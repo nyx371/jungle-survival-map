@@ -33,10 +33,6 @@
               Drop in with up to four teammates, scavenge during the day, build lighted footholds,
               craft the weapon that fits your role, and survive the Zerg waves that come for you at night.
             </p>
-            <div class="home-actions">
-              <button class="inline-action" type="button" data-tab-jump="system">How the map works</button>
-              <a class="inline-link" href="https://github.com/nyx371/jungle-survival-map">View source</a>
-            </div>
           </div>
           <aside class="mission-card" aria-label="Mission briefing">
             <p class="eyebrow">Mission</p>
@@ -45,21 +41,44 @@
               <li><strong>Players:</strong> 1–5 Ghost commandos</li>
               <li><strong>Cycle:</strong> 22 minute days / 22 minute nights</li>
               <li><strong>Pressure:</strong> wave-based Zerg attacks</li>
-              <li><strong>Progress:</strong> weapons and upgrades persist after death</li>
+              <li><strong>Death:</strong> respawn, lose resources and structures, keep progression</li>
             </ul>
           </aside>
         </div>
 
-        <div id="home-grid" class="grid"></div>
-
-        <div class="panel player-promise">
-          <h3>The heart of the map</h3>
-          <p>
-            You are not building a giant base or ordering an army around. You are trying to keep one
-            Ghost alive long enough to make the next decision: push into the dark for better resources,
-            hold the line a little longer, or tear everything down and move before the jungle catches up.
-          </p>
+        <div class="briefing-strip" aria-label="Game pillars">
+          <div><span>01</span><strong>Scout by day</strong></div>
+          <div><span>02</span><strong>Build light</strong></div>
+          <div><span>03</span><strong>Hold at night</strong></div>
+          <div><span>04</span><strong>Move before collapse</strong></div>
         </div>
+
+        <section class="home-showcase">
+          <div class="showcase-copy panel">
+            <p class="eyebrow">What you play</p>
+            <h2>A survival map about small decisions under pressure.</h2>
+            <p>
+              You are not building a giant base or ordering an army around. You are trying to keep one
+              Ghost alive long enough to make the next decision: push into the dark for better resources,
+              hold the line a little longer, or tear everything down and move before the jungle catches up.
+            </p>
+          </div>
+          <div class="night-card panel" aria-label="Night threat meter">
+            <div class="night-card-top">
+              <span>Night threat</span>
+              <strong>Black → Brown → Orange → Red</strong>
+            </div>
+            <div class="threat-bars">
+              <span style="--bar: 35%"></span>
+              <span style="--bar: 52%"></span>
+              <span style="--bar: 74%"></span>
+              <span style="--bar: 96%"></span>
+            </div>
+            <p>Enemy color tells the squad how far the jungle has evolved.</p>
+          </div>
+        </section>
+
+        <div id="home-grid" class="grid home-feature-grid"></div>
       </section>
 
       <section id="system" class="tab-panel">

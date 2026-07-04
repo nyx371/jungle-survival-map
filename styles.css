@@ -112,19 +112,9 @@ h3 { margin-top: 0; }
 }
 
 .system-tabs {
-  width: 0;
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transition: max-width 180ms ease, opacity 180ms ease;
-}
-
-.top-nav.show-system-tabs .system-tabs {
-  width: auto;
-  max-width: 540px;
-  opacity: 1;
-  pointer-events: auto;
+  padding-left: 0.45rem;
+  margin-left: 0.1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .primary-tabs {
@@ -269,6 +259,106 @@ h3 { margin-top: 0; }
 .mission-card li {
   padding-top: 0.75rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.briefing-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.briefing-strip div {
+  min-height: 96px;
+  display: grid;
+  align-content: space-between;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.2);
+}
+
+.briefing-strip span {
+  color: var(--accent);
+  font-weight: 950;
+  font-size: 0.8rem;
+}
+
+.briefing-strip strong {
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  line-height: 1.05;
+}
+
+.home-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.showcase-copy h2 {
+  max-width: 820px;
+  font-size: clamp(2rem, 5vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.showcase-copy p:not(.eyebrow) {
+  max-width: 790px;
+  color: var(--muted);
+  line-height: 1.75;
+  font-size: 1.08rem;
+}
+
+.night-card {
+  display: grid;
+  align-content: space-between;
+  min-height: 320px;
+  background:
+    radial-gradient(circle at 70% 15%, rgba(255, 95, 86, 0.18), transparent 45%),
+    rgba(0, 0, 0, 0.24);
+}
+
+.night-card-top {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.night-card-top span {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.night-card-top strong {
+  font-size: 1.3rem;
+  line-height: 1.1;
+}
+
+.threat-bars {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.threat-bars span {
+  width: var(--bar);
+  height: 0.72rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1a1a1a, #8a5435, #ff8a2a, #ff3b30);
+  box-shadow: 0 0 26px rgba(255, 95, 86, 0.18);
+}
+
+.night-card p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.home-feature-grid {
+  margin-top: 1rem;
 }
 
 .player-promise h3 {
@@ -589,10 +679,6 @@ a { color: var(--accent); }
     justify-content: flex-start;
   }
 
-  .top-nav.show-system-tabs .system-tabs {
-    max-width: 520px;
-  }
-
   .tab,
   .sub-tab {
     padding: 0.58rem 0.72rem;
@@ -605,6 +691,15 @@ a { color: var(--accent); }
     grid-template-columns: 1fr;
     padding: 1.25rem;
     border-radius: 26px;
+  }
+
+  .briefing-strip,
+  .home-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .briefing-strip div {
+    min-height: 82px;
   }
 
   .game-hero h1 {

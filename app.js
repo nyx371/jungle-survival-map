@@ -21,7 +21,7 @@ function activateTab(tabName, options = {}) {
 
   document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
   document.getElementById(tabName)?.classList.add('active');
-  document.querySelector('.top-nav')?.classList.toggle('show-system-tabs', tabName === 'system');
+  document.querySelectorAll('.sub-tab').forEach((tab) => tab.classList.remove('active'));
 
   if (options.scroll !== false) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -36,6 +36,8 @@ function setupTabs() {
   document.querySelectorAll('[data-system-target]').forEach((button) => {
     button.addEventListener('click', () => {
       activateTab('system', { scroll: false });
+      document.querySelectorAll('.sub-tab').forEach((tab) => tab.classList.remove('active'));
+      button.classList.add('active');
       document.getElementById(button.dataset.systemTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
@@ -141,12 +143,6 @@ function renderSourceList(files) {
 
 async function init() {
   setupTabs();
-  document.querySelectorAll('[data-tab-jump]').forEach((button) => {
-    button.addEventListener('click', () => {
-      activateTab(button.dataset.tabJump);
-    });
-  });
-
   try {
     state.content = await loadJson('data/site-content.json');
     renderGameplayLoop(state.content.gameplayLoop);
