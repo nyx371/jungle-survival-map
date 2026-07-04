@@ -20,12 +20,18 @@
     </header>
 
     <main>
-      <nav class="tabs" aria-label="Jungle Survival sections">
-        <button class="tab active" data-tab="loop">Gameplay Loop</button>
-        <button class="tab" data-tab="features">Map Features</button>
-        <button class="tab" data-tab="enemies">Enemy Mob Variants</button>
-        <button class="tab" data-tab="upgrades">Player Upgrades</button>
-        <button class="tab" data-tab="source">EPS Source</button>
+      <nav class="top-nav" aria-label="Jungle Survival sections">
+        <div class="nav-brand" aria-hidden="true">
+          <span class="brand-mark">JS</span>
+          <span class="brand-copy">Jungle Survival</span>
+        </div>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="loop" role="tab" aria-selected="true">Loop</button>
+          <button class="tab" data-tab="features" role="tab" aria-selected="false">Overview</button>
+          <button class="tab" data-tab="enemies" role="tab" aria-selected="false">Enemies</button>
+          <button class="tab" data-tab="upgrades" role="tab" aria-selected="false">Upgrades</button>
+          <button class="tab" data-tab="source" role="tab" aria-selected="false">Source</button>
+        </div>
       </nav>
 
       <section id="loop" class="tab-panel active">
