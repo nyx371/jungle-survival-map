@@ -1,52 +1,28 @@
 {
   "features": [
     {
-      "title": "Play as your own jungle commando",
-      "body": "Every player controls a personal Ghost hero. You are not managing an army \u2014 you are surviving as a small squad of elite commandos."
+      "title": "A co-op Ghost survival map",
+      "body": "Play as a small squad of Ghost commandos dropped into a hostile jungle. You survive by moving together, scavenging resources, and adapting before the swarm overwhelms you."
     },
     {
-      "title": "Build your own combat style",
-      "body": "Your Ghost can grow into a sniper, close-range brawler, explosive specialist, support survivor, or hybrid depending on the upgrades and weapons you craft."
+      "title": "Craft weapons and shape your role",
+      "body": "Your Ghost is not locked to the default attack. Craft and swap weapons, then upgrade into a sniper, brawler, explosives specialist, support survivor, or hybrid build."
     },
     {
-      "title": "Craft weapons, then swap between them",
-      "body": "Instead of being stuck with the default Ghost attack, players craft new weapons and swap their Ghost to the weapon that fits the situation."
+      "title": "Progression that feels personal",
+      "body": "Each player upgrades independently: weapon damage, range, fire rate, health, armor, shields, energy, mobility, and utility can all become part of your build."
     },
     {
-      "title": "Upgrade without stealing power from teammates",
-      "body": "Each player has their own hidden unit and weapon data, so your weapon damage, range, armor, shields, health, and energy can improve independently."
+      "title": "A jungle that changes every run",
+      "body": "Resources are placed from randomized jungle candidates, mobs respawn by area, and evolving threats push the squad to explore instead of camping one safe spot."
     },
     {
-      "title": "Harvest the jungle to survive",
-      "body": "Resources are found around the map, guarded by danger, and used to craft weapons, buy upgrades, and keep the squad alive."
+      "title": "Build tactically, then move on",
+      "body": "Temporary structures help you hold ground, recover, or prepare for danger \u2014 but everything can be deconstructed when it is time to relocate."
     },
     {
-      "title": "Keep moving or get overrun",
-      "body": "The map rewards mobility. You can build useful structures, but the jungle keeps escalating and turtling forever should not be safe."
-    },
-    {
-      "title": "Build, use, and deconstruct",
-      "body": "Temporary structures give tactical advantages, and anything player-built can be deconstructed when the squad needs to move on."
-    },
-    {
-      "title": "Share minerals with teammates",
-      "body": "Players can send minerals to each other, helping a teammate finish a key weapon, emergency upgrade, or recovery purchase."
-    },
-    {
-      "title": "Use deep squad menus",
-      "body": "Menus will handle crafting, upgrades, structures, resource transfers, status information, and future special abilities without needing a huge command card."
-    },
-    {
-      "title": "Explore randomized resource pockets",
-      "body": "Resource spots are chosen from preplaced jungle candidates each run, so routes and fights vary while still feeling intentionally designed."
-    },
-    {
-      "title": "Fight an evolving Zerg ecosystem",
-      "body": "Enemies automatically evolve as the game progresses. Their color and name reveal their threat tier before they reach you."
-    },
-    {
-      "title": "Read danger through sound",
-      "body": "Heartbeat, hurt sounds, and Ghost breathing cues will warn players when they are wounded or under pressure."
+      "title": "Readable escalating enemies",
+      "body": "Zerg mobs evolve automatically over time. Their names and colors \u2014 Black, Brown, Orange, Red \u2014 tell players how dangerous each variant has become."
     }
   ],
   "enemies": [
