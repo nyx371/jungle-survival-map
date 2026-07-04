@@ -1,9 +1,18 @@
 // Enemy mob evolution concept.
 // Zerg units are upgraded automatically over time.
 // Visual language: Black -> Brown -> Orange -> Red.
+// Planned base roster: Drone, Broodling, Zergling, Hydralisk, Lurker, Queen, Mutalisk, Guardian, Defiler, Ultralisk.
 
 var EnemyTier = 0;
 var EnemyTierTimer = 0;
+
+
+const DroneMob = TrgUnit("Zerg Drone");
+const BroodlingMob = TrgUnit("Zerg Broodling");
+const QueenMob = TrgUnit("Zerg Queen");
+const MutaliskMob = TrgUnit("Zerg Mutalisk");
+const GuardianMob = TrgUnit("Zerg Guardian");
+const LurkerMob = TrgUnit("Zerg Lurker");
 
 const ZerglingMob = TrgUnit("Zerg Zergling");
 const HydraliskMob = TrgUnit("Zerg Hydralisk");

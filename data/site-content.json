@@ -1,93 +1,353 @@
 {
   "features": [
     {
-      "title": "Personal Ghost hero",
-      "body": "Each player controls their own Ghost-style commando in the jungle map. The hero is persistent, upgradeable, and tracked per player."
+      "title": "Play as your own jungle commando",
+      "body": "Every player controls a personal Ghost hero. You are not managing an army \u2014 you are surviving as a small squad of elite commandos."
     },
     {
-      "title": "Player-specific DAT unit IDs",
-      "body": "Every player gets a unique hero unit ID so health, armor, shields, energy, speed, and other stats can upgrade independently."
+      "title": "Build your own combat style",
+      "body": "Your Ghost can grow into a sniper, close-range brawler, explosive specialist, support survivor, or hybrid depending on the upgrades and weapons you craft."
     },
     {
-      "title": "Player-specific weapon IDs",
-      "body": "Every player gets unique weapon IDs so crafted weapons and weapon upgrades do not clash with teammates."
+      "title": "Craft weapons, then swap between them",
+      "body": "Instead of being stuck with the default Ghost attack, players craft new weapons and swap their Ghost to the weapon that fits the situation."
     },
     {
-      "title": "Craft, harvest, survive",
-      "body": "The loop is commando survival: gather minerals, craft stronger weapons, upgrade stats, and keep moving through escalating threats."
+      "title": "Upgrade without stealing power from teammates",
+      "body": "Each player has their own hidden unit and weapon data, so your weapon damage, range, armor, shields, health, and energy can improve independently."
     },
     {
-      "title": "Mobile structures",
-      "body": "Some structures can be built, but the map is mostly on the move. Everything player-built can be deconstructed."
+      "title": "Harvest the jungle to survive",
+      "body": "Resources are found around the map, guarded by danger, and used to craft weapons, buy upgrades, and keep the squad alive."
     },
     {
-      "title": "Resource sharing",
-      "body": "Players will be able to send minerals to each other through the menu system."
+      "title": "Keep moving or get overrun",
+      "body": "The map rewards mobility. You can build useful structures, but the jungle keeps escalating and turtling forever should not be safe."
     },
     {
-      "title": "Deep menu system",
-      "body": "Nested menus support weapon crafting, upgrades, structures, team resource transfers, status pages, and future systems."
+      "title": "Build, use, and deconstruct",
+      "body": "Temporary structures give tactical advantages, and anything player-built can be deconstructed when the squad needs to move on."
     },
     {
-      "title": "Weighted resource locations",
-      "body": "Preplaced units mark candidate resource locations. Runtime logic chooses active locations with weighted random selection."
+      "title": "Share minerals with teammates",
+      "body": "Players can send minerals to each other, helping a teammate finish a key weapon, emergency upgrade, or recovery purchase."
     },
     {
-      "title": "Area mob respawns",
-      "body": "Jungle zones maintain pressure by respawning mobs by area instead of only fixed spawn points."
+      "title": "Use deep squad menus",
+      "body": "Menus will handle crafting, upgrades, structures, resource transfers, status information, and future special abilities without needing a huge command card."
     },
     {
-      "title": "Audio feedback",
-      "body": "Low HP heartbeat, hurt sounds, and possible Ghost breathing SFX help communicate danger locally to each player."
+      "title": "Explore randomized resource pockets",
+      "body": "Resource spots are chosen from preplaced jungle candidates each run, so routes and fights vary while still feeling intentionally designed."
     },
     {
-      "title": "Exploding death mobs",
-      "body": "Some enemies will explode or trigger effects on death, such as plague-style variants."
+      "title": "Fight an evolving Zerg ecosystem",
+      "body": "Enemies automatically evolve as the game progresses. Their color and name reveal their threat tier before they reach you."
     },
     {
-      "title": "Simple minerals economy",
-      "body": "Everything gives minerals, just in different amounts. The economy stays readable while the upgrade system gets deep."
+      "title": "Read danger through sound",
+      "body": "Heartbeat, hurt sounds, and Ghost breathing cues will warn players when they are wounded or under pressure."
     }
   ],
   "enemies": [
     {
+      "base": "Zerg Drone",
+      "role": "Worker swarm / resource harasser",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Black Forager",
+          "color": "Black",
+          "change": "Low HP scout-worker. Mostly tests player aim and reveals where the swarm is spreading."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Gnawer",
+          "color": "Brown",
+          "change": "Gains more HP and a faster bite, making ignored worker packs dangerous."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Stripper",
+          "color": "Orange",
+          "change": "Gains bonus damage against structures and deconstruct targets, punishing static defenses."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Ravager",
+          "color": "Red",
+          "change": "Fast raider with high structure damage and enough HP to slip through weak perimeter fire."
+        }
+      ]
+    },
+    {
+      "base": "Zerg Broodling",
+      "role": "Disposable ambush pack",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Black Brood",
+          "color": "Black",
+          "change": "Very fragile melee flood unit that appears in numbers."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Brood",
+          "color": "Brown",
+          "change": "More movement speed and HP, better at surrounding isolated Ghosts."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Brood",
+          "color": "Orange",
+          "change": "Much faster attack cooldown; dangerous if allowed to stack on a player."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Brood",
+          "color": "Red",
+          "change": "Tiny berserker variant with high speed and burst damage, forcing quick repositioning."
+        }
+      ]
+    },
+    {
       "base": "Zerg Zergling",
       "role": "Fast melee pressure",
       "evolutions": [
-        { "tier": "I", "name": "Black Skitter", "color": "Black", "change": "Weak starter melee, low HP, short vision." },
-        { "tier": "II", "name": "Brown Skitter", "color": "Brown", "change": "More HP and faster movement." },
-        { "tier": "III", "name": "Orange Ripper", "color": "Orange", "change": "Higher damage and faster attack cooldown." },
-        { "tier": "IV", "name": "Red Ripper", "color": "Red", "change": "Elite speed, high damage, can pressure wounded players." }
+        {
+          "tier": "I",
+          "name": "Black Skitter",
+          "color": "Black",
+          "change": "Basic fast melee enemy: low HP, low damage, short vision."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Skitter",
+          "color": "Brown",
+          "change": "Gains +HP and movement speed, becoming reliable chase pressure."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Ripper",
+          "color": "Orange",
+          "change": "Switches to a sharper claw profile: higher damage and shorter cooldown."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Ripper",
+          "color": "Red",
+          "change": "Elite hunter with max speed, high damage, and enough durability to punish wounded players."
+        }
       ]
     },
     {
       "base": "Zerg Hydralisk",
-      "role": "Ranged hunter",
+      "role": "Ranged line attacker",
       "evolutions": [
-        { "tier": "I", "name": "Black Spitter", "color": "Black", "change": "Basic ranged attack with modest damage." },
-        { "tier": "II", "name": "Brown Spitter", "color": "Brown", "change": "More HP and slightly longer weapon range." },
-        { "tier": "III", "name": "Orange Needler", "color": "Orange", "change": "Swaps to a stronger/faster ranged weapon." },
-        { "tier": "IV", "name": "Red Needler", "color": "Red", "change": "Longer range weapon and high damage." }
+        {
+          "tier": "I",
+          "name": "Black Spitter",
+          "color": "Black",
+          "change": "Short-range spine attack with modest damage."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Spitter",
+          "color": "Brown",
+          "change": "Gains HP and +1 weapon range, letting it fire from behind melee mobs."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Needler",
+          "color": "Orange",
+          "change": "Swaps to a faster needle weapon with better cooldown and higher damage."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Needler",
+          "color": "Red",
+          "change": "Long-range elite shooter with high damage, forcing players to break line of sight or snipe it first."
+        }
       ]
     },
     {
-      "base": "Zerg Ultralisk",
-      "role": "Heavy bruiser",
+      "base": "Zerg Lurker",
+      "role": "Area denial / burrow threat",
       "evolutions": [
-        { "tier": "I", "name": "Black Crusher", "color": "Black", "change": "Slow tank unit with low early damage." },
-        { "tier": "II", "name": "Brown Crusher", "color": "Brown", "change": "Gains armor and max HP." },
-        { "tier": "III", "name": "Orange Mauler", "color": "Orange", "change": "Gains speed and stronger melee weapon." },
-        { "tier": "IV", "name": "Red Mauler", "color": "Red", "change": "Boss-like armor, HP, and punishing attack stats." }
+        {
+          "tier": "I",
+          "name": "Black Burrower",
+          "color": "Black",
+          "change": "Slow setup ambusher with low damage spikes."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Burrower",
+          "color": "Brown",
+          "change": "More HP and stronger spine damage, holding narrow paths better."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Impaler",
+          "color": "Orange",
+          "change": "Longer spine range and higher splash pressure, threatening grouped players."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Impaler",
+          "color": "Red",
+          "change": "Elite area-control unit with very long reach and lethal line damage if not cleared quickly."
+        }
+      ]
+    },
+    {
+      "base": "Zerg Queen",
+      "role": "Disruptor / support caster",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Black Matron",
+          "color": "Black",
+          "change": "Light support threat with low HP and short-range harassment."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Matron",
+          "color": "Brown",
+          "change": "Gains HP and faster movement so it can stay behind the front line."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Hexer",
+          "color": "Orange",
+          "change": "Switches to a longer-range disruption weapon/effect to pressure priority targets."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Hexer",
+          "color": "Red",
+          "change": "High-priority support unit with long range and punishing debuff-style pressure."
+        }
+      ]
+    },
+    {
+      "base": "Zerg Mutalisk",
+      "role": "Flying flanker",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Black Wing",
+          "color": "Black",
+          "change": "Light air threat with low HP and short-range poke."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Wing",
+          "color": "Brown",
+          "change": "Gains movement speed and HP, making it harder to kite."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Razorwing",
+          "color": "Orange",
+          "change": "Upgraded bouncing glaive damage for harassment against grouped players."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Razorwing",
+          "color": "Red",
+          "change": "Fast elite flyer with higher damage and longer range, demanding anti-air weapon swaps."
+        }
+      ]
+    },
+    {
+      "base": "Zerg Guardian",
+      "role": "Siege flyer",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Black Siegewing",
+          "color": "Black",
+          "change": "Slow air artillery with low damage but long enough range to teach target priority."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Siegewing",
+          "color": "Brown",
+          "change": "Gains HP and stronger siege damage against structures."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Shellwing",
+          "color": "Orange",
+          "change": "Longer range and higher impact damage, forcing the squad to move or counter-snipe."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Shellwing",
+          "color": "Red",
+          "change": "Elite siege threat with very long range and heavy structure/player pressure."
+        }
       ]
     },
     {
       "base": "Zerg Defiler",
-      "role": "Plague/exploder special",
+      "role": "Plague / death-effect special",
       "evolutions": [
-        { "tier": "I", "name": "Black Bloater", "color": "Black", "change": "Low threat support mob." },
-        { "tier": "II", "name": "Brown Bloater", "color": "Brown", "change": "More HP and death warning behavior." },
-        { "tier": "III", "name": "Orange Plaguebearer", "color": "Orange", "change": "Explodes or applies plague-style damage on death." },
-        { "tier": "IV", "name": "Red Plaguebearer", "color": "Red", "change": "Larger death effect and higher pressure near groups." }
+        {
+          "tier": "I",
+          "name": "Black Bloater",
+          "color": "Black",
+          "change": "Slow fragile special unit with a small death warning."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Bloater",
+          "color": "Brown",
+          "change": "Gains HP and a larger death burst radius."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Plaguebearer",
+          "color": "Orange",
+          "change": "Death effect becomes plague-style damage over an area, punishing close-range kills."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Plaguebearer",
+          "color": "Red",
+          "change": "Large plague/explosion death effect that can break grouped players if killed carelessly."
+        }
+      ]
+    },
+    {
+      "base": "Zerg Ultralisk",
+      "role": "Heavy bruiser / frontline boss",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Black Crusher",
+          "color": "Black",
+          "change": "Slow tank with high HP but low early damage."
+        },
+        {
+          "tier": "II",
+          "name": "Brown Crusher",
+          "color": "Brown",
+          "change": "Gains armor and a larger HP pool, requiring sustained fire."
+        },
+        {
+          "tier": "III",
+          "name": "Orange Mauler",
+          "color": "Orange",
+          "change": "Gains speed and a stronger melee weapon, becoming a real chase threat."
+        },
+        {
+          "tier": "IV",
+          "name": "Red Mauler",
+          "color": "Red",
+          "change": "Boss-like elite with heavy armor, huge HP, and punishing melee damage."
+        }
       ]
     }
   ],
