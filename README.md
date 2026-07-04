@@ -1,6 +1,6 @@
-# euddraft Balance Lab
+# Jungle Survival Map
 
-Static GitHub Pages placeholder for displaying StarCraft/euddraft map balance data.
+Static GitHub Pages placeholder for displaying Jungle Survival map balance data.
 
 ## Local preview
 
@@ -14,7 +14,7 @@ Then open <http://localhost:8000>.
 
 ## Data
 
-Replace `data/balance.json` with generated exports from epScript/euddraft tooling.
+Replace `data/balance.json` with generated exports from Jungle Survival epScript/euddraft tooling.
 
 Planned sections:
 
