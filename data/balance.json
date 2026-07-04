@@ -1,0 +1,30 @@
+{
+  "version": "placeholder",
+  "updated": "2026-07-04",
+  "units": [
+    {
+      "name": "Terran Marine",
+      "hp": 80,
+      "armor": 2,
+      "weapon": "Gauss Rifle",
+      "damage": 12,
+      "cooldown": 8
+    },
+    {
+      "name": "Zerg Zergling",
+      "hp": 35,
+      "armor": 0,
+      "weapon": "Claws",
+      "damage": 5,
+      "cooldown": 8
+    },
+    {
+      "name": "Protoss Zealot",
+      "hp": "100 + 60 shields",
+      "armor": 1,
+      "weapon": "Psi Blades",
+      "damage": "8 x 2",
+      "cooldown": 22
+    }
+  ]
+}

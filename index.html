@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>euddraft Balance Lab</title>
+    <meta name="description" content="Placeholder dashboard for StarCraft/euddraft map balance data." />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">StarCraft · euddraft · epScript</p>
+        <h1>Map Balance Lab</h1>
+        <p class="lede">
+          A placeholder dashboard for publishing unit, weapon, and economy balance data
+          from euddraft / epScript map projects.
+        </p>
+      </div>
+      <div class="status-card" aria-label="project status">
+        <span class="pulse"></span>
+        <strong>Prototype</strong>
+        <small>Static GitHub Pages site</small>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Balance Snapshot</h2>
+          <p>Replace <code>data/balance.json</code> with generated map balance exports later.</p>
+        </div>
+        <div id="balance-grid" class="grid" aria-live="polite"></div>
+      </section>
+
+      <section class="panel two-column">
+        <div>
+          <h2>Planned data</h2>
+          <ul class="checklist">
+            <li>Unit DAT patches: HP, armor, cost, build time, weapons</li>
+            <li>Weapon DAT patches: damage, cooldown, range, splash, targeting</li>
+            <li>Tech / upgrade costs and timing</li>
+            <li>Generated diffs between map versions</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Example epScript target</h2>
+          <pre><code>const marine = TrgUnit("Terran Marine");
+const gauss = Weapon("Gauss Rifle");
+
+marine.maxHp = 80 * 256;
+gauss.damage = 12;
+gauss.cooldown = 8;</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Built for euddraft balance work.</span>
+      <a href="https://github.com/nyx371/euddraft-balance">GitHub repository</a>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
