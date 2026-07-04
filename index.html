@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jungle Survival Map</title>
-    <meta name="description" content="Placeholder dashboard for Jungle Survival StarCraft map balance data." />
+    <meta name="description" content="Feature roadmap and epScript source viewer for the Jungle Survival StarCraft map." />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -13,50 +13,86 @@
         <p class="eyebrow">StarCraft · Jungle Survival · epScript</p>
         <h1>Jungle Survival Map</h1>
         <p class="lede">
-          A placeholder dashboard for publishing unit, weapon, economy, and wave balance data
-          for the Jungle Survival StarCraft map.
+          A commando-style jungle survival map where each player controls a custom Ghost,
+          crafts weapons, harvests minerals, and survives Zerg mobs that evolve over time.
         </p>
       </div>
       <div class="status-card" aria-label="project status">
         <span class="pulse"></span>
         <strong>Prototype</strong>
-        <small>Static GitHub Pages site</small>
+        <small>Feature planning + source viewer</small>
       </div>
     </header>
 
     <main>
-      <section class="panel">
-        <div class="section-heading">
-          <h2>Balance Snapshot</h2>
-          <p>Replace <code>data/balance.json</code> with generated Jungle Survival balance exports later.</p>
+      <nav class="tabs" aria-label="Jungle Survival sections">
+        <button class="tab active" data-tab="features">Map Features</button>
+        <button class="tab" data-tab="enemies">Enemy Mob Variants</button>
+        <button class="tab" data-tab="upgrades">Player Upgrades</button>
+        <button class="tab" data-tab="source">EPS Source</button>
+      </nav>
+
+      <section id="features" class="tab-panel active">
+        <div class="panel section-heading vertical">
+          <p class="eyebrow">Core systems</p>
+          <h2>Systems the map will have</h2>
+          <p>
+            These are the headline systems for Jungle Survival. The implementation will use
+            epScript/euddraft with DAT-driven unit and weapon changes where possible.
+          </p>
         </div>
-        <div id="balance-grid" class="grid" aria-live="polite"></div>
+        <div id="feature-grid" class="grid"></div>
       </section>
 
-      <section class="panel two-column">
-        <div>
-          <h2>Planned data</h2>
-          <ul class="checklist">
-            <li>Unit DAT patches: HP, armor, cost, build time, weapons</li>
-            <li>Weapon DAT patches: damage, cooldown, range, splash, targeting</li>
-            <li>Tech / upgrade costs and timing</li>
-            <li>Generated diffs between map versions</li>
-          </ul>
+      <section id="enemies" class="tab-panel">
+        <div class="panel section-heading vertical">
+          <p class="eyebrow">Zerg threat ladder</p>
+          <h2>Enemy mob variants</h2>
+          <p>
+            Zerg units are the base mob family. Each mob line upgrades automatically as the
+            game progresses. Every evolution changes name and color so players immediately
+            know what they are fighting: Black → Brown → Orange → Red.
+          </p>
         </div>
-        <div>
-          <h2>Example epScript target</h2>
-          <pre><code>const marine = TrgUnit("Terran Marine");
-const gauss = Weapon("Gauss Rifle");
+        <div id="enemy-grid" class="grid wide"></div>
+      </section>
 
-marine.maxHp = 80 * 256;
-gauss.damage = 12;
-gauss.cooldown = 8;</code></pre>
+      <section id="upgrades" class="tab-panel">
+        <div class="panel section-heading vertical">
+          <p class="eyebrow">Commando progression</p>
+          <h2>Player upgrades and craftable weapons</h2>
+          <p>
+            Each player has their own Ghost unit DAT ID and their own weapon DAT IDs. That lets
+            upgrades mutate one player’s stats and crafted weapons without changing anyone else.
+          </p>
+        </div>
+        <div id="upgrade-grid" class="grid"></div>
+      </section>
+
+      <section id="source" class="tab-panel">
+        <div class="panel section-heading vertical">
+          <p class="eyebrow">Generated source browser</p>
+          <h2>EPS source code</h2>
+          <p>
+            This tab loads the committed epScript source files from the repository. As systems are
+            implemented, this becomes the quick in-browser source viewer for the map logic.
+          </p>
+        </div>
+        <div class="source-layout panel">
+          <aside id="source-list" class="source-list" aria-label="EPS source files"></aside>
+          <article class="source-viewer">
+            <div class="source-title-row">
+              <h3 id="source-title">Select a source file</h3>
+              <a id="source-link" href="#" target="_blank" rel="noreferrer">Open raw</a>
+            </div>
+            <pre><code id="source-code">Loading source index…</code></pre>
+          </article>
         </div>
       </section>
     </main>
 
     <footer>
-      <span>Built for Jungle Survival balance work.</span>
+      <span>Built for Jungle Survival balance and implementation planning.</span>
       <a href="https://github.com/nyx371/jungle-survival-map">GitHub repository</a>
     </footer>
 

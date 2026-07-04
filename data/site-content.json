@@ -1,0 +1,140 @@
+{
+  "features": [
+    {
+      "title": "Personal Ghost hero",
+      "body": "Each player controls their own Ghost-style commando in the jungle map. The hero is persistent, upgradeable, and tracked per player."
+    },
+    {
+      "title": "Player-specific DAT unit IDs",
+      "body": "Every player gets a unique hero unit ID so health, armor, shields, energy, speed, and other stats can upgrade independently."
+    },
+    {
+      "title": "Player-specific weapon IDs",
+      "body": "Every player gets unique weapon IDs so crafted weapons and weapon upgrades do not clash with teammates."
+    },
+    {
+      "title": "Craft, harvest, survive",
+      "body": "The loop is commando survival: gather minerals, craft stronger weapons, upgrade stats, and keep moving through escalating threats."
+    },
+    {
+      "title": "Mobile structures",
+      "body": "Some structures can be built, but the map is mostly on the move. Everything player-built can be deconstructed."
+    },
+    {
+      "title": "Resource sharing",
+      "body": "Players will be able to send minerals to each other through the menu system."
+    },
+    {
+      "title": "Deep menu system",
+      "body": "Nested menus support weapon crafting, upgrades, structures, team resource transfers, status pages, and future systems."
+    },
+    {
+      "title": "Weighted resource locations",
+      "body": "Preplaced units mark candidate resource locations. Runtime logic chooses active locations with weighted random selection."
+    },
+    {
+      "title": "Area mob respawns",
+      "body": "Jungle zones maintain pressure by respawning mobs by area instead of only fixed spawn points."
+    },
+    {
+      "title": "Audio feedback",
+      "body": "Low HP heartbeat, hurt sounds, and possible Ghost breathing SFX help communicate danger locally to each player."
+    },
+    {
+      "title": "Exploding death mobs",
+      "body": "Some enemies will explode or trigger effects on death, such as plague-style variants."
+    },
+    {
+      "title": "Simple minerals economy",
+      "body": "Everything gives minerals, just in different amounts. The economy stays readable while the upgrade system gets deep."
+    }
+  ],
+  "enemies": [
+    {
+      "base": "Zerg Zergling",
+      "role": "Fast melee pressure",
+      "evolutions": [
+        { "tier": "I", "name": "Black Skitter", "color": "Black", "change": "Weak starter melee, low HP, short vision." },
+        { "tier": "II", "name": "Brown Skitter", "color": "Brown", "change": "More HP and faster movement." },
+        { "tier": "III", "name": "Orange Ripper", "color": "Orange", "change": "Higher damage and faster attack cooldown." },
+        { "tier": "IV", "name": "Red Ripper", "color": "Red", "change": "Elite speed, high damage, can pressure wounded players." }
+      ]
+    },
+    {
+      "base": "Zerg Hydralisk",
+      "role": "Ranged hunter",
+      "evolutions": [
+        { "tier": "I", "name": "Black Spitter", "color": "Black", "change": "Basic ranged attack with modest damage." },
+        { "tier": "II", "name": "Brown Spitter", "color": "Brown", "change": "More HP and slightly longer weapon range." },
+        { "tier": "III", "name": "Orange Needler", "color": "Orange", "change": "Swaps to a stronger/faster ranged weapon." },
+        { "tier": "IV", "name": "Red Needler", "color": "Red", "change": "Longer range weapon and high damage." }
+      ]
+    },
+    {
+      "base": "Zerg Ultralisk",
+      "role": "Heavy bruiser",
+      "evolutions": [
+        { "tier": "I", "name": "Black Crusher", "color": "Black", "change": "Slow tank unit with low early damage." },
+        { "tier": "II", "name": "Brown Crusher", "color": "Brown", "change": "Gains armor and max HP." },
+        { "tier": "III", "name": "Orange Mauler", "color": "Orange", "change": "Gains speed and stronger melee weapon." },
+        { "tier": "IV", "name": "Red Mauler", "color": "Red", "change": "Boss-like armor, HP, and punishing attack stats." }
+      ]
+    },
+    {
+      "base": "Zerg Defiler",
+      "role": "Plague/exploder special",
+      "evolutions": [
+        { "tier": "I", "name": "Black Bloater", "color": "Black", "change": "Low threat support mob." },
+        { "tier": "II", "name": "Brown Bloater", "color": "Brown", "change": "More HP and death warning behavior." },
+        { "tier": "III", "name": "Orange Plaguebearer", "color": "Orange", "change": "Explodes or applies plague-style damage on death." },
+        { "tier": "IV", "name": "Red Plaguebearer", "color": "Red", "change": "Larger death effect and higher pressure near groups." }
+      ]
+    }
+  ],
+  "upgrades": [
+    {
+      "title": "Crafted weapons",
+      "items": [
+        "Swap away from the default Ghost attack into crafted weapons.",
+        "Rifle: reliable single-target damage.",
+        "Shotgun: short range burst / possible splash.",
+        "Sniper: long range, slower cooldown, high damage.",
+        "Flamer or acid weapon: area control concept.",
+        "Explosive weapon: anti-pack option with splash tradeoffs."
+      ]
+    },
+    {
+      "title": "Weapon upgrades",
+      "items": [
+        "Damage",
+        "Cooldown / fire rate",
+        "Range",
+        "Splash radius or damage factor",
+        "Target flags / air-ground capability",
+        "Weapon behavior swaps by crafted weapon type"
+      ]
+    },
+    {
+      "title": "Survival upgrades",
+      "items": [
+        "Max health",
+        "Armor",
+        "Shields",
+        "Shield regeneration concept",
+        "Energy max / energy regeneration",
+        "Movement speed and vision range"
+      ]
+    },
+    {
+      "title": "Utility and team upgrades",
+      "items": [
+        "Resource transfer menu",
+        "Harvest efficiency",
+        "Temporary structures",
+        "Deconstruction refund improvements",
+        "SFX/status alerts",
+        "Future active abilities"
+      ]
+    }
+  ]
+}

@@ -1,26 +1,132 @@
-async function loadBalanceData() {
-  const grid = document.querySelector('#balance-grid');
+const state = {
+  content: null,
+  sources: [],
+};
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById(button.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+async function loadJson(path) {
+  const response = await fetch(path, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+  return response.json();
+}
+
+function renderFeatures(features) {
+  const grid = document.querySelector('#feature-grid');
+  grid.innerHTML = features.map((feature) => `
+    <article class="card">
+      <h3>${escapeHtml(feature.title)}</h3>
+      <p>${escapeHtml(feature.body)}</p>
+    </article>
+  `).join('');
+}
+
+function renderEnemies(enemies) {
+  const grid = document.querySelector('#enemy-grid');
+  grid.innerHTML = enemies.map((enemy) => `
+    <article class="card enemy-card">
+      <div class="card-kicker">${escapeHtml(enemy.base)}</div>
+      <h3>${escapeHtml(enemy.role)}</h3>
+      <div class="evolution-list">
+        ${enemy.evolutions.map((evolution) => `
+          <div class="evolution tier-${escapeHtml(evolution.color.toLowerCase())}">
+            <span class="color-chip">${escapeHtml(evolution.color)}</span>
+            <div>
+              <strong>${escapeHtml(evolution.tier)} · ${escapeHtml(evolution.name)}</strong>
+              <p>${escapeHtml(evolution.change)}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </article>
+  `).join('');
+}
+
+function renderUpgrades(upgrades) {
+  const grid = document.querySelector('#upgrade-grid');
+  grid.innerHTML = upgrades.map((group) => `
+    <article class="card">
+      <h3>${escapeHtml(group.title)}</h3>
+      <ul class="checklist compact">
+        ${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+      </ul>
+    </article>
+  `).join('');
+}
+
+async function loadSource(file) {
+  const code = document.querySelector('#source-code');
+  const title = document.querySelector('#source-title');
+  const link = document.querySelector('#source-link');
+
+  title.textContent = file.label;
+  link.href = file.path;
+  code.textContent = 'Loading…';
 
   try {
-    const response = await fetch('data/balance.json', { cache: 'no-store' });
+    const response = await fetch(file.path, { cache: 'no-store' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-
-    grid.innerHTML = data.units.map((unit) => `
-      <article class="card">
-        <h3>${unit.name}</h3>
-        <dl>
-          <dt>HP</dt><dd>${unit.hp}</dd>
-          <dt>Armor</dt><dd>${unit.armor}</dd>
-          <dt>Weapon</dt><dd>${unit.weapon}</dd>
-          <dt>Damage</dt><dd>${unit.damage}</dd>
-          <dt>Cooldown</dt><dd>${unit.cooldown}</dd>
-        </dl>
-      </article>
-    `).join('');
+    code.textContent = await response.text();
   } catch (error) {
-    grid.innerHTML = `<p class="muted">Balance data failed to load: ${error.message}</p>`;
+    code.textContent = `Unable to load ${file.path}: ${error.message}`;
   }
 }
 
-loadBalanceData();
+function renderSourceList(files) {
+  const list = document.querySelector('#source-list');
+  list.innerHTML = files.map((file, index) => `
+    <button class="source-file ${index === 0 ? 'active' : ''}" data-index="${index}">
+      ${escapeHtml(file.label)}
+    </button>
+  `).join('');
+
+  list.querySelectorAll('.source-file').forEach((button) => {
+    button.addEventListener('click', () => {
+      list.querySelectorAll('.source-file').forEach((item) => item.classList.remove('active'));
+      button.classList.add('active');
+      loadSource(files[Number(button.dataset.index)]);
+    });
+  });
+
+  if (files[0]) loadSource(files[0]);
+}
+
+async function init() {
+  setupTabs();
+
+  try {
+    state.content = await loadJson('data/site-content.json');
+    renderFeatures(state.content.features);
+    renderEnemies(state.content.enemies);
+    renderUpgrades(state.content.upgrades);
+  } catch (error) {
+    document.querySelector('#feature-grid').innerHTML = `<p class="muted">Unable to load site content: ${escapeHtml(error.message)}</p>`;
+  }
+
+  try {
+    state.sources = await loadJson('data/source-files.json');
+    renderSourceList(state.sources);
+  } catch (error) {
+    document.querySelector('#source-code').textContent = `Unable to load source index: ${error.message}`;
+  }
+}
+
+init();

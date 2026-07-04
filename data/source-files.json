@@ -1,0 +1,6 @@
+[
+  { "label": "main.eps", "path": "src/main.eps" },
+  { "label": "systems/player_slots.eps", "path": "src/systems/player_slots.eps" },
+  { "label": "systems/enemy_variants.eps", "path": "src/systems/enemy_variants.eps" },
+  { "label": "systems/player_upgrades.eps", "path": "src/systems/player_upgrades.eps" }
+]

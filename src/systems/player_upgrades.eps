@@ -1,0 +1,63 @@
+// Player upgrade and crafted weapon concept.
+// Upgrades mutate the purchasing player's unique DAT unit/weapon IDs.
+
+const UPGRADE_WEAPON_DAMAGE = 0;
+const UPGRADE_WEAPON_RANGE = 1;
+const UPGRADE_WEAPON_COOLDOWN = 2;
+const UPGRADE_MAX_HP = 3;
+const UPGRADE_ARMOR = 4;
+const UPGRADE_SHIELDS = 5;
+
+const CRAFT_RIFLE = 0;
+const CRAFT_SHOTGUN = 1;
+const CRAFT_SNIPER = 2;
+const CRAFT_EXPLOSIVE = 3;
+
+function initPlayerUpgradeDat() {
+    // Placeholder: final implementation will initialize per-player upgrade arrays.
+}
+
+function craftWeapon(player, craftId) {
+    const weapon = PlayerPrimaryWeapons[player];
+
+    if (craftId == CRAFT_RIFLE) {
+        weapon.damage = 12;
+        weapon.cooldown = 12;
+        weapon.maxRange = 5 * 32;
+    } else if (craftId == CRAFT_SHOTGUN) {
+        weapon.damage = 22;
+        weapon.cooldown = 20;
+        weapon.maxRange = 3 * 32;
+        weapon.splashInnerRadius = 16;
+    } else if (craftId == CRAFT_SNIPER) {
+        weapon.damage = 45;
+        weapon.cooldown = 32;
+        weapon.maxRange = 8 * 32;
+    } else if (craftId == CRAFT_EXPLOSIVE) {
+        weapon.damage = 30;
+        weapon.cooldown = 28;
+        weapon.maxRange = 6 * 32;
+        weapon.splashInnerRadius = 24;
+        weapon.splashMiddleRadius = 48;
+    }
+}
+
+function applyStatUpgrade(player, upgradeId, level) {
+    const hero = PlayerHeroUnits[player];
+    const weapon = PlayerPrimaryWeapons[player];
+
+    if (upgradeId == UPGRADE_WEAPON_DAMAGE) {
+        weapon.damage = 10 + level * 3;
+    } else if (upgradeId == UPGRADE_WEAPON_RANGE) {
+        weapon.maxRange = (5 + level) * 32;
+    } else if (upgradeId == UPGRADE_WEAPON_COOLDOWN) {
+        weapon.cooldown = 15 - level;
+    } else if (upgradeId == UPGRADE_MAX_HP) {
+        hero.maxHp = (80 + level * 20) * 256;
+    } else if (upgradeId == UPGRADE_ARMOR) {
+        hero.armor = level;
+    } else if (upgradeId == UPGRADE_SHIELDS) {
+        hero.hasShield = 1;
+        hero.maxShield = 20 + level * 10;
+    }
+}

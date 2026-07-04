@@ -1,0 +1,20 @@
+// Jungle Survival Map — main epScript entrypoint
+// Placeholder source for the GitHub Pages source browser.
+
+import player_slots;
+import enemy_variants;
+import player_upgrades;
+
+function onPluginStart() {
+    initPlayerSlots();
+    initEnemyVariantDat();
+    initPlayerUpgradeDat();
+    DisplayTextAll("Jungle Survival prototype loaded");
+}
+
+function beforeTriggerExec() {
+    updateEnemyEvolutionTimer();
+}
+
+function afterTriggerExec() {
+}

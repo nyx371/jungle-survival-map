@@ -1,0 +1,65 @@
+// Enemy mob evolution concept.
+// Zerg units are upgraded automatically over time.
+// Visual language: Black -> Brown -> Orange -> Red.
+
+var EnemyTier = 0;
+var EnemyTierTimer = 0;
+
+const ZerglingMob = TrgUnit("Zerg Zergling");
+const HydraliskMob = TrgUnit("Zerg Hydralisk");
+const UltraliskMob = TrgUnit("Zerg Ultralisk");
+const DefilerMob = TrgUnit("Zerg Defiler");
+
+const ZerglingWeapon = Weapon("Claws");
+const HydraliskWeapon = Weapon("Needle Spines");
+const UltraliskWeapon = Weapon("Kaiser Blades");
+
+function initEnemyVariantDat() {
+    applyEnemyTier(0);
+}
+
+function updateEnemyEvolutionTimer() {
+    EnemyTierTimer += 1;
+
+    // Placeholder timing. Final version should use game-time thresholds.
+    if (EnemyTier < 3 && EnemyTierTimer >= 24 * 60 * 4) {
+        EnemyTier += 1;
+        EnemyTierTimer = 0;
+        applyEnemyTier(EnemyTier);
+        DisplayTextAll("The jungle threat has evolved.");
+    }
+}
+
+function applyEnemyTier(tier) {
+    if (tier == 0) {
+        // Black tier: weak starter enemies.
+        ZerglingMob.maxHp = 35 * 256;
+        ZerglingWeapon.damage = 5;
+        ZerglingWeapon.cooldown = 8;
+        HydraliskMob.maxHp = 70 * 256;
+        HydraliskWeapon.damage = 10;
+        HydraliskWeapon.maxRange = 4 * 32;
+    } else if (tier == 1) {
+        // Brown tier: tougher and faster.
+        ZerglingMob.maxHp = 50 * 256;
+        ZerglingWeapon.damage = 7;
+        HydraliskMob.maxHp = 90 * 256;
+        HydraliskWeapon.maxRange = 5 * 32;
+    } else if (tier == 2) {
+        // Orange tier: upgraded weapon pressure.
+        ZerglingMob.maxHp = 70 * 256;
+        ZerglingWeapon.damage = 10;
+        ZerglingWeapon.cooldown = 6;
+        HydraliskMob.maxHp = 120 * 256;
+        HydraliskWeapon.damage = 16;
+    } else {
+        // Red tier: elite endgame variants.
+        ZerglingMob.maxHp = 95 * 256;
+        ZerglingWeapon.damage = 14;
+        HydraliskMob.maxHp = 160 * 256;
+        HydraliskWeapon.damage = 22;
+        HydraliskWeapon.maxRange = 6 * 32;
+        UltraliskMob.maxHp = 550 * 256;
+        UltraliskWeapon.damage = 45;
+    }
+}
