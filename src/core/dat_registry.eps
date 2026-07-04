@@ -1,17 +1,11 @@
-// Player-specific DAT allocation concept.
-// Each player receives a unique Ghost-like unit ID and unique weapon IDs.
+// Central DAT allocation registry. Final safe IDs are TBD and must be tested.
 
-const PLAYER_COUNT = 6;
-
-// Final safe unit and weapon IDs are still TBD.
-// These names are placeholders showing the intended pattern.
 const PlayerHeroUnits = py_list(
     TrgUnit("Terran Ghost"),
     TrgUnit("Sarah Kerrigan"),
     TrgUnit("Samir Duran"),
     TrgUnit("Infested Duran"),
-    TrgUnit("Alexei Stukov"),
-    TrgUnit("Infested Kerrigan")
+    TrgUnit("Alexei Stukov")
 );
 
 const PlayerPrimaryWeapons = py_list(
@@ -19,22 +13,17 @@ const PlayerPrimaryWeapons = py_list(
     Weapon("Gauss Rifle"),
     Weapon("Fragmentation Grenade"),
     Weapon("Gemini Missiles"),
-    Weapon("Arclite Cannon"),
     Weapon("Hellfire Missile Pack")
 );
 
-function initPlayerSlots() {
-    foreach (i : py_range(PLAYER_COUNT)) {
+function initDatRegistry() {
+    foreach (i : py_range(MAX_PLAYERS)) {
         const hero = PlayerHeroUnits[i];
         const weapon = PlayerPrimaryWeapons[i];
-
         hero.groundWeapon = weapon;
         hero.airWeapon = weapon;
         hero.maxHp = 80 * 256;
         hero.armor = 0;
-        hero.hasShield = 1;
-        hero.maxShield = 20;
-
         weapon.damage = 10;
         weapon.cooldown = 15;
         weapon.maxRange = 5 * 32;

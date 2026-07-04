@@ -1,19 +1,59 @@
-// Jungle Survival Map — main epScript entrypoint
-// Placeholder source for the GitHub Pages source browser.
+// Jungle Survival Map — main epScript entrypoint.
+// Keep this file orchestration-only. Gameplay logic belongs in systems/*.
 
-import player_slots;
-import enemy_variants;
-import player_upgrades;
+import constants;
+import dat_registry;
+import day_night;
+import players;
+import resources;
+import weapons;
+import upgrades;
+import structures;
+import lights;
+import mobs;
+import mob_evolution;
+import menus;
+import transfers;
+import audio;
+import camera;
+import victory;
 
 function onPluginStart() {
-    initPlayerSlots();
-    initEnemyVariantDat();
-    initPlayerUpgradeDat();
-    DisplayTextAll("Jungle Survival prototype loaded");
+    initConstants();
+    initDatRegistry();
+    initPlayers();
+    initDayNight();
+    initResources();
+    initWeapons();
+    initUpgrades();
+    initStructures();
+    initLights();
+    initMobs();
+    initMobEvolution();
+    initMenus();
+    initTransfers();
+    initAudio();
+    initCamera();
+    initVictory();
+
+    DisplayTextAll("Jungle Survival systems loaded");
 }
 
 function beforeTriggerExec() {
-    updateEnemyEvolutionTimer();
+    updateDayNight();
+    updatePlayers();
+    updateResources();
+    updateWeapons();
+    updateUpgrades();
+    updateStructures();
+    updateLights();
+    updateMobEvolution();
+    updateMobs();
+    updateTransfers();
+    updateAudio();
+    updateCamera();
+    updateMenus();
+    updateVictory();
 }
 
 function afterTriggerExec() {

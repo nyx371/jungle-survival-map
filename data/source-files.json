@@ -1,6 +1,70 @@
 [
-  { "label": "main.eps", "path": "src/main.eps" },
-  { "label": "systems/player_slots.eps", "path": "src/systems/player_slots.eps" },
-  { "label": "systems/enemy_variants.eps", "path": "src/systems/enemy_variants.eps" },
-  { "label": "systems/player_upgrades.eps", "path": "src/systems/player_upgrades.eps" }
+  {
+    "label": "main.eps",
+    "path": "src/main.eps"
+  },
+  {
+    "label": "core/constants.eps",
+    "path": "src/core/constants.eps"
+  },
+  {
+    "label": "core/dat_registry.eps",
+    "path": "src/core/dat_registry.eps"
+  },
+  {
+    "label": "systems/audio.eps",
+    "path": "src/systems/audio.eps"
+  },
+  {
+    "label": "systems/camera.eps",
+    "path": "src/systems/camera.eps"
+  },
+  {
+    "label": "systems/day_night.eps",
+    "path": "src/systems/day_night.eps"
+  },
+  {
+    "label": "systems/lights.eps",
+    "path": "src/systems/lights.eps"
+  },
+  {
+    "label": "systems/menus.eps",
+    "path": "src/systems/menus.eps"
+  },
+  {
+    "label": "systems/mob_evolution.eps",
+    "path": "src/systems/mob_evolution.eps"
+  },
+  {
+    "label": "systems/mobs.eps",
+    "path": "src/systems/mobs.eps"
+  },
+  {
+    "label": "systems/players.eps",
+    "path": "src/systems/players.eps"
+  },
+  {
+    "label": "systems/resources.eps",
+    "path": "src/systems/resources.eps"
+  },
+  {
+    "label": "systems/structures.eps",
+    "path": "src/systems/structures.eps"
+  },
+  {
+    "label": "systems/transfers.eps",
+    "path": "src/systems/transfers.eps"
+  },
+  {
+    "label": "systems/upgrades.eps",
+    "path": "src/systems/upgrades.eps"
+  },
+  {
+    "label": "systems/victory.eps",
+    "path": "src/systems/victory.eps"
+  },
+  {
+    "label": "systems/weapons.eps",
+    "path": "src/systems/weapons.eps"
+  }
 ]
