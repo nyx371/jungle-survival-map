@@ -1,28 +1,28 @@
 {
   "features": [
     {
-      "title": "A co-op Ghost survival map",
-      "body": "Play as a small squad of Ghost commandos dropped into a hostile jungle. You survive by moving together, scavenging resources, and adapting before the swarm overwhelms you."
+      "title": "One Ghost, real decisions",
+      "body": "You control one Ghost hero, not a whole army. Your positioning, weapon choice, and timing matter every time you leave the light."
     },
     {
-      "title": "Craft weapons and shape your role",
-      "body": "Your Ghost is not locked to the default attack. Craft and swap weapons, then upgrade into a sniper, brawler, explosives specialist, support survivor, or hybrid build."
+      "title": "Days are your chance to breathe",
+      "body": "Scout the jungle, harvest resources, craft weapons, and set up a temporary safe pocket before night returns."
     },
     {
-      "title": "Progression that feels personal",
-      "body": "Each player upgrades independently: weapon damage, range, fire rate, health, armor, shields, energy, mobility, and utility can all become part of your build."
+      "title": "Nights are when plans get tested",
+      "body": "The swarm pushes harder after dark. Stay together, protect your lights, and decide when holding ground is no longer worth it."
     },
     {
-      "title": "A jungle that changes every run",
-      "body": "Resources are placed from randomized jungle candidates, mobs respawn by area, and evolving threats push the squad to explore instead of camping one safe spot."
+      "title": "Builds stay personal",
+      "body": "Craft weapons and upgrade your Ghost into the role you want: sniper, close-range brawler, explosives specialist, support survivor, or something in between."
     },
     {
-      "title": "Build tactically, then move on",
-      "body": "Temporary structures help you hold ground, recover, or prepare for danger \u2014 but everything can be deconstructed when it is time to relocate."
+      "title": "Death hurts without ending the run",
+      "body": "If you die, you respawn somewhere in the jungle. You lose most minerals and your structures, but keep crafted weapons and upgrades."
     },
     {
-      "title": "Readable escalating enemies",
-      "body": "Zerg mobs evolve automatically over time. Their names and colors \u2014 Black, Brown, Orange, Red \u2014 tell players how dangerous each variant has become."
+      "title": "The jungle does not stay still",
+      "body": "Enemies evolve over time and pressure comes in waves. Safe spots are temporary, so the squad has to keep adapting."
     }
   ],
   "enemies": [
@@ -405,6 +405,32 @@
     {
       "title": "The swarm evolves with time",
       "body": "Enemy evolution is mainly time-based, but player actions like heavy killing or deep exploration can accelerate the threat. The map scales for 1\u20135 players, rewarding collaboration because the squad is stronger together."
+    }
+  ],
+  "resources": [
+    {
+      "title": "Trees",
+      "body": "Common daytime harvest targets. Good for steady minerals while scouting the edges of safer areas."
+    },
+    {
+      "title": "Bushes",
+      "body": "Fast, small resource pickups that reward movement and checking side paths."
+    },
+    {
+      "title": "Rocks",
+      "body": "Slower to harvest, but worth more. Best taken when the squad has secured enough light or cover."
+    },
+    {
+      "title": "Crystals",
+      "body": "High-value finds that create a reason to push deeper into risky jungle territory."
+    },
+    {
+      "title": "Biomass",
+      "body": "Resources taken from the living jungle. Useful, but often found closer to danger."
+    },
+    {
+      "title": "Harvesting tradeoff",
+      "body": "Right-click to harvest. While harvesting, your Ghost is committed and cannot fire, so teammates and timing matter."
     }
   ]
 }

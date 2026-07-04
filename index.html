@@ -26,100 +26,138 @@
           <span class="brand-copy">Jungle Survival</span>
         </div>
         <div class="tabs" role="tablist">
-          <button class="tab active" data-tab="loop" role="tab" aria-selected="true">Loop</button>
-          <button class="tab" data-tab="features" role="tab" aria-selected="false">Overview</button>
-          <button class="tab" data-tab="enemies" role="tab" aria-selected="false">Enemies</button>
-          <button class="tab" data-tab="upgrades" role="tab" aria-selected="false">Upgrades</button>
+          <button class="tab active" data-tab="home" role="tab" aria-selected="true">Home</button>
+          <button class="tab" data-tab="system" role="tab" aria-selected="false">System</button>
           <button class="tab" data-tab="source" role="tab" aria-selected="false">Source</button>
         </div>
       </nav>
 
-      <section id="loop" class="tab-panel active">
-        <div class="panel section-heading vertical">
-          <p class="eyebrow">Core experience</p>
-          <h2>The gameplay loop</h2>
+      <section id="home" class="tab-panel active">
+        <div class="home-hero panel">
+          <p class="eyebrow">Co-op Ghost survival</p>
+          <h2>Survive the jungle for five nights.</h2>
           <p>
-            Survive five escalating nights as Ghost commandos: scavenge, craft, build lighted safe pockets,
-            endure night waves, and keep moving before the jungle overwhelms you.
+            Drop in as a small squad of Ghost commandos. Scout during the day, gather what you can,
+            build lighted footholds, and hold together when the jungle comes alive at night.
+          </p>
+          <div class="home-actions">
+            <button class="inline-action" type="button" data-tab-jump="system">See how it works</button>
+            <a class="inline-link" href="https://github.com/nyx371/jungle-survival-map">View the repo</a>
+          </div>
+        </div>
+
+        <div id="home-grid" class="grid"></div>
+
+        <div class="panel player-promise">
+          <h3>What players should feel</h3>
+          <p>
+            You are never managing a huge army. You are controlling one fragile, upgradeable commando
+            with a few teammates nearby. Every trip away from light should feel like a choice: risk the
+            dark for better resources, or regroup before the next wave hits.
           </p>
         </div>
-        <div class="loop-visual" aria-label="Jungle Survival gameplay loop diagram">
-          <article class="loop-node day">
-            <span class="loop-step">01</span>
-            <h3>Day: Scout & Harvest</h3>
-            <p>Explore freely, find resource pockets, gather minerals from trees, rocks, crystals, bushes, and biomass.</p>
-          </article>
-          <div class="loop-arrow">→</div>
-          <article class="loop-node craft">
-            <span class="loop-step">02</span>
-            <h3>Craft & Upgrade</h3>
-            <p>Craft one active weapon, upgrade your Ghost, share minerals, and prepare the squad for the next push.</p>
-          </article>
-          <div class="loop-arrow">→</div>
-          <article class="loop-node build">
-            <span class="loop-step">03</span>
-            <h3>Build a Safe Pocket</h3>
-            <p>Place lights, walls, turrets, and regeneration stations. Lights gradually brighten the area and block nearby spawns.</p>
-          </article>
-          <div class="loop-arrow down">↓</div>
-          <article class="loop-node night">
-            <span class="loop-step">04</span>
-            <h3>Night: Survive Waves</h3>
-            <p>Zerg pressure spikes. Skillful Ghost control, teamwork, weapon choice, and light placement matter most.</p>
-          </article>
-          <div class="loop-arrow reverse night-to-evolve">←</div>
-          <article class="loop-node evolve">
-            <span class="loop-step">05</span>
-            <h3>The Jungle Evolves</h3>
-            <p>Mobs advance Black → Brown → Orange → Red. Time drives evolution; kills and exploration can accelerate it.</p>
-          </article>
-          <div class="loop-arrow reverse evolve-to-move">←</div>
-          <article class="loop-node move">
-            <span class="loop-step">06</span>
-            <h3>Deconstruct & Move</h3>
-            <p>Break down structures, relocate, recover from losses, and repeat until the squad survives five nights.</p>
-          </article>
-        </div>
-        <div class="loop-outcome panel">
-          <strong>Death penalty:</strong> respawn at a random position, lose most minerals and your built structures, but keep upgrades and crafted progression.
-        </div>
-        <div id="loop-grid" class="grid"></div>
       </section>
 
-      <section id="features" class="tab-panel">
+      <section id="system" class="tab-panel">
         <div class="panel section-heading vertical">
-          <p class="eyebrow">Map pitch</p>
-          <h2>What is Jungle Survival?</h2>
+          <p class="eyebrow">How the map works</p>
+          <h2>The survival system</h2>
           <p>
-            A quick overview of the co-op survival fantasy, player progression, and evolving Zerg threat.
+            The loop, resources, enemies, and upgrades all feed into the same pressure cycle:
+            prepare while you can, survive when the jungle pushes back, then move before your safe pocket becomes a trap.
           </p>
+          <div class="section-pills" aria-label="System sections">
+            <a href="#system-loop">Loop</a>
+            <a href="#system-resources">Resources</a>
+            <a href="#system-enemies">Enemies</a>
+            <a href="#system-upgrades">Upgrades</a>
+          </div>
         </div>
-        <div id="feature-grid" class="grid"></div>
-      </section>
 
-      <section id="enemies" class="tab-panel">
-        <div class="panel section-heading vertical">
-          <p class="eyebrow">Zerg threat ladder</p>
-          <h2>Enemy mob variants</h2>
-          <p>
-            Zerg units are the base mob family. Each mob line upgrades automatically as the
-            game progresses. Every evolution changes name and color so players immediately
-            know what they are fighting: Black → Brown → Orange → Red.
-          </p>
-        </div>
-        <div id="enemy-grid" class="grid wide"></div>
-      </section>
+        <section id="system-loop" class="system-section">
+          <div class="section-heading vertical compact-heading">
+            <p class="eyebrow">Core loop</p>
+            <h2>Scavenge, build, survive, move.</h2>
+            <p>
+              Each day and night lasts 22 minutes. Days are for scouting and preparation. Nights are for holding your nerve.
+            </p>
+          </div>
+          <div class="loop-visual" aria-label="Jungle Survival gameplay loop diagram">
+            <article class="loop-node day">
+              <span class="loop-step">01</span>
+              <h3>Day: Scout & Harvest</h3>
+              <p>Explore freely, find resource pockets, gather minerals from trees, rocks, crystals, bushes, and biomass.</p>
+            </article>
+            <div class="loop-arrow">→</div>
+            <article class="loop-node craft">
+              <span class="loop-step">02</span>
+              <h3>Craft & Upgrade</h3>
+              <p>Craft one active weapon, upgrade your Ghost, share minerals, and prepare the squad for the next push.</p>
+            </article>
+            <div class="loop-arrow">→</div>
+            <article class="loop-node build">
+              <span class="loop-step">03</span>
+              <h3>Build a Safe Pocket</h3>
+              <p>Place lights, walls, turrets, and regeneration stations. Lights brighten the area and block nearby spawns.</p>
+            </article>
+            <div class="loop-arrow down">↓</div>
+            <article class="loop-node night">
+              <span class="loop-step">04</span>
+              <h3>Night: Survive Waves</h3>
+              <p>Zerg pressure spikes. Ghost control, teamwork, weapon choice, and light placement matter most.</p>
+            </article>
+            <div class="loop-arrow reverse night-to-evolve">←</div>
+            <article class="loop-node evolve">
+              <span class="loop-step">05</span>
+              <h3>The Jungle Evolves</h3>
+              <p>Mobs advance Black → Brown → Orange → Red. Time drives evolution; kills and exploration can accelerate it.</p>
+            </article>
+            <div class="loop-arrow reverse evolve-to-move">←</div>
+            <article class="loop-node move">
+              <span class="loop-step">06</span>
+              <h3>Deconstruct & Move</h3>
+              <p>Break down structures, relocate, recover from losses, and repeat until the squad survives five nights.</p>
+            </article>
+          </div>
+          <div class="loop-outcome panel">
+            <strong>Death penalty:</strong> respawn at a random position, lose most minerals and your built structures, but keep upgrades and crafted progression.
+          </div>
+          <div id="loop-grid" class="grid"></div>
+        </section>
 
-      <section id="upgrades" class="tab-panel">
-        <div class="panel section-heading vertical">
-          <p class="eyebrow">Commando progression</p>
-          <h2>Player upgrades and craftable weapons</h2>
-          <p>
-            Each player has their own Ghost unit DAT ID and their own weapon DAT IDs. That lets
-            upgrades mutate one player’s stats and crafted weapons without changing anyone else.
-          </p>
-        </div>
-        <div id="upgrade-grid" class="grid"></div>
+        <section id="system-resources" class="system-section">
+          <div class="section-heading vertical compact-heading">
+            <p class="eyebrow">Scavenging</p>
+            <h2>Resources</h2>
+            <p>
+              Everything you harvest becomes minerals, keeping the economy readable while still making the jungle feel varied.
+            </p>
+          </div>
+          <div id="resource-grid" class="grid"></div>
+        </section>
+
+        <section id="system-enemies" class="system-section">
+          <div class="section-heading vertical compact-heading">
+            <p class="eyebrow">Zerg threat ladder</p>
+            <h2>Enemies</h2>
+            <p>
+              Zerg units are the base mob families. Each line evolves automatically as the run progresses.
+              Enemy name and color tell players the threat level: Black → Brown → Orange → Red.
+            </p>
+          </div>
+          <div id="enemy-grid" class="grid wide"></div>
+        </section>
+
+        <section id="system-upgrades" class="system-section">
+          <div class="section-heading vertical compact-heading">
+            <p class="eyebrow">Commando progression</p>
+            <h2>Upgrades and craftable weapons</h2>
+            <p>
+              Each player grows independently. You keep unlocks and upgrades through death, but bad fights still cost resources and structures.
+            </p>
+          </div>
+          <div id="upgrade-grid" class="grid"></div>
+        </section>
       </section>
 
       <section id="source" class="tab-panel">

@@ -23,6 +23,7 @@ function setupTabs() {
       button.classList.add('active');
       button.setAttribute('aria-selected', 'true');
       document.getElementById(button.dataset.tab).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 }
@@ -44,7 +45,11 @@ function renderCardGrid(selector, items) {
 }
 
 function renderFeatures(features) {
-  renderCardGrid('#feature-grid', features);
+  renderCardGrid('#home-grid', features);
+}
+
+function renderResources(resources) {
+  renderCardGrid('#resource-grid', resources);
 }
 
 function renderGameplayLoop(loop) {
@@ -123,15 +128,21 @@ function renderSourceList(files) {
 
 async function init() {
   setupTabs();
+  document.querySelectorAll('[data-tab-jump]').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.querySelector(`.tab[data-tab="${button.dataset.tabJump}"]`)?.click();
+    });
+  });
 
   try {
     state.content = await loadJson('data/site-content.json');
     renderGameplayLoop(state.content.gameplayLoop);
     renderFeatures(state.content.features);
+    renderResources(state.content.resources);
     renderEnemies(state.content.enemies);
     renderUpgrades(state.content.upgrades);
   } catch (error) {
-    document.querySelector('#feature-grid').innerHTML = `<p class="muted">Unable to load site content: ${escapeHtml(error.message)}</p>`;
+    document.querySelector('#home-grid').innerHTML = `<p class="muted">Unable to load site content: ${escapeHtml(error.message)}</p>`;
   }
 
   try {
