@@ -8,52 +8,56 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="hero">
-      <div>
-        <p class="eyebrow">StarCraft · Jungle Survival · epScript</p>
-        <h1>Jungle Survival Map</h1>
-        <p class="lede">
-          A co-op Ghost commando survival map about scavenging the jungle, crafting weapons,
-          upgrading your hero, and surviving a Zerg ecosystem that evolves over time.
-        </p>
-      </div>
-    </header>
-
     <main>
       <nav class="top-nav" aria-label="Jungle Survival sections">
-        <div class="nav-brand" aria-hidden="true">
-          <span class="brand-mark">JS</span>
-          <span class="brand-copy">Jungle Survival</span>
-        </div>
-        <div class="tabs" role="tablist">
+        <div class="tabs primary-tabs" role="tablist">
           <button class="tab active" data-tab="home" role="tab" aria-selected="true">Home</button>
           <button class="tab" data-tab="system" role="tab" aria-selected="false">System</button>
           <button class="tab" data-tab="source" role="tab" aria-selected="false">Source</button>
         </div>
+        <div class="system-tabs" aria-label="System sections">
+          <button class="sub-tab" type="button" data-system-target="system-loop">Loop</button>
+          <button class="sub-tab" type="button" data-system-target="system-resources">Resources</button>
+          <button class="sub-tab" type="button" data-system-target="system-enemies">Enemies</button>
+          <button class="sub-tab" type="button" data-system-target="system-upgrades">Upgrades</button>
+        </div>
       </nav>
 
       <section id="home" class="tab-panel active">
-        <div class="home-hero panel">
-          <p class="eyebrow">Co-op Ghost survival</p>
-          <h2>Survive the jungle for five nights.</h2>
-          <p>
-            Drop in as a small squad of Ghost commandos. Scout during the day, gather what you can,
-            build lighted footholds, and hold together when the jungle comes alive at night.
-          </p>
-          <div class="home-actions">
-            <button class="inline-action" type="button" data-tab-jump="system">See how it works</button>
-            <a class="inline-link" href="https://github.com/nyx371/jungle-survival-map">View the repo</a>
+        <div class="game-hero">
+          <div class="game-hero-copy">
+            <p class="eyebrow">StarCraft co-op survival map</p>
+            <h1>Jungle Survival</h1>
+            <p class="tagline">Five nights. One Ghost each. A jungle that gets meaner after dark.</p>
+            <p class="game-summary">
+              Drop in with up to four teammates, scavenge during the day, build lighted footholds,
+              craft the weapon that fits your role, and survive the Zerg waves that come for you at night.
+            </p>
+            <div class="home-actions">
+              <button class="inline-action" type="button" data-tab-jump="system">How the map works</button>
+              <a class="inline-link" href="https://github.com/nyx371/jungle-survival-map">View source</a>
+            </div>
           </div>
+          <aside class="mission-card" aria-label="Mission briefing">
+            <p class="eyebrow">Mission</p>
+            <h2>Survive 5 nights</h2>
+            <ul>
+              <li><strong>Players:</strong> 1–5 Ghost commandos</li>
+              <li><strong>Cycle:</strong> 22 minute days / 22 minute nights</li>
+              <li><strong>Pressure:</strong> wave-based Zerg attacks</li>
+              <li><strong>Progress:</strong> weapons and upgrades persist after death</li>
+            </ul>
+          </aside>
         </div>
 
         <div id="home-grid" class="grid"></div>
 
         <div class="panel player-promise">
-          <h3>What players should feel</h3>
+          <h3>The heart of the map</h3>
           <p>
-            You are never managing a huge army. You are controlling one fragile, upgradeable commando
-            with a few teammates nearby. Every trip away from light should feel like a choice: risk the
-            dark for better resources, or regroup before the next wave hits.
+            You are not building a giant base or ordering an army around. You are trying to keep one
+            Ghost alive long enough to make the next decision: push into the dark for better resources,
+            hold the line a little longer, or tear everything down and move before the jungle catches up.
           </p>
         </div>
       </section>
@@ -66,12 +70,6 @@
             The loop, resources, enemies, and upgrades all feed into the same pressure cycle:
             prepare while you can, survive when the jungle pushes back, then move before your safe pocket becomes a trap.
           </p>
-          <div class="section-pills" aria-label="System sections">
-            <a href="#system-loop">Loop</a>
-            <a href="#system-resources">Resources</a>
-            <a href="#system-enemies">Enemies</a>
-            <a href="#system-upgrades">Upgrades</a>
-          </div>
         </div>
 
         <section id="system-loop" class="system-section">

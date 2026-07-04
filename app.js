@@ -12,18 +12,31 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function activateTab(tabName, options = {}) {
+  document.querySelectorAll('.tab').forEach((tab) => {
+    const active = tab.dataset.tab === tabName;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
+  document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(tabName)?.classList.add('active');
+  document.querySelector('.top-nav')?.classList.toggle('show-system-tabs', tabName === 'system');
+
+  if (options.scroll !== false) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
 function setupTabs() {
   document.querySelectorAll('.tab').forEach((button) => {
+    button.addEventListener('click', () => activateTab(button.dataset.tab));
+  });
+
+  document.querySelectorAll('[data-system-target]').forEach((button) => {
     button.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach((tab) => {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
-      });
-      document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
-      button.classList.add('active');
-      button.setAttribute('aria-selected', 'true');
-      document.getElementById(button.dataset.tab).classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      activateTab('system', { scroll: false });
+      document.getElementById(button.dataset.systemTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 }
@@ -130,7 +143,7 @@ async function init() {
   setupTabs();
   document.querySelectorAll('[data-tab-jump]').forEach((button) => {
     button.addEventListener('click', () => {
-      document.querySelector(`.tab[data-tab="${button.dataset.tabJump}"]`)?.click();
+      activateTab(button.dataset.tabJump);
     });
   });
 
