@@ -8,11 +8,12 @@ The map should feel tense and tactical: players are stronger together, but every
 
 ## Objective
 
-Survive long enough to make it through **five day/night cycles**.
+Survive long enough to make it through **five nights**.
 
 - One day: 22 minutes
 - One night: 22 minutes
-- Initial target: survive 5 days
+- Initial target: survive 5 nights
+- Possible finale: final boss before victory/extraction
 - Future layer: endless mode after the main survival objective
 
 The game gets progressively harder over time.
@@ -25,6 +26,8 @@ The game gets progressively harder over time.
 
 2. **Players harvest resources**
    - Trees, bushes, rocks, crystals, and biological resources all convert into minerals.
+   - Harvesting is done by right-clicking resources.
+   - A Ghost cannot fire and harvest at the same time.
    - Minerals are the single token resource for clarity.
 
 3. **Players spend minerals**
@@ -49,7 +52,7 @@ The game gets progressively harder over time.
    - Staying in one place forever should become unsafe.
 
 7. **Repeat until extraction/survival win**
-   - Survive five days, with possible endless continuation later.
+   - Survive five nights, potentially with a final boss before victory, with possible endless continuation later.
 
 ## Player Death
 
@@ -90,7 +93,7 @@ Structures are tactical tools, not permanent bases.
 Planned structures:
 
 - **Light sources**
-  - Brighten nearby screen area.
+  - Gradually brighten the nearby screen area.
   - Prevent mobs from spawning nearby.
 - **Walls**
   - Delay and redirect mobs.

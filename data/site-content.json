@@ -375,8 +375,8 @@
   ],
   "gameplayLoop": [
     {
-      "title": "Survive five days in the jungle",
-      "body": "The main objective is to survive long enough to make it through five full day/night cycles. Each day and night lasts 22 minutes, and the jungle becomes more dangerous as time passes. Endless mode can layer on later for players who want to keep pushing."
+      "title": "Survive five nights in the jungle",
+      "body": "Victory comes after surviving five nights in the jungle. The current target is a five-night run, potentially ending with a final boss before extraction or victory. Endless mode can layer on later for players who want to keep pushing."
     },
     {
       "title": "Scavenge by day, endure the night",
@@ -388,7 +388,7 @@
     },
     {
       "title": "Harvest everything into minerals",
-      "body": "Trees, bushes, rocks, crystals, and biological resources can all be harvested. They convert into one readable resource: minerals. Minerals fuel weapons, upgrades, structures, recovery, and team support."
+      "body": "Trees, bushes, rocks, crystals, and biological resources can all be harvested by right-clicking. Harvesting converts everything into one readable resource: minerals. While harvesting, your Ghost is committed to the job and cannot fire at the same time."
     },
     {
       "title": "Craft one active weapon at a time",
@@ -396,7 +396,7 @@
     },
     {
       "title": "Build safe pockets, then abandon them",
-      "body": "Light sources brighten the screen nearby and prevent mob spawning in their area. Walls, regeneration stations, and turrets help the squad hold ground \u2014 but death destroys your built structures, and the map pressures you to move."
+      "body": "Light sources gradually brighten the nearby screen and prevent mob spawning in their area. Walls, regeneration stations, and turrets help the squad hold ground \u2014 but death destroys your built structures, and the map pressures you to move."
     },
     {
       "title": "Death hurts, but progression survives",
