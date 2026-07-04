@@ -1,7 +1,82 @@
+// Resource Harvesting
 // Right-click harvesting. Harvesting locks out firing until complete.
+
+const RESOURCE_TREE = 0;
+const RESOURCE_BUSH = 1;
+const RESOURCE_ROCK = 2;
+const RESOURCE_CRYSTAL = 3;
+const RESOURCE_BIOMASS = 4;
+
+const HARVEST_TICK_FRAMES = 8;
+const HARVEST_WEAPON_LOCKOUT = 1;
+
+const IsHarvesting = EUDArray(MAX_PLAYERS);
+const HarvestTarget = EUDArray(MAX_PLAYERS);
+const HarvestProgress = EUDArray(MAX_PLAYERS);
+const HarvestTick = EUDArray(MAX_PLAYERS);
+
+
+function addMinerals(player, amount) {
+    // TODO: replace with exact player resource mutation helper once harness is compile-tested.
+    // Conceptually: SetResources(CurrentPlayer/player, Add, amount, Ore).
+}
+
+function loseMostMinerals(player, keepPercent) {
+    // TODO: read current minerals, keep keepPercent, subtract the rest.
+    // Death keeps progression but destroys momentum.
+}
+
 function initResources() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        clearHarvestState(p);
+    }
+    // TODO: scan preplaced candidate units and activate weighted resource nodes.
+}
+
+function clearHarvestState(player) {
+    IsHarvesting[player] = 0;
+    HarvestTarget[player] = 0;
+    HarvestProgress[player] = 0;
+    HarvestTick[player] = 0;
+    setPlayerHarvestLockout(player, 0);
+}
+
+function setPlayerHarvestLockout(player, enabled) {
+    // TODO: while enabled, prevent the player's Ghost weapon from firing.
+    // Likely implemented by order control, weapon swap to harmless dummy, or attack interruption.
+}
+
+function startHarvest(player, target) {
+    IsHarvesting[player] = 1;
+    HarvestTarget[player] = target;
+    HarvestProgress[player] = 0;
+    HarvestTick[player] = HARVEST_TICK_FRAMES;
+    setPlayerHarvestLockout(player, HARVEST_WEAPON_LOCKOUT);
+}
+
+function finishHarvestTick(player) {
+    // TODO: read target resource type/value.
+    // TODO: add minerals and reduce remaining node value.
+    addMinerals(player, 1);
+}
+
+function updateHarvesting(player) {
+    // TODO: detect right-click/order target. If target is resource, call startHarvest.
+
+    if (IsHarvesting[player]) {
+        if (HarvestTick[player] > 0) {
+            HarvestTick[player] -= 1;
+        } else {
+            HarvestTick[player] = HARVEST_TICK_FRAMES;
+            finishHarvestTick(player);
+        }
+
+        // TODO: cancel harvest if player gives another order, target depletes, or danger interrupt occurs.
+    }
 }
 
 function updateResources() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        updateHarvesting(p);
+    }
 }
-

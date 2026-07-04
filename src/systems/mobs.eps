@@ -1,6 +1,54 @@
+// Area Mob Spawning and Respawn
+
+const MAX_ZONES = 16;
+const ZoneTargetDensity = EUDArray(MAX_ZONES);
+const ZoneCurrentDensity = EUDArray(MAX_ZONES);
+const ZoneSpawnCooldown = EUDArray(MAX_ZONES);
+const ZoneThreatBudget = EUDArray(MAX_ZONES);
+
 function initMobs() {
+    foreach (z : py_range(MAX_ZONES)) {
+        ZoneTargetDensity[z] = 4;
+        ZoneCurrentDensity[z] = 0;
+        ZoneSpawnCooldown[z] = 0;
+        ZoneThreatBudget[z] = 100;
+    }
+}
+
+function getPlayerCountSpawnScale() {
+    // TODO: count active human players. Placeholder 100%.
+    return 100;
+}
+
+function getZoneSpawnBudget(zone) {
+    return ZoneThreatBudget[zone] * getNightSpawnMultiplier() / 100 * getPlayerCountSpawnScale() / 100;
+}
+
+function canSpawnAt(x, y) {
+    if (isSpawnBlockedAt(x, y)) return 0;
+    // TODO: reject if too close to player hero or invalid terrain.
+    return 1;
+}
+
+function spawnMobInZone(zone) {
+    // TODO: choose family based on zone budget, current tier, day/night.
+    // TODO: choose spawn point inside zone where canSpawnAt(x, y) == 1.
+}
+
+function updateZoneSpawning(zone) {
+    if (ZoneSpawnCooldown[zone] > 0) {
+        ZoneSpawnCooldown[zone] -= 1;
+        return;
+    }
+
+    if (ZoneCurrentDensity[zone] < ZoneTargetDensity[zone]) {
+        spawnMobInZone(zone);
+        ZoneSpawnCooldown[zone] = 4 * FRAMES_PER_GAME_SECOND;
+    }
 }
 
 function updateMobs() {
+    foreach (z : py_range(MAX_ZONES)) {
+        updateZoneSpawning(z);
+    }
 }
-

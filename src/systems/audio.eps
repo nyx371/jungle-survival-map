@@ -1,6 +1,34 @@
+// Audio Feedback: hurt sounds, heartbeat, Ghost breathing.
+
+const LOW_HP_PERCENT = 30;
+const HURT_SOUND_COOLDOWN = 3 * FRAMES_PER_GAME_SECOND;
+const HEARTBEAT_COOLDOWN = 2 * FRAMES_PER_GAME_SECOND;
+
+const LastHp = EUDArray(MAX_PLAYERS);
+const HurtSoundTimer = EUDArray(MAX_PLAYERS);
+const HeartbeatTimer = EUDArray(MAX_PLAYERS);
+
 function initAudio() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        LastHp[p] = 0;
+        HurtSoundTimer[p] = 0;
+        HeartbeatTimer[p] = 0;
+    }
+}
+
+function clearAudioDangerState(player) {
+    HurtSoundTimer[player] = 0;
+    HeartbeatTimer[player] = 0;
+}
+
+function updateAudioForPlayer(player) {
+    // TODO: compare current hero HP to LastHp[player].
+    // TODO: play local hurt sound if damaged and cooldown ready.
+    // TODO: play local heartbeat if HP below threshold and cooldown ready.
 }
 
 function updateAudio() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        updateAudioForPlayer(p);
+    }
 }
-

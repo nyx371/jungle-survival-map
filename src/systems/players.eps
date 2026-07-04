@@ -1,6 +1,62 @@
+// Player Hero State, Death, and Respawn
+
+const RESPAWN_DELAY_FRAMES = 12 * FRAMES_PER_GAME_SECOND;
+const DEATH_MINERAL_KEEP_PERCENT = 20;
+
+const HeroAlive = EUDArray(MAX_PLAYERS);
+const RespawnTimer = EUDArray(MAX_PLAYERS);
+const DeathsThisRun = EUDArray(MAX_PLAYERS);
+const LastKnownX = EUDArray(MAX_PLAYERS);
+const LastKnownY = EUDArray(MAX_PLAYERS);
+
 function initPlayers() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        HeroAlive[p] = 1;
+        RespawnTimer[p] = 0;
+        DeathsThisRun[p] = 0;
+        LastKnownX[p] = 0;
+        LastKnownY[p] = 0;
+    }
+}
+
+function getPlayerHeroUnit(player) {
+    return PlayerHeroUnits[player];
+}
+
+function markPlayerDead(player) {
+    HeroAlive[player] = 0;
+    RespawnTimer[player] = RESPAWN_DELAY_FRAMES;
+    DeathsThisRun[player] += 1;
+
+    loseMostMinerals(player, DEATH_MINERAL_KEEP_PERCENT);
+    destroyPlayerStructures(player);
+    clearHarvestState(player);
+    clearAudioDangerState(player);
+}
+
+function respawnPlayer(player) {
+    // TODO: pick a random valid respawn position away from mob clusters.
+    // TODO: create/move the player's unique Ghost hero to that position.
+    HeroAlive[player] = 1;
+    applyHeroUpgradeDat(player);
+    applyActiveWeaponDat(player);
+    DisplayTextAll("A commando has re-entered the jungle.");
+}
+
+function updatePlayerDeathState(player) {
+    if (HeroAlive[player] == 0) {
+        if (RespawnTimer[player] > 0) {
+            RespawnTimer[player] -= 1;
+        } else {
+            respawnPlayer(player);
+        }
+    }
+
+    // TODO: detect actual hero CUnit death and call markPlayerDead(player).
 }
 
 function updatePlayers() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        updatePlayerDeathState(p);
+    }
 }
-

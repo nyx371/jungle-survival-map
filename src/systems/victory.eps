@@ -1,7 +1,49 @@
-// Handles five-night victory, optional final boss, and future endless mode.
+// Victory / Final Boss / Endless Mode
+
+const VICTORY_RUNNING = 0;
+const VICTORY_FINAL_BOSS = 1;
+const VICTORY_COMPLETE = 2;
+const VICTORY_ENDLESS = 3;
+
+var VictoryState = VICTORY_RUNNING;
+var FinalBossEnabled = 1;
+var FinalBossSpawned = 0;
+var EndlessModeEnabled = 0;
+
 function initVictory() {
+    VictoryState = VICTORY_RUNNING;
+    FinalBossSpawned = 0;
+}
+
+function requestVictorySequence() {
+    if (FinalBossEnabled) {
+        VictoryState = VICTORY_FINAL_BOSS;
+        spawnFinalBoss();
+    } else {
+        completeVictory();
+    }
+}
+
+function spawnFinalBoss() {
+    if (!FinalBossSpawned) {
+        FinalBossSpawned = 1;
+        DisplayTextAll("The jungle alpha has emerged.");
+        // TODO: spawn boss and lock victory until it dies.
+    }
+}
+
+function completeVictory() {
+    if (EndlessModeEnabled) {
+        VictoryState = VICTORY_ENDLESS;
+        DisplayTextAll("You survived. Endless mode begins.");
+    } else {
+        VictoryState = VICTORY_COMPLETE;
+        Victory();
+    }
 }
 
 function updateVictory() {
+    if (VictoryState == VICTORY_FINAL_BOSS) {
+        // TODO: detect final boss death, then completeVictory().
+    }
 }
-

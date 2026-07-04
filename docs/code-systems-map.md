@@ -4,6 +4,8 @@ This document maps the Jungle Survival gameplay strategy into epScript/euddraft 
 
 The goal is to keep the code modular, data-driven, and easy to compile-test system by system.
 
+For deeper implementation notes on the highest-priority gameplay systems, see [`important-systems.md`](important-systems.md).
+
 ## Top-Level Runtime Flow
 
 ```text

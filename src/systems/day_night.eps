@@ -1,7 +1,66 @@
+// Day/Night Director
 // 22 minute day/night cycle. Victory after five nights, with optional final boss.
+
+var GlobalFrame = 0;
+var CycleFrame = 0;
+var IsNight = 0;
+var CurrentDay = 1;
+var CurrentNight = 0;
+var NightsSurvived = 0;
+var NightIntensity = 0;
+var VictoryPending = 0;
+
+const DAY_FRAMES = DAY_SECONDS * FRAMES_PER_GAME_SECOND;
+const NIGHT_FRAMES = NIGHT_SECONDS * FRAMES_PER_GAME_SECOND;
+
 function initDayNight() {
+    GlobalFrame = 0;
+    CycleFrame = 0;
+    IsNight = 0;
+    CurrentDay = 1;
+    CurrentNight = 0;
+    NightsSurvived = 0;
+    NightIntensity = 0;
+    VictoryPending = 0;
+}
+
+function startNight() {
+    IsNight = 1;
+    CycleFrame = 0;
+    CurrentNight += 1;
+    NightIntensity = CurrentNight;
+    addEvolutionPressure(25 + CurrentNight * 10);
+    DisplayTextAll("Night falls. Stay near light.");
+}
+
+function endNight() {
+    IsNight = 0;
+    CycleFrame = 0;
+    NightsSurvived += 1;
+
+    if (NightsSurvived >= TARGET_NIGHTS_TO_WIN) {
+        VictoryPending = 1;
+        requestVictorySequence();
+    } else {
+        CurrentDay += 1;
+        DisplayTextAll("Dawn breaks. Scavenge while you can.");
+    }
 }
 
 function updateDayNight() {
+    GlobalFrame += 1;
+    CycleFrame += 1;
+
+    if (IsNight == 0 && CycleFrame >= DAY_FRAMES) {
+        startNight();
+    } else if (IsNight == 1 && CycleFrame >= NIGHT_FRAMES) {
+        endNight();
+    }
 }
 
+function getNightSpawnMultiplier() {
+    if (IsNight) {
+        return 100 + NightIntensity * 25;
+    }
+    return 60 + CurrentDay * 10;
+}

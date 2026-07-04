@@ -1,6 +1,20 @@
+// Team Resource Transfers
+
+const TransferTarget = EUDArray(MAX_PLAYERS);
+const TransferAmount = EUDArray(MAX_PLAYERS);
+
 function initTransfers() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        TransferTarget[p] = 0;
+        TransferAmount[p] = 0;
+    }
+}
+
+function sendMinerals(fromPlayer, toPlayer, amount) {
+    // TODO: validate amount and sender balance.
+    // TODO: subtract from sender and add to recipient.
 }
 
 function updateTransfers() {
+    // Menu driven.
 }
-

@@ -1,6 +1,48 @@
+// Deep Menu Router
+
+const MENU_CLOSED = 0;
+const MENU_MAIN = 1;
+const MENU_WEAPONS = 2;
+const MENU_HERO_UPGRADES = 3;
+const MENU_WEAPON_UPGRADES = 4;
+const MENU_STRUCTURES = 5;
+const MENU_TRANSFER = 6;
+const MENU_OPTIONS = 7;
+
+const MenuPage = EUDArray(MAX_PLAYERS);
+const MenuCursor = EUDArray(MAX_PLAYERS);
+const MenuContext = EUDArray(MAX_PLAYERS);
+
 function initMenus() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        MenuPage[p] = MENU_CLOSED;
+        MenuCursor[p] = 0;
+        MenuContext[p] = 0;
+    }
+}
+
+function openMenu(player, page) {
+    MenuPage[player] = page;
+    MenuCursor[player] = 0;
+}
+
+function closeMenu(player) {
+    MenuPage[player] = MENU_CLOSED;
+}
+
+function handleMenuInput(player) {
+    // TODO: route command/card/death-counter input to current menu page.
+}
+
+function renderMenu(player) {
+    // TODO: display concise local menu text.
 }
 
 function updateMenus() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        if (MenuPage[p] != MENU_CLOSED) {
+            handleMenuInput(p);
+            renderMenu(p);
+        }
+    }
 }
-

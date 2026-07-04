@@ -1,6 +1,48 @@
+// Structures: lights, walls, regeneration stations, turrets.
+
+const STRUCTURE_LIGHT = 0;
+const STRUCTURE_WALL = 1;
+const STRUCTURE_REGEN = 2;
+const STRUCTURE_TURRET = 3;
+const STRUCTURE_COUNT = 4;
+const MAX_STRUCTURES = 128;
+
+const StructureOwner = EUDArray(MAX_STRUCTURES);
+const StructureType = EUDArray(MAX_STRUCTURES);
+const StructureAlive = EUDArray(MAX_STRUCTURES);
+const StructureRefund = EUDArray(MAX_STRUCTURES);
+
 function initStructures() {
+    foreach (i : py_range(MAX_STRUCTURES)) {
+        StructureOwner[i] = -1;
+        StructureType[i] = 0;
+        StructureAlive[i] = 0;
+        StructureRefund[i] = 0;
+    }
+}
+
+function buildStructure(player, structureType) {
+    // TODO: find free structure slot, validate cost, create structure near player/target.
+    // If structureType == STRUCTURE_LIGHT, register with lights system.
+}
+
+function deconstructStructure(player, structureIndex) {
+    if (StructureOwner[structureIndex] == player && StructureAlive[structureIndex]) {
+        addMinerals(player, StructureRefund[structureIndex]);
+        StructureAlive[structureIndex] = 0;
+        // TODO: remove CUnit and unregister light if needed.
+    }
+}
+
+function destroyPlayerStructures(player) {
+    foreach (i : py_range(MAX_STRUCTURES)) {
+        if (StructureOwner[i] == player && StructureAlive[i]) {
+            StructureAlive[i] = 0;
+            // TODO: remove structure CUnit without refund.
+        }
+    }
 }
 
 function updateStructures() {
+    // Build/deconstruct is mostly menu/event driven.
 }
-

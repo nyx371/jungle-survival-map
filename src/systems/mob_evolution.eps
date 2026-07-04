@@ -1,7 +1,91 @@
+// Mob Evolution
 // Black -> Brown -> Orange -> Red evolution driven by time, kills, and exploration pressure.
+
+const MOB_TIER_BLACK = 0;
+const MOB_TIER_BROWN = 1;
+const MOB_TIER_ORANGE = 2;
+const MOB_TIER_RED = 3;
+
+var GlobalMobTier = MOB_TIER_BLACK;
+var EvolutionPressure = 0;
+
 function initMobEvolution() {
+    GlobalMobTier = MOB_TIER_BLACK;
+    EvolutionPressure = 0;
+    applyAllMobTierDat(GlobalMobTier);
+}
+
+function addEvolutionPressure(amount) {
+    EvolutionPressure += amount;
+}
+
+function getEvolutionThresholdForNextTier() {
+    if (GlobalMobTier == MOB_TIER_BLACK) return 100;
+    if (GlobalMobTier == MOB_TIER_BROWN) return 250;
+    if (GlobalMobTier == MOB_TIER_ORANGE) return 500;
+    return 999999;
+}
+
+function applyAllMobTierDat(tier) {
+    applyZerglingTierDat(tier);
+    applyHydraliskTierDat(tier);
+    // TODO: apply Drone, Broodling, Lurker, Queen, Mutalisk, Guardian, Defiler, Ultralisk.
+}
+
+function applyZerglingTierDat(tier) {
+    const unit = TrgUnit("Zerg Zergling");
+    const weapon = Weapon("Claws");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 35 * 256;
+        weapon.damage = 5;
+        weapon.cooldown = 8;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 50 * 256;
+        weapon.damage = 7;
+        weapon.cooldown = 8;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 70 * 256;
+        weapon.damage = 10;
+        weapon.cooldown = 6;
+    } else {
+        unit.maxHp = 95 * 256;
+        weapon.damage = 14;
+        weapon.cooldown = 5;
+    }
+}
+
+function applyHydraliskTierDat(tier) {
+    const unit = TrgUnit("Zerg Hydralisk");
+    const weapon = Weapon("Needle Spines");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 70 * 256;
+        weapon.damage = 10;
+        weapon.maxRange = 4 * 32;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 90 * 256;
+        weapon.damage = 12;
+        weapon.maxRange = 5 * 32;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 120 * 256;
+        weapon.damage = 16;
+        weapon.cooldown = 12;
+        weapon.maxRange = 5 * 32;
+    } else {
+        unit.maxHp = 160 * 256;
+        weapon.damage = 22;
+        weapon.cooldown = 10;
+        weapon.maxRange = 6 * 32;
+    }
 }
 
 function updateMobEvolution() {
-}
+    // Time pressure: slow constant scaling.
+    addEvolutionPressure(1);
 
+    if (GlobalMobTier < MOB_TIER_RED && EvolutionPressure >= getEvolutionThresholdForNextTier()) {
+        EvolutionPressure = 0;
+        GlobalMobTier += 1;
+        applyAllMobTierDat(GlobalMobTier);
+        DisplayTextAll("The jungle evolves. Watch enemy colors.");
+    }
+}

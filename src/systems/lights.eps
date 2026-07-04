@@ -1,7 +1,49 @@
+// Light System
 // Light sources gradually brighten nearby screen and block mob spawning.
+
+const MAX_LIGHTS = 64;
+const DEFAULT_LIGHT_RADIUS = 9 * 32;
+const DEFAULT_NO_SPAWN_RADIUS = 12 * 32;
+
+const LightActive = EUDArray(MAX_LIGHTS);
+const LightOwner = EUDArray(MAX_LIGHTS);
+const LightX = EUDArray(MAX_LIGHTS);
+const LightY = EUDArray(MAX_LIGHTS);
+const LightRadius = EUDArray(MAX_LIGHTS);
+const LightNoSpawnRadius = EUDArray(MAX_LIGHTS);
+
 function initLights() {
+    foreach (i : py_range(MAX_LIGHTS)) {
+        LightActive[i] = 0;
+        LightOwner[i] = -1;
+        LightX[i] = 0;
+        LightY[i] = 0;
+        LightRadius[i] = DEFAULT_LIGHT_RADIUS;
+        LightNoSpawnRadius[i] = DEFAULT_NO_SPAWN_RADIUS;
+    }
+}
+
+function registerLight(owner, x, y, radius, noSpawnRadius) {
+    // TODO: find free light slot and store position/radius.
+}
+
+function unregisterLightByStructure(structureIndex) {
+    // TODO: map structure -> light slot and clear it.
+}
+
+function isSpawnBlockedAt(x, y) {
+    // TODO: distance check against active lights.
+    // Return 1 if x/y is inside any no-spawn radius.
+    return 0;
+}
+
+function updateLocalBrightness(player) {
+    // TODO: local-only brightness/vision effect based on nearby lights.
+    // Must not affect synchronized gameplay state.
 }
 
 function updateLights() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        updateLocalBrightness(p);
+    }
 }
-
