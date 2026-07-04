@@ -29,14 +29,22 @@ async function loadJson(path) {
   return response.json();
 }
 
-function renderFeatures(features) {
-  const grid = document.querySelector('#feature-grid');
-  grid.innerHTML = features.map((feature) => `
+function renderCardGrid(selector, items) {
+  const grid = document.querySelector(selector);
+  grid.innerHTML = items.map((item) => `
     <article class="card">
-      <h3>${escapeHtml(feature.title)}</h3>
-      <p>${escapeHtml(feature.body)}</p>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.body)}</p>
     </article>
   `).join('');
+}
+
+function renderFeatures(features) {
+  renderCardGrid('#feature-grid', features);
+}
+
+function renderGameplayLoop(loop) {
+  renderCardGrid('#loop-grid', loop);
 }
 
 function renderEnemies(enemies) {
@@ -114,6 +122,7 @@ async function init() {
 
   try {
     state.content = await loadJson('data/site-content.json');
+    renderGameplayLoop(state.content.gameplayLoop);
     renderFeatures(state.content.features);
     renderEnemies(state.content.enemies);
     renderUpgrades(state.content.upgrades);

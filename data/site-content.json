@@ -372,5 +372,39 @@
         "Future active abilities"
       ]
     }
+  ],
+  "gameplayLoop": [
+    {
+      "title": "Survive five days in the jungle",
+      "body": "The main objective is to survive long enough to make it through five full day/night cycles. Each day and night lasts 22 minutes, and the jungle becomes more dangerous as time passes. Endless mode can layer on later for players who want to keep pushing."
+    },
+    {
+      "title": "Scavenge by day, endure the night",
+      "body": "Pressure comes in waves instead of constant attacks. Days give players room to scout, harvest, expand, and prepare. Nights are more intense, with heavier mob pressure and a greater need for light, teamwork, and smart positioning."
+    },
+    {
+      "title": "Control one Ghost, not an army",
+      "body": "Each player controls a single Ghost hero and must micro it carefully. The camera is free by default, with optional camera follow for players who want it. Movement is unconstrained: the whole jungle is open."
+    },
+    {
+      "title": "Harvest everything into minerals",
+      "body": "Trees, bushes, rocks, crystals, and biological resources can all be harvested. They convert into one readable resource: minerals. Minerals fuel weapons, upgrades, structures, recovery, and team support."
+    },
+    {
+      "title": "Craft one active weapon at a time",
+      "body": "Players craft weapons that replace the default Ghost attack. You can only equip one weapon at a time, but crafted weapons remain available, can be swapped back to, and can be upgraded over the run."
+    },
+    {
+      "title": "Build safe pockets, then abandon them",
+      "body": "Light sources brighten the screen nearby and prevent mob spawning in their area. Walls, regeneration stations, and turrets help the squad hold ground \u2014 but death destroys your built structures, and the map pressures you to move."
+    },
+    {
+      "title": "Death hurts, but progression survives",
+      "body": "When a Ghost dies, the player respawns at a random position. They lose most carried resources and all structures they built, but keep upgrades and unlocked progression. The penalty is serious without forcing players out of the game."
+    },
+    {
+      "title": "The swarm evolves with time",
+      "body": "Enemy evolution is mainly time-based, but player actions like heavy killing or deep exploration can accelerate the threat. The map scales for 1\u20135 players, rewarding collaboration because the squad is stronger together."
+    }
   ]
 }

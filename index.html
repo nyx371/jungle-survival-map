@@ -21,18 +21,31 @@
 
     <main>
       <nav class="tabs" aria-label="Jungle Survival sections">
-        <button class="tab active" data-tab="features">Map Features</button>
+        <button class="tab active" data-tab="loop">Gameplay Loop</button>
+        <button class="tab" data-tab="features">Map Features</button>
         <button class="tab" data-tab="enemies">Enemy Mob Variants</button>
         <button class="tab" data-tab="upgrades">Player Upgrades</button>
         <button class="tab" data-tab="source">EPS Source</button>
       </nav>
 
-      <section id="features" class="tab-panel active">
+      <section id="loop" class="tab-panel active">
         <div class="panel section-heading vertical">
-          <p class="eyebrow">Core systems</p>
+          <p class="eyebrow">Core experience</p>
+          <h2>The gameplay loop</h2>
+          <p>
+            Survive five escalating days as Ghost commandos: scavenge, craft, build lighted safe pockets,
+            endure night waves, and keep moving before the jungle overwhelms you.
+          </p>
+        </div>
+        <div id="loop-grid" class="grid"></div>
+      </section>
+
+      <section id="features" class="tab-panel">
+        <div class="panel section-heading vertical">
+          <p class="eyebrow">Map pitch</p>
           <h2>What is Jungle Survival?</h2>
           <p>
-            A quick overview of the co-op survival loop, player progression, and evolving Zerg threat.
+            A quick overview of the co-op survival fantasy, player progression, and evolving Zerg threat.
           </p>
         </div>
         <div id="feature-grid" class="grid"></div>
