@@ -1,0 +1,1952 @@
+[
+  {
+    "index": 0,
+    "title": "Marine",
+    "file": "assets/cmdicons/cmdicons_000.png"
+  },
+  {
+    "index": 1,
+    "title": "Ghost",
+    "file": "assets/cmdicons/cmdicons_001.png"
+  },
+  {
+    "index": 2,
+    "title": "Vulture",
+    "file": "assets/cmdicons/cmdicons_002.png"
+  },
+  {
+    "index": 3,
+    "title": "Goliath",
+    "file": "assets/cmdicons/cmdicons_003.png"
+  },
+  {
+    "index": 4,
+    "title": "Blank (Goliath Turret)",
+    "file": "assets/cmdicons/cmdicons_004.png"
+  },
+  {
+    "index": 5,
+    "title": "Siege Tank (Tank Mode)",
+    "file": "assets/cmdicons/cmdicons_005.png"
+  },
+  {
+    "index": 6,
+    "title": "Blank (Tank Turret)",
+    "file": "assets/cmdicons/cmdicons_006.png"
+  },
+  {
+    "index": 7,
+    "title": "SCV",
+    "file": "assets/cmdicons/cmdicons_007.png"
+  },
+  {
+    "index": 8,
+    "title": "Wraith",
+    "file": "assets/cmdicons/cmdicons_008.png"
+  },
+  {
+    "index": 9,
+    "title": "Science Vessel",
+    "file": "assets/cmdicons/cmdicons_009.png"
+  },
+  {
+    "index": 10,
+    "title": "Gui Montag (Firebat)",
+    "file": "assets/cmdicons/cmdicons_010.png"
+  },
+  {
+    "index": 11,
+    "title": "Dropship",
+    "file": "assets/cmdicons/cmdicons_011.png"
+  },
+  {
+    "index": 12,
+    "title": "Battlecruiser",
+    "file": "assets/cmdicons/cmdicons_012.png"
+  },
+  {
+    "index": 13,
+    "title": "Vulture Spider Mine",
+    "file": "assets/cmdicons/cmdicons_013.png"
+  },
+  {
+    "index": 14,
+    "title": "Nuclear Missile",
+    "file": "assets/cmdicons/cmdicons_014.png"
+  },
+  {
+    "index": 15,
+    "title": "Civilian",
+    "file": "assets/cmdicons/cmdicons_015.png"
+  },
+  {
+    "index": 16,
+    "title": "Sarah Kerrigan (Ghost)",
+    "file": "assets/cmdicons/cmdicons_016.png"
+  },
+  {
+    "index": 17,
+    "title": "Alan Schezar (Goliath)",
+    "file": "assets/cmdicons/cmdicons_017.png"
+  },
+  {
+    "index": 18,
+    "title": "Blank (Alan Turret)",
+    "file": "assets/cmdicons/cmdicons_018.png"
+  },
+  {
+    "index": 19,
+    "title": "Jim Raynor (Vulture)",
+    "file": "assets/cmdicons/cmdicons_019.png"
+  },
+  {
+    "index": 20,
+    "title": "Jim Raynor (Marine)",
+    "file": "assets/cmdicons/cmdicons_020.png"
+  },
+  {
+    "index": 21,
+    "title": "Tom Kazansky (Wraith)",
+    "file": "assets/cmdicons/cmdicons_021.png"
+  },
+  {
+    "index": 22,
+    "title": "Magellan (Science Vessel)",
+    "file": "assets/cmdicons/cmdicons_022.png"
+  },
+  {
+    "index": 23,
+    "title": "Edmund Duke (Siege Tank)",
+    "file": "assets/cmdicons/cmdicons_023.png"
+  },
+  {
+    "index": 24,
+    "title": "Blank (Duke Turret)",
+    "file": "assets/cmdicons/cmdicons_024.png"
+  },
+  {
+    "index": 25,
+    "title": "Edmund Duke (Siege Mode)",
+    "file": "assets/cmdicons/cmdicons_025.png"
+  },
+  {
+    "index": 26,
+    "title": "Blank (Duke Turret)",
+    "file": "assets/cmdicons/cmdicons_026.png"
+  },
+  {
+    "index": 27,
+    "title": "Blank (Arcturus Mengsk)",
+    "file": "assets/cmdicons/cmdicons_027.png"
+  },
+  {
+    "index": 28,
+    "title": "Hyperion (Battlecruiser)",
+    "file": "assets/cmdicons/cmdicons_028.png"
+  },
+  {
+    "index": 29,
+    "title": "Norad II (Battlecruiser)",
+    "file": "assets/cmdicons/cmdicons_029.png"
+  },
+  {
+    "index": 30,
+    "title": "Terran Siege Tank (Siege Mode)",
+    "file": "assets/cmdicons/cmdicons_030.png"
+  },
+  {
+    "index": 31,
+    "title": "Blank (Siege Tank Turret)",
+    "file": "assets/cmdicons/cmdicons_031.png"
+  },
+  {
+    "index": 32,
+    "title": "Firebat",
+    "file": "assets/cmdicons/cmdicons_032.png"
+  },
+  {
+    "index": 33,
+    "title": "Marine (Scanner Sweep)",
+    "file": "assets/cmdicons/cmdicons_033.png"
+  },
+  {
+    "index": 34,
+    "title": "Medic",
+    "file": "assets/cmdicons/cmdicons_034.png"
+  },
+  {
+    "index": 35,
+    "title": "Larva",
+    "file": "assets/cmdicons/cmdicons_035.png"
+  },
+  {
+    "index": 36,
+    "title": "Radioactive (Zerg Egg)",
+    "file": "assets/cmdicons/cmdicons_036.png"
+  },
+  {
+    "index": 37,
+    "title": "Zergling",
+    "file": "assets/cmdicons/cmdicons_037.png"
+  },
+  {
+    "index": 38,
+    "title": "Hydralisk",
+    "file": "assets/cmdicons/cmdicons_038.png"
+  },
+  {
+    "index": 39,
+    "title": "Ultralisk",
+    "file": "assets/cmdicons/cmdicons_039.png"
+  },
+  {
+    "index": 40,
+    "title": "Broodling",
+    "file": "assets/cmdicons/cmdicons_040.png"
+  },
+  {
+    "index": 41,
+    "title": "Drone",
+    "file": "assets/cmdicons/cmdicons_041.png"
+  },
+  {
+    "index": 42,
+    "title": "Overlord",
+    "file": "assets/cmdicons/cmdicons_042.png"
+  },
+  {
+    "index": 43,
+    "title": "Mutalisk",
+    "file": "assets/cmdicons/cmdicons_043.png"
+  },
+  {
+    "index": 44,
+    "title": "Guardian",
+    "file": "assets/cmdicons/cmdicons_044.png"
+  },
+  {
+    "index": 45,
+    "title": "Queen",
+    "file": "assets/cmdicons/cmdicons_045.png"
+  },
+  {
+    "index": 46,
+    "title": "Defiler",
+    "file": "assets/cmdicons/cmdicons_046.png"
+  },
+  {
+    "index": 47,
+    "title": "Scourge",
+    "file": "assets/cmdicons/cmdicons_047.png"
+  },
+  {
+    "index": 48,
+    "title": "Torrarsque (Ultralisk)",
+    "file": "assets/cmdicons/cmdicons_048.png"
+  },
+  {
+    "index": 49,
+    "title": "Matriarch (Queen)",
+    "file": "assets/cmdicons/cmdicons_049.png"
+  },
+  {
+    "index": 50,
+    "title": "Infested Terran",
+    "file": "assets/cmdicons/cmdicons_050.png"
+  },
+  {
+    "index": 51,
+    "title": "Infested Kerrigan (Infested Terran)",
+    "file": "assets/cmdicons/cmdicons_051.png"
+  },
+  {
+    "index": 52,
+    "title": "Unclean One (Defiler)",
+    "file": "assets/cmdicons/cmdicons_052.png"
+  },
+  {
+    "index": 53,
+    "title": "Hunter Killer (Hydralisk)",
+    "file": "assets/cmdicons/cmdicons_053.png"
+  },
+  {
+    "index": 54,
+    "title": "Devouring One (Zergling)",
+    "file": "assets/cmdicons/cmdicons_054.png"
+  },
+  {
+    "index": 55,
+    "title": "Kukulza (Mutalisk)",
+    "file": "assets/cmdicons/cmdicons_055.png"
+  },
+  {
+    "index": 56,
+    "title": "Kukulza (Guardian)",
+    "file": "assets/cmdicons/cmdicons_056.png"
+  },
+  {
+    "index": 57,
+    "title": "Yggdrasill (Overlord)",
+    "file": "assets/cmdicons/cmdicons_057.png"
+  },
+  {
+    "index": 58,
+    "title": "Valkyrie",
+    "file": "assets/cmdicons/cmdicons_058.png"
+  },
+  {
+    "index": 59,
+    "title": "Mutalisk/Guardian Cocoon",
+    "file": "assets/cmdicons/cmdicons_059.png"
+  },
+  {
+    "index": 60,
+    "title": "Corsair",
+    "file": "assets/cmdicons/cmdicons_060.png"
+  },
+  {
+    "index": 61,
+    "title": "Dark Templar (Unit)",
+    "file": "assets/cmdicons/cmdicons_061.png"
+  },
+  {
+    "index": 62,
+    "title": "Devourer",
+    "file": "assets/cmdicons/cmdicons_062.png"
+  },
+  {
+    "index": 63,
+    "title": "Dark Archon",
+    "file": "assets/cmdicons/cmdicons_063.png"
+  },
+  {
+    "index": 64,
+    "title": "Probe",
+    "file": "assets/cmdicons/cmdicons_064.png"
+  },
+  {
+    "index": 65,
+    "title": "Zealot",
+    "file": "assets/cmdicons/cmdicons_065.png"
+  },
+  {
+    "index": 66,
+    "title": "Dragoon",
+    "file": "assets/cmdicons/cmdicons_066.png"
+  },
+  {
+    "index": 67,
+    "title": "High Templar",
+    "file": "assets/cmdicons/cmdicons_067.png"
+  },
+  {
+    "index": 68,
+    "title": "Archon",
+    "file": "assets/cmdicons/cmdicons_068.png"
+  },
+  {
+    "index": 69,
+    "title": "Shuttle",
+    "file": "assets/cmdicons/cmdicons_069.png"
+  },
+  {
+    "index": 70,
+    "title": "Scout",
+    "file": "assets/cmdicons/cmdicons_070.png"
+  },
+  {
+    "index": 71,
+    "title": "Arbiter",
+    "file": "assets/cmdicons/cmdicons_071.png"
+  },
+  {
+    "index": 72,
+    "title": "Carrier",
+    "file": "assets/cmdicons/cmdicons_072.png"
+  },
+  {
+    "index": 73,
+    "title": "Interceptor",
+    "file": "assets/cmdicons/cmdicons_073.png"
+  },
+  {
+    "index": 74,
+    "title": "Dark Templar (Hero)",
+    "file": "assets/cmdicons/cmdicons_074.png"
+  },
+  {
+    "index": 75,
+    "title": "Zeratul (Dark Templar)",
+    "file": "assets/cmdicons/cmdicons_075.png"
+  },
+  {
+    "index": 76,
+    "title": "Tassadar/Zeratul (Archon)",
+    "file": "assets/cmdicons/cmdicons_076.png"
+  },
+  {
+    "index": 77,
+    "title": "Fenix (Zealot)",
+    "file": "assets/cmdicons/cmdicons_077.png"
+  },
+  {
+    "index": 78,
+    "title": "Fenix (Dragoon)",
+    "file": "assets/cmdicons/cmdicons_078.png"
+  },
+  {
+    "index": 79,
+    "title": "Tassadar (Templar)",
+    "file": "assets/cmdicons/cmdicons_079.png"
+  },
+  {
+    "index": 80,
+    "title": "Mojo (Scout)",
+    "file": "assets/cmdicons/cmdicons_080.png"
+  },
+  {
+    "index": 81,
+    "title": "Warbringer (Reaver)",
+    "file": "assets/cmdicons/cmdicons_081.png"
+  },
+  {
+    "index": 82,
+    "title": "Gantrithor (Carrier)",
+    "file": "assets/cmdicons/cmdicons_082.png"
+  },
+  {
+    "index": 83,
+    "title": "Reaver",
+    "file": "assets/cmdicons/cmdicons_083.png"
+  },
+  {
+    "index": 84,
+    "title": "Observer",
+    "file": "assets/cmdicons/cmdicons_084.png"
+  },
+  {
+    "index": 85,
+    "title": "Scarab",
+    "file": "assets/cmdicons/cmdicons_085.png"
+  },
+  {
+    "index": 86,
+    "title": "Danimoth (Arbiter)",
+    "file": "assets/cmdicons/cmdicons_086.png"
+  },
+  {
+    "index": 87,
+    "title": "Blank (Aldaris)",
+    "file": "assets/cmdicons/cmdicons_087.png"
+  },
+  {
+    "index": 88,
+    "title": "Artanis (Scout)",
+    "file": "assets/cmdicons/cmdicons_088.png"
+  },
+  {
+    "index": 89,
+    "title": "Rhynadon (Badlands Critter)",
+    "file": "assets/cmdicons/cmdicons_089.png"
+  },
+  {
+    "index": 90,
+    "title": "Bengalaas (Jungle Critter)",
+    "file": "assets/cmdicons/cmdicons_090.png"
+  },
+  {
+    "index": 91,
+    "title": "Lurker (Cargo Ship - Unused)",
+    "file": "assets/cmdicons/cmdicons_091.png"
+  },
+  {
+    "index": 92,
+    "title": "Mercenary Gunship (Unused)",
+    "file": "assets/cmdicons/cmdicons_092.png"
+  },
+  {
+    "index": 93,
+    "title": "Scantid (Desert Critter)",
+    "file": "assets/cmdicons/cmdicons_093.png"
+  },
+  {
+    "index": 94,
+    "title": "Kakaru (Twilight Critter)",
+    "file": "assets/cmdicons/cmdicons_094.png"
+  },
+  {
+    "index": 95,
+    "title": "Ragnasaur (Ashworld Critter)",
+    "file": "assets/cmdicons/cmdicons_095.png"
+  },
+  {
+    "index": 96,
+    "title": "Ursadon (Ice Critter)",
+    "file": "assets/cmdicons/cmdicons_096.png"
+  },
+  {
+    "index": 97,
+    "title": "Blank (Zerg Lurker Egg)",
+    "file": "assets/cmdicons/cmdicons_097.png"
+  },
+  {
+    "index": 98,
+    "title": "Blank (Raszagal)",
+    "file": "assets/cmdicons/cmdicons_098.png"
+  },
+  {
+    "index": 99,
+    "title": "Samir Duran (Ghost)",
+    "file": "assets/cmdicons/cmdicons_099.png"
+  },
+  {
+    "index": 100,
+    "title": "Alexei Stukov (Ghost)",
+    "file": "assets/cmdicons/cmdicons_100.png"
+  },
+  {
+    "index": 101,
+    "title": "Map Revealer",
+    "file": "assets/cmdicons/cmdicons_101.png"
+  },
+  {
+    "index": 102,
+    "title": "Blank (Gerard DuGalle)",
+    "file": "assets/cmdicons/cmdicons_102.png"
+  },
+  {
+    "index": 103,
+    "title": "Lurker",
+    "file": "assets/cmdicons/cmdicons_103.png"
+  },
+  {
+    "index": 104,
+    "title": "Infested Duran (Infested Terran)",
+    "file": "assets/cmdicons/cmdicons_104.png"
+  },
+  {
+    "index": 105,
+    "title": "Blank (Disruption Field)",
+    "file": "assets/cmdicons/cmdicons_105.png"
+  },
+  {
+    "index": 106,
+    "title": "Command Center",
+    "file": "assets/cmdicons/cmdicons_106.png"
+  },
+  {
+    "index": 107,
+    "title": "Comsat Station",
+    "file": "assets/cmdicons/cmdicons_107.png"
+  },
+  {
+    "index": 108,
+    "title": "Nuclear Silo",
+    "file": "assets/cmdicons/cmdicons_108.png"
+  },
+  {
+    "index": 109,
+    "title": "Supply Depot",
+    "file": "assets/cmdicons/cmdicons_109.png"
+  },
+  {
+    "index": 110,
+    "title": "Refinery",
+    "file": "assets/cmdicons/cmdicons_110.png"
+  },
+  {
+    "index": 111,
+    "title": "Barracks",
+    "file": "assets/cmdicons/cmdicons_111.png"
+  },
+  {
+    "index": 112,
+    "title": "Academy",
+    "file": "assets/cmdicons/cmdicons_112.png"
+  },
+  {
+    "index": 113,
+    "title": "Factory",
+    "file": "assets/cmdicons/cmdicons_113.png"
+  },
+  {
+    "index": 114,
+    "title": "Starport",
+    "file": "assets/cmdicons/cmdicons_114.png"
+  },
+  {
+    "index": 115,
+    "title": "Control Tower",
+    "file": "assets/cmdicons/cmdicons_115.png"
+  },
+  {
+    "index": 116,
+    "title": "Science Facility",
+    "file": "assets/cmdicons/cmdicons_116.png"
+  },
+  {
+    "index": 117,
+    "title": "Covert Ops",
+    "file": "assets/cmdicons/cmdicons_117.png"
+  },
+  {
+    "index": 118,
+    "title": "Physics Lab",
+    "file": "assets/cmdicons/cmdicons_118.png"
+  },
+  {
+    "index": 119,
+    "title": "Blank (Starbase - Unused)",
+    "file": "assets/cmdicons/cmdicons_119.png"
+  },
+  {
+    "index": 120,
+    "title": "Machine Shop",
+    "file": "assets/cmdicons/cmdicons_120.png"
+  },
+  {
+    "index": 121,
+    "title": "Repair Bay (Unused)",
+    "file": "assets/cmdicons/cmdicons_121.png"
+  },
+  {
+    "index": 122,
+    "title": "Engineering Bay",
+    "file": "assets/cmdicons/cmdicons_122.png"
+  },
+  {
+    "index": 123,
+    "title": "Armory",
+    "file": "assets/cmdicons/cmdicons_123.png"
+  },
+  {
+    "index": 124,
+    "title": "Missile Tower",
+    "file": "assets/cmdicons/cmdicons_124.png"
+  },
+  {
+    "index": 125,
+    "title": "Bunker",
+    "file": "assets/cmdicons/cmdicons_125.png"
+  },
+  {
+    "index": 126,
+    "title": "Crashed Norad II",
+    "file": "assets/cmdicons/cmdicons_126.png"
+  },
+  {
+    "index": 127,
+    "title": "Ion Cannon",
+    "file": "assets/cmdicons/cmdicons_127.png"
+  },
+  {
+    "index": 128,
+    "title": "Uraj",
+    "file": "assets/cmdicons/cmdicons_128.png"
+  },
+  {
+    "index": 129,
+    "title": "Khalis",
+    "file": "assets/cmdicons/cmdicons_129.png"
+  },
+  {
+    "index": 130,
+    "title": "Infested Command Center",
+    "file": "assets/cmdicons/cmdicons_130.png"
+  },
+  {
+    "index": 131,
+    "title": "Hatchery",
+    "file": "assets/cmdicons/cmdicons_131.png"
+  },
+  {
+    "index": 132,
+    "title": "Lair",
+    "file": "assets/cmdicons/cmdicons_132.png"
+  },
+  {
+    "index": 133,
+    "title": "Hive",
+    "file": "assets/cmdicons/cmdicons_133.png"
+  },
+  {
+    "index": 134,
+    "title": "Nydus Canal",
+    "file": "assets/cmdicons/cmdicons_134.png"
+  },
+  {
+    "index": 135,
+    "title": "Hydralisk Den",
+    "file": "assets/cmdicons/cmdicons_135.png"
+  },
+  {
+    "index": 136,
+    "title": "Defiler Mound",
+    "file": "assets/cmdicons/cmdicons_136.png"
+  },
+  {
+    "index": 137,
+    "title": "Greater Spire",
+    "file": "assets/cmdicons/cmdicons_137.png"
+  },
+  {
+    "index": 138,
+    "title": "Queen's Nest",
+    "file": "assets/cmdicons/cmdicons_138.png"
+  },
+  {
+    "index": 139,
+    "title": "Evolution Chamber",
+    "file": "assets/cmdicons/cmdicons_139.png"
+  },
+  {
+    "index": 140,
+    "title": "Ultralisk Cavern",
+    "file": "assets/cmdicons/cmdicons_140.png"
+  },
+  {
+    "index": 141,
+    "title": "Spire",
+    "file": "assets/cmdicons/cmdicons_141.png"
+  },
+  {
+    "index": 142,
+    "title": "Spawning Pool",
+    "file": "assets/cmdicons/cmdicons_142.png"
+  },
+  {
+    "index": 143,
+    "title": "Creep Colony",
+    "file": "assets/cmdicons/cmdicons_143.png"
+  },
+  {
+    "index": 144,
+    "title": "Spore Colony",
+    "file": "assets/cmdicons/cmdicons_144.png"
+  },
+  {
+    "index": 145,
+    "title": "Radioactive (Zerg Bldg1 - Unused)",
+    "file": "assets/cmdicons/cmdicons_145.png"
+  },
+  {
+    "index": 146,
+    "title": "Sunken Colony",
+    "file": "assets/cmdicons/cmdicons_146.png"
+  },
+  {
+    "index": 147,
+    "title": "Overmind (Without Shell)",
+    "file": "assets/cmdicons/cmdicons_147.png"
+  },
+  {
+    "index": 148,
+    "title": "Overmind (With Shell)",
+    "file": "assets/cmdicons/cmdicons_148.png"
+  },
+  {
+    "index": 149,
+    "title": "Extractor",
+    "file": "assets/cmdicons/cmdicons_149.png"
+  },
+  {
+    "index": 150,
+    "title": "Mature Chrysalis",
+    "file": "assets/cmdicons/cmdicons_150.png"
+  },
+  {
+    "index": 151,
+    "title": "Cerebrate",
+    "file": "assets/cmdicons/cmdicons_151.png"
+  },
+  {
+    "index": 152,
+    "title": "Cerebrate Daggoth",
+    "file": "assets/cmdicons/cmdicons_152.png"
+  },
+  {
+    "index": 153,
+    "title": "Blank (Zerg Bldg2 - Unused)",
+    "file": "assets/cmdicons/cmdicons_153.png"
+  },
+  {
+    "index": 154,
+    "title": "Nexus",
+    "file": "assets/cmdicons/cmdicons_154.png"
+  },
+  {
+    "index": 155,
+    "title": "Robotics Facility",
+    "file": "assets/cmdicons/cmdicons_155.png"
+  },
+  {
+    "index": 156,
+    "title": "Pylon",
+    "file": "assets/cmdicons/cmdicons_156.png"
+  },
+  {
+    "index": 157,
+    "title": "Assimilator",
+    "file": "assets/cmdicons/cmdicons_157.png"
+  },
+  {
+    "index": 158,
+    "title": "Blank (Protoss Bldg1 - Unused)",
+    "file": "assets/cmdicons/cmdicons_158.png"
+  },
+  {
+    "index": 159,
+    "title": "Observatory",
+    "file": "assets/cmdicons/cmdicons_159.png"
+  },
+  {
+    "index": 160,
+    "title": "Gateway",
+    "file": "assets/cmdicons/cmdicons_160.png"
+  },
+  {
+    "index": 161,
+    "title": "Blank (Protoss Bldg2 - Unused)",
+    "file": "assets/cmdicons/cmdicons_161.png"
+  },
+  {
+    "index": 162,
+    "title": "Photon Cannon",
+    "file": "assets/cmdicons/cmdicons_162.png"
+  },
+  {
+    "index": 163,
+    "title": "Citadel of Adun",
+    "file": "assets/cmdicons/cmdicons_163.png"
+  },
+  {
+    "index": 164,
+    "title": "Cybernetics Core",
+    "file": "assets/cmdicons/cmdicons_164.png"
+  },
+  {
+    "index": 165,
+    "title": "Templar Archives",
+    "file": "assets/cmdicons/cmdicons_165.png"
+  },
+  {
+    "index": 166,
+    "title": "Forge",
+    "file": "assets/cmdicons/cmdicons_166.png"
+  },
+  {
+    "index": 167,
+    "title": "Stargate",
+    "file": "assets/cmdicons/cmdicons_167.png"
+  },
+  {
+    "index": 168,
+    "title": "Stasis Cell/Prison",
+    "file": "assets/cmdicons/cmdicons_168.png"
+  },
+  {
+    "index": 169,
+    "title": "Fleet Beacon",
+    "file": "assets/cmdicons/cmdicons_169.png"
+  },
+  {
+    "index": 170,
+    "title": "Arbiter Tribunal",
+    "file": "assets/cmdicons/cmdicons_170.png"
+  },
+  {
+    "index": 171,
+    "title": "Robotics Support Bay",
+    "file": "assets/cmdicons/cmdicons_171.png"
+  },
+  {
+    "index": 172,
+    "title": "Shield Battery",
+    "file": "assets/cmdicons/cmdicons_172.png"
+  },
+  {
+    "index": 173,
+    "title": "Khaydarin Crystal Formation",
+    "file": "assets/cmdicons/cmdicons_173.png"
+  },
+  {
+    "index": 174,
+    "title": "Protoss Temple",
+    "file": "assets/cmdicons/cmdicons_174.png"
+  },
+  {
+    "index": 175,
+    "title": "Xel'Naga Temple",
+    "file": "assets/cmdicons/cmdicons_175.png"
+  },
+  {
+    "index": 176,
+    "title": "Mineral Cluster (Type 1)",
+    "file": "assets/cmdicons/cmdicons_176.png"
+  },
+  {
+    "index": 177,
+    "title": "Mineral Cluster (Type 2)",
+    "file": "assets/cmdicons/cmdicons_177.png"
+  },
+  {
+    "index": 178,
+    "title": "Mineral Cluster (Type 3)",
+    "file": "assets/cmdicons/cmdicons_178.png"
+  },
+  {
+    "index": 179,
+    "title": "Blank (Cave - Unused)",
+    "file": "assets/cmdicons/cmdicons_179.png"
+  },
+  {
+    "index": 180,
+    "title": "Blank (Cave-in - Unused)",
+    "file": "assets/cmdicons/cmdicons_180.png"
+  },
+  {
+    "index": 181,
+    "title": "Blank (Cantina - Unused)",
+    "file": "assets/cmdicons/cmdicons_181.png"
+  },
+  {
+    "index": 182,
+    "title": "Blank (Mining Platform - Unused)",
+    "file": "assets/cmdicons/cmdicons_182.png"
+  },
+  {
+    "index": 183,
+    "title": "Blank (Independent CC - Unused)",
+    "file": "assets/cmdicons/cmdicons_183.png"
+  },
+  {
+    "index": 184,
+    "title": "Blank (Independent Starport - Unused)",
+    "file": "assets/cmdicons/cmdicons_184.png"
+  },
+  {
+    "index": 185,
+    "title": "Blank (Jump Gate - Unused)",
+    "file": "assets/cmdicons/cmdicons_185.png"
+  },
+  {
+    "index": 186,
+    "title": "Blank (Ruins - Unused)",
+    "file": "assets/cmdicons/cmdicons_186.png"
+  },
+  {
+    "index": 187,
+    "title": "Blank (Khayd. Crystal Form. - Unused)",
+    "file": "assets/cmdicons/cmdicons_187.png"
+  },
+  {
+    "index": 188,
+    "title": "Vespene Geyser",
+    "file": "assets/cmdicons/cmdicons_188.png"
+  },
+  {
+    "index": 189,
+    "title": "Warp Gate",
+    "file": "assets/cmdicons/cmdicons_189.png"
+  },
+  {
+    "index": 190,
+    "title": "Psi Disrupter",
+    "file": "assets/cmdicons/cmdicons_190.png"
+  },
+  {
+    "index": 191,
+    "title": "Blank (Zerg Marker)",
+    "file": "assets/cmdicons/cmdicons_191.png"
+  },
+  {
+    "index": 192,
+    "title": "Blank (Terran Marker)",
+    "file": "assets/cmdicons/cmdicons_192.png"
+  },
+  {
+    "index": 193,
+    "title": "Blank (Protoss Marker)",
+    "file": "assets/cmdicons/cmdicons_193.png"
+  },
+  {
+    "index": 194,
+    "title": "Zerg Beacon",
+    "file": "assets/cmdicons/cmdicons_194.png"
+  },
+  {
+    "index": 195,
+    "title": "Terran Beacon",
+    "file": "assets/cmdicons/cmdicons_195.png"
+  },
+  {
+    "index": 196,
+    "title": "Protoss Beacon",
+    "file": "assets/cmdicons/cmdicons_196.png"
+  },
+  {
+    "index": 197,
+    "title": "Zerg Flag Beacon",
+    "file": "assets/cmdicons/cmdicons_197.png"
+  },
+  {
+    "index": 198,
+    "title": "Terran Flag Beacon",
+    "file": "assets/cmdicons/cmdicons_198.png"
+  },
+  {
+    "index": 199,
+    "title": "Protoss Flag Beacon",
+    "file": "assets/cmdicons/cmdicons_199.png"
+  },
+  {
+    "index": 200,
+    "title": "Power Generator",
+    "file": "assets/cmdicons/cmdicons_200.png"
+  },
+  {
+    "index": 201,
+    "title": "Overmind Cocoon",
+    "file": "assets/cmdicons/cmdicons_201.png"
+  },
+  {
+    "index": 202,
+    "title": "Blank (Dark Swarm)",
+    "file": "assets/cmdicons/cmdicons_202.png"
+  },
+  {
+    "index": 203,
+    "title": "Blank (Floor Missile Trap)",
+    "file": "assets/cmdicons/cmdicons_203.png"
+  },
+  {
+    "index": 204,
+    "title": "Blank (Floor Hatch - Unused)",
+    "file": "assets/cmdicons/cmdicons_204.png"
+  },
+  {
+    "index": 205,
+    "title": "Blank (Left Upper Level Door)",
+    "file": "assets/cmdicons/cmdicons_205.png"
+  },
+  {
+    "index": 206,
+    "title": "Blank (Right Upper Level Door)",
+    "file": "assets/cmdicons/cmdicons_206.png"
+  },
+  {
+    "index": 207,
+    "title": "Blank (Left Pit Door)",
+    "file": "assets/cmdicons/cmdicons_207.png"
+  },
+  {
+    "index": 208,
+    "title": "Blank (Right Pit Door)",
+    "file": "assets/cmdicons/cmdicons_208.png"
+  },
+  {
+    "index": 209,
+    "title": "Blank (Floor Gun Trap)",
+    "file": "assets/cmdicons/cmdicons_209.png"
+  },
+  {
+    "index": 210,
+    "title": "Blank (Left Wall Missile Trap)",
+    "file": "assets/cmdicons/cmdicons_210.png"
+  },
+  {
+    "index": 211,
+    "title": "Blank (Left Wall Flame Trap)",
+    "file": "assets/cmdicons/cmdicons_211.png"
+  },
+  {
+    "index": 212,
+    "title": "Infested Mine (Unused)",
+    "file": "assets/cmdicons/cmdicons_212.png"
+  },
+  {
+    "index": 213,
+    "title": "Blank (Right Wall Flame Trap)",
+    "file": "assets/cmdicons/cmdicons_213.png"
+  },
+  {
+    "index": 214,
+    "title": "Start Location",
+    "file": "assets/cmdicons/cmdicons_214.png"
+  },
+  {
+    "index": 215,
+    "title": "Flag",
+    "file": "assets/cmdicons/cmdicons_215.png"
+  },
+  {
+    "index": 216,
+    "title": "Young Chrysalis",
+    "file": "assets/cmdicons/cmdicons_216.png"
+  },
+  {
+    "index": 217,
+    "title": "Psi Emitter",
+    "file": "assets/cmdicons/cmdicons_217.png"
+  },
+  {
+    "index": 218,
+    "title": "Data Disc",
+    "file": "assets/cmdicons/cmdicons_218.png"
+  },
+  {
+    "index": 219,
+    "title": "Khaydarin Crystal",
+    "file": "assets/cmdicons/cmdicons_219.png"
+  },
+  {
+    "index": 220,
+    "title": "Blank (Mineral Chunk Type 1)",
+    "file": "assets/cmdicons/cmdicons_220.png"
+  },
+  {
+    "index": 221,
+    "title": "Blank (Mineral Chunk Type 2)",
+    "file": "assets/cmdicons/cmdicons_221.png"
+  },
+  {
+    "index": 222,
+    "title": "Blank (Protoss Vespene Orb Type 1)",
+    "file": "assets/cmdicons/cmdicons_222.png"
+  },
+  {
+    "index": 223,
+    "title": "Blank (Protoss Vespene Orb Type 2)",
+    "file": "assets/cmdicons/cmdicons_223.png"
+  },
+  {
+    "index": 224,
+    "title": "Blank (Zerg Vespene Sac Type 1)",
+    "file": "assets/cmdicons/cmdicons_224.png"
+  },
+  {
+    "index": 225,
+    "title": "Blank (Zerg Vespene Sac Type 2)",
+    "file": "assets/cmdicons/cmdicons_225.png"
+  },
+  {
+    "index": 226,
+    "title": "Blank (Terran Vespene Tank Type 1)",
+    "file": "assets/cmdicons/cmdicons_226.png"
+  },
+  {
+    "index": 227,
+    "title": "Blank (Terran Vespene Tank Type 2)",
+    "file": "assets/cmdicons/cmdicons_227.png"
+  },
+  {
+    "index": 228,
+    "title": "Move",
+    "file": "assets/cmdicons/cmdicons_228.png"
+  },
+  {
+    "index": 229,
+    "title": "Stop",
+    "file": "assets/cmdicons/cmdicons_229.png"
+  },
+  {
+    "index": 230,
+    "title": "Attack",
+    "file": "assets/cmdicons/cmdicons_230.png"
+  },
+  {
+    "index": 231,
+    "title": "Gather",
+    "file": "assets/cmdicons/cmdicons_231.png"
+  },
+  {
+    "index": 232,
+    "title": "Repair",
+    "file": "assets/cmdicons/cmdicons_232.png"
+  },
+  {
+    "index": 233,
+    "title": "Return Resources",
+    "file": "assets/cmdicons/cmdicons_233.png"
+  },
+  {
+    "index": 234,
+    "title": "Terran Basic Buildings",
+    "file": "assets/cmdicons/cmdicons_234.png"
+  },
+  {
+    "index": 235,
+    "title": "Terran Advanced Buildings",
+    "file": "assets/cmdicons/cmdicons_235.png"
+  },
+  {
+    "index": 236,
+    "title": "Cancel",
+    "file": "assets/cmdicons/cmdicons_236.png"
+  },
+  {
+    "index": 237,
+    "title": "Use Stimpack",
+    "file": "assets/cmdicons/cmdicons_237.png"
+  },
+  {
+    "index": 238,
+    "title": "U-238 Shells",
+    "file": "assets/cmdicons/cmdicons_238.png"
+  },
+  {
+    "index": 239,
+    "title": "Burst Lasers (Unused)",
+    "file": "assets/cmdicons/cmdicons_239.png"
+  },
+  {
+    "index": 240,
+    "title": "Lockdown",
+    "file": "assets/cmdicons/cmdicons_240.png"
+  },
+  {
+    "index": 241,
+    "title": "EMP Shockwave",
+    "file": "assets/cmdicons/cmdicons_241.png"
+  },
+  {
+    "index": 242,
+    "title": "Irradiate",
+    "file": "assets/cmdicons/cmdicons_242.png"
+  },
+  {
+    "index": 243,
+    "title": "Use Spider Mines",
+    "file": "assets/cmdicons/cmdicons_243.png"
+  },
+  {
+    "index": 244,
+    "title": "Afterburners (Unused Terran Upgrade)",
+    "file": "assets/cmdicons/cmdicons_244.png"
+  },
+  {
+    "index": 245,
+    "title": "Seige Mode",
+    "file": "assets/cmdicons/cmdicons_245.png"
+  },
+  {
+    "index": 246,
+    "title": "Tank Mode",
+    "file": "assets/cmdicons/cmdicons_246.png"
+  },
+  {
+    "index": 247,
+    "title": "Defensive Matrix",
+    "file": "assets/cmdicons/cmdicons_247.png"
+  },
+  {
+    "index": 248,
+    "title": "Titan Reactor",
+    "file": "assets/cmdicons/cmdicons_248.png"
+  },
+  {
+    "index": 249,
+    "title": "Ocular Implants",
+    "file": "assets/cmdicons/cmdicons_249.png"
+  },
+  {
+    "index": 250,
+    "title": "Scanner Sweep",
+    "file": "assets/cmdicons/cmdicons_250.png"
+  },
+  {
+    "index": 251,
+    "title": "Yamato Gun",
+    "file": "assets/cmdicons/cmdicons_251.png"
+  },
+  {
+    "index": 252,
+    "title": "Cloak",
+    "file": "assets/cmdicons/cmdicons_252.png"
+  },
+  {
+    "index": 253,
+    "title": "Decloak",
+    "file": "assets/cmdicons/cmdicons_253.png"
+  },
+  {
+    "index": 254,
+    "title": "Patrol",
+    "file": "assets/cmdicons/cmdicons_254.png"
+  },
+  {
+    "index": 255,
+    "title": "Hold Position",
+    "file": "assets/cmdicons/cmdicons_255.png"
+  },
+  {
+    "index": 256,
+    "title": "Moebius Reactor",
+    "file": "assets/cmdicons/cmdicons_256.png"
+  },
+  {
+    "index": 257,
+    "title": "Zerg Basic Buildings",
+    "file": "assets/cmdicons/cmdicons_257.png"
+  },
+  {
+    "index": 258,
+    "title": "Zerg Advanced Buildings",
+    "file": "assets/cmdicons/cmdicons_258.png"
+  },
+  {
+    "index": 259,
+    "title": "Burrow",
+    "file": "assets/cmdicons/cmdicons_259.png"
+  },
+  {
+    "index": 260,
+    "title": "Unburrow",
+    "file": "assets/cmdicons/cmdicons_260.png"
+  },
+  {
+    "index": 261,
+    "title": "Ventral Sacs",
+    "file": "assets/cmdicons/cmdicons_261.png"
+  },
+  {
+    "index": 262,
+    "title": "Antennae",
+    "file": "assets/cmdicons/cmdicons_262.png"
+  },
+  {
+    "index": 263,
+    "title": "Metabolic Boost",
+    "file": "assets/cmdicons/cmdicons_263.png"
+  },
+  {
+    "index": 264,
+    "title": "Adrenal Glands",
+    "file": "assets/cmdicons/cmdicons_264.png"
+  },
+  {
+    "index": 265,
+    "title": "Plague",
+    "file": "assets/cmdicons/cmdicons_265.png"
+  },
+  {
+    "index": 266,
+    "title": "Muscular Augments",
+    "file": "assets/cmdicons/cmdicons_266.png"
+  },
+  {
+    "index": 267,
+    "title": "Ensnare",
+    "file": "assets/cmdicons/cmdicons_267.png"
+  },
+  {
+    "index": 268,
+    "title": "Grooved Spines",
+    "file": "assets/cmdicons/cmdicons_268.png"
+  },
+  {
+    "index": 269,
+    "title": "Roar (Unused Zerg Upgrade)",
+    "file": "assets/cmdicons/cmdicons_269.png"
+  },
+  {
+    "index": 270,
+    "title": "Dark Swarm",
+    "file": "assets/cmdicons/cmdicons_270.png"
+  },
+  {
+    "index": 271,
+    "title": "Parasite",
+    "file": "assets/cmdicons/cmdicons_271.png"
+  },
+  {
+    "index": 272,
+    "title": "Protoss Basic Buildings",
+    "file": "assets/cmdicons/cmdicons_272.png"
+  },
+  {
+    "index": 273,
+    "title": "Protoss Advanced Buildings",
+    "file": "assets/cmdicons/cmdicons_273.png"
+  },
+  {
+    "index": 274,
+    "title": "Mind Control (SC Beta - Unused)",
+    "file": "assets/cmdicons/cmdicons_274.png"
+  },
+  {
+    "index": 275,
+    "title": "Psionic Storm",
+    "file": "assets/cmdicons/cmdicons_275.png"
+  },
+  {
+    "index": 276,
+    "title": "Gravitic Boosters",
+    "file": "assets/cmdicons/cmdicons_276.png"
+  },
+  {
+    "index": 277,
+    "title": "Hallucination",
+    "file": "assets/cmdicons/cmdicons_277.png"
+  },
+  {
+    "index": 278,
+    "title": "Stasis Field",
+    "file": "assets/cmdicons/cmdicons_278.png"
+  },
+  {
+    "index": 279,
+    "title": "Blank",
+    "file": "assets/cmdicons/cmdicons_279.png"
+  },
+  {
+    "index": 280,
+    "title": "Recall",
+    "file": "assets/cmdicons/cmdicons_280.png"
+  },
+  {
+    "index": 281,
+    "title": "Singularity Charge",
+    "file": "assets/cmdicons/cmdicons_281.png"
+  },
+  {
+    "index": 282,
+    "title": "Lift off",
+    "file": "assets/cmdicons/cmdicons_282.png"
+  },
+  {
+    "index": 283,
+    "title": "Land",
+    "file": "assets/cmdicons/cmdicons_283.png"
+  },
+  {
+    "index": 284,
+    "title": "Apollo Reactor",
+    "file": "assets/cmdicons/cmdicons_284.png"
+  },
+  {
+    "index": 285,
+    "title": "Colossus Reactor",
+    "file": "assets/cmdicons/cmdicons_285.png"
+  },
+  {
+    "index": 286,
+    "title": "Set Rally Point",
+    "file": "assets/cmdicons/cmdicons_286.png"
+  },
+  {
+    "index": 287,
+    "title": "Ion Thrusters",
+    "file": "assets/cmdicons/cmdicons_287.png"
+  },
+  {
+    "index": 288,
+    "title": "Infantry Weapons",
+    "file": "assets/cmdicons/cmdicons_288.png"
+  },
+  {
+    "index": 289,
+    "title": "Vehicle Weapons",
+    "file": "assets/cmdicons/cmdicons_289.png"
+  },
+  {
+    "index": 290,
+    "title": "Ship Weapons",
+    "file": "assets/cmdicons/cmdicons_290.png"
+  },
+  {
+    "index": 291,
+    "title": "Ship Plating",
+    "file": "assets/cmdicons/cmdicons_291.png"
+  },
+  {
+    "index": 292,
+    "title": "Infantry Armor",
+    "file": "assets/cmdicons/cmdicons_292.png"
+  },
+  {
+    "index": 293,
+    "title": "Vehicle Armor",
+    "file": "assets/cmdicons/cmdicons_293.png"
+  },
+  {
+    "index": 294,
+    "title": "Gamete Meiosis",
+    "file": "assets/cmdicons/cmdicons_294.png"
+  },
+  {
+    "index": 295,
+    "title": "Metasynaptic Node",
+    "file": "assets/cmdicons/cmdicons_295.png"
+  },
+  {
+    "index": 296,
+    "title": "Pneumatized Caparace",
+    "file": "assets/cmdicons/cmdicons_296.png"
+  },
+  {
+    "index": 297,
+    "title": "Zerg Caparace",
+    "file": "assets/cmdicons/cmdicons_297.png"
+  },
+  {
+    "index": 298,
+    "title": "Flyer Caparace",
+    "file": "assets/cmdicons/cmdicons_298.png"
+  },
+  {
+    "index": 299,
+    "title": "Melee Attacks",
+    "file": "assets/cmdicons/cmdicons_299.png"
+  },
+  {
+    "index": 300,
+    "title": "Missile Attacks",
+    "file": "assets/cmdicons/cmdicons_300.png"
+  },
+  {
+    "index": 301,
+    "title": "Flyer Attacks",
+    "file": "assets/cmdicons/cmdicons_301.png"
+  },
+  {
+    "index": 302,
+    "title": "Consume",
+    "file": "assets/cmdicons/cmdicons_302.png"
+  },
+  {
+    "index": 303,
+    "title": "Ground Armor",
+    "file": "assets/cmdicons/cmdicons_303.png"
+  },
+  {
+    "index": 304,
+    "title": "Air Plating",
+    "file": "assets/cmdicons/cmdicons_304.png"
+  },
+  {
+    "index": 305,
+    "title": "Ground Weapons",
+    "file": "assets/cmdicons/cmdicons_305.png"
+  },
+  {
+    "index": 306,
+    "title": "Air Weapons",
+    "file": "assets/cmdicons/cmdicons_306.png"
+  },
+  {
+    "index": 307,
+    "title": "Leg Enhancements",
+    "file": "assets/cmdicons/cmdicons_307.png"
+  },
+  {
+    "index": 308,
+    "title": "Recharge Shields",
+    "file": "assets/cmdicons/cmdicons_308.png"
+  },
+  {
+    "index": 309,
+    "title": "Load (into Transport)",
+    "file": "assets/cmdicons/cmdicons_309.png"
+  },
+  {
+    "index": 310,
+    "title": "Plasma Shields",
+    "file": "assets/cmdicons/cmdicons_310.png"
+  },
+  {
+    "index": 311,
+    "title": "Nuclear Strike",
+    "file": "assets/cmdicons/cmdicons_311.png"
+  },
+  {
+    "index": 312,
+    "title": "Unload All (from Transport/Bunker)",
+    "file": "assets/cmdicons/cmdicons_312.png"
+  },
+  {
+    "index": 313,
+    "title": "Infest Command Center",
+    "file": "assets/cmdicons/cmdicons_313.png"
+  },
+  {
+    "index": 314,
+    "title": "Scarab Damage",
+    "file": "assets/cmdicons/cmdicons_314.png"
+  },
+  {
+    "index": 315,
+    "title": "Reaver Capacity",
+    "file": "assets/cmdicons/cmdicons_315.png"
+  },
+  {
+    "index": 316,
+    "title": "Gravitic Drive",
+    "file": "assets/cmdicons/cmdicons_316.png"
+  },
+  {
+    "index": 317,
+    "title": "Sensor Array",
+    "file": "assets/cmdicons/cmdicons_317.png"
+  },
+  {
+    "index": 318,
+    "title": "Khaydarin Amulet",
+    "file": "assets/cmdicons/cmdicons_318.png"
+  },
+  {
+    "index": 319,
+    "title": "Apial Sensors",
+    "file": "assets/cmdicons/cmdicons_319.png"
+  },
+  {
+    "index": 320,
+    "title": "Gravitic Thrusters",
+    "file": "assets/cmdicons/cmdicons_320.png"
+  },
+  {
+    "index": 321,
+    "title": "Carrier Capacity",
+    "file": "assets/cmdicons/cmdicons_321.png"
+  },
+  {
+    "index": 322,
+    "title": "Khaydarin Core",
+    "file": "assets/cmdicons/cmdicons_322.png"
+  },
+  {
+    "index": 323,
+    "title": "Gauss Rifle",
+    "file": "assets/cmdicons/cmdicons_323.png"
+  },
+  {
+    "index": 324,
+    "title": "C-10 Canister Rifle",
+    "file": "assets/cmdicons/cmdicons_324.png"
+  },
+  {
+    "index": 325,
+    "title": "Fragmentation Grenade",
+    "file": "assets/cmdicons/cmdicons_325.png"
+  },
+  {
+    "index": 326,
+    "title": "Twin Autocannons",
+    "file": "assets/cmdicons/cmdicons_326.png"
+  },
+  {
+    "index": 327,
+    "title": "Hellfire Missile Pack",
+    "file": "assets/cmdicons/cmdicons_327.png"
+  },
+  {
+    "index": 328,
+    "title": "Arclite Cannon",
+    "file": "assets/cmdicons/cmdicons_328.png"
+  },
+  {
+    "index": 329,
+    "title": "Fusion Cutter",
+    "file": "assets/cmdicons/cmdicons_329.png"
+  },
+  {
+    "index": 330,
+    "title": "Fusion Cutter (Harvest)",
+    "file": "assets/cmdicons/cmdicons_330.png"
+  },
+  {
+    "index": 331,
+    "title": "Gemini Missiles",
+    "file": "assets/cmdicons/cmdicons_331.png"
+  },
+  {
+    "index": 332,
+    "title": "Burst Lasers",
+    "file": "assets/cmdicons/cmdicons_332.png"
+  },
+  {
+    "index": 333,
+    "title": "ATS Laser Battery",
+    "file": "assets/cmdicons/cmdicons_333.png"
+  },
+  {
+    "index": 334,
+    "title": "ATA Laser Battery",
+    "file": "assets/cmdicons/cmdicons_334.png"
+  },
+  {
+    "index": 335,
+    "title": "Flame Thrower",
+    "file": "assets/cmdicons/cmdicons_335.png"
+  },
+  {
+    "index": 336,
+    "title": "Arclite Shock Cannon",
+    "file": "assets/cmdicons/cmdicons_336.png"
+  },
+  {
+    "index": 337,
+    "title": "Longbolt Missile",
+    "file": "assets/cmdicons/cmdicons_337.png"
+  },
+  {
+    "index": 338,
+    "title": "Claws",
+    "file": "assets/cmdicons/cmdicons_338.png"
+  },
+  {
+    "index": 339,
+    "title": "Needle Spines",
+    "file": "assets/cmdicons/cmdicons_339.png"
+  },
+  {
+    "index": 340,
+    "title": "Kaiser Blades",
+    "file": "assets/cmdicons/cmdicons_340.png"
+  },
+  {
+    "index": 341,
+    "title": "Toxic Spores",
+    "file": "assets/cmdicons/cmdicons_341.png"
+  },
+  {
+    "index": 342,
+    "title": "Spines",
+    "file": "assets/cmdicons/cmdicons_342.png"
+  },
+  {
+    "index": 343,
+    "title": "Flyer Attack",
+    "file": "assets/cmdicons/cmdicons_343.png"
+  },
+  {
+    "index": 344,
+    "title": "Acid Spore",
+    "file": "assets/cmdicons/cmdicons_344.png"
+  },
+  {
+    "index": 345,
+    "title": "Glave Wurm",
+    "file": "assets/cmdicons/cmdicons_345.png"
+  },
+  {
+    "index": 346,
+    "title": "Venom (Unused Zerg Weapon)",
+    "file": "assets/cmdicons/cmdicons_346.png"
+  },
+  {
+    "index": 347,
+    "title": "Seeker Spores",
+    "file": "assets/cmdicons/cmdicons_347.png"
+  },
+  {
+    "index": 348,
+    "title": "Subterranean Tentacle",
+    "file": "assets/cmdicons/cmdicons_348.png"
+  },
+  {
+    "index": 349,
+    "title": "Suicide (Infested Terran)",
+    "file": "assets/cmdicons/cmdicons_349.png"
+  },
+  {
+    "index": 350,
+    "title": "Suicide (Scourge)",
+    "file": "assets/cmdicons/cmdicons_350.png"
+  },
+  {
+    "index": 351,
+    "title": "Particle Beam",
+    "file": "assets/cmdicons/cmdicons_351.png"
+  },
+  {
+    "index": 352,
+    "title": "Particle Beam (Harvest)",
+    "file": "assets/cmdicons/cmdicons_352.png"
+  },
+  {
+    "index": 353,
+    "title": "Psi/Warp Blades",
+    "file": "assets/cmdicons/cmdicons_353.png"
+  },
+  {
+    "index": 354,
+    "title": "Phase Disruptor",
+    "file": "assets/cmdicons/cmdicons_354.png"
+  },
+  {
+    "index": 355,
+    "title": "Psi Assault",
+    "file": "assets/cmdicons/cmdicons_355.png"
+  },
+  {
+    "index": 356,
+    "title": "Psionic Shockwave",
+    "file": "assets/cmdicons/cmdicons_356.png"
+  },
+  {
+    "index": 357,
+    "title": "Radioactive (Unused)",
+    "file": "assets/cmdicons/cmdicons_357.png"
+  },
+  {
+    "index": 358,
+    "title": "Dual Photon Blasters",
+    "file": "assets/cmdicons/cmdicons_358.png"
+  },
+  {
+    "index": 359,
+    "title": "Anti-matter Missiles",
+    "file": "assets/cmdicons/cmdicons_359.png"
+  },
+  {
+    "index": 360,
+    "title": "Phase Disruptor Cannon",
+    "file": "assets/cmdicons/cmdicons_360.png"
+  },
+  {
+    "index": 361,
+    "title": "Pulse Cannon",
+    "file": "assets/cmdicons/cmdicons_361.png"
+  },
+  {
+    "index": 362,
+    "title": "Photon Cannon",
+    "file": "assets/cmdicons/cmdicons_362.png"
+  },
+  {
+    "index": 363,
+    "title": "Radioactive (Unused)",
+    "file": "assets/cmdicons/cmdicons_363.png"
+  },
+  {
+    "index": 364,
+    "title": "Spider Mine",
+    "file": "assets/cmdicons/cmdicons_364.png"
+  },
+  {
+    "index": 365,
+    "title": "Heal",
+    "file": "assets/cmdicons/cmdicons_365.png"
+  },
+  {
+    "index": 366,
+    "title": "Restoration",
+    "file": "assets/cmdicons/cmdicons_366.png"
+  },
+  {
+    "index": 367,
+    "title": "Restoration",
+    "file": "assets/cmdicons/cmdicons_367.png"
+  },
+  {
+    "index": 368,
+    "title": "Disruption Web",
+    "file": "assets/cmdicons/cmdicons_368.png"
+  },
+  {
+    "index": 369,
+    "title": "Disruption Web",
+    "file": "assets/cmdicons/cmdicons_369.png"
+  },
+  {
+    "index": 370,
+    "title": "Unknown371",
+    "file": "assets/cmdicons/cmdicons_370.png"
+  },
+  {
+    "index": 371,
+    "title": "Mind Control",
+    "file": "assets/cmdicons/cmdicons_371.png"
+  },
+  {
+    "index": 372,
+    "title": "Feedback",
+    "file": "assets/cmdicons/cmdicons_372.png"
+  },
+  {
+    "index": 373,
+    "title": "Optical Flare",
+    "file": "assets/cmdicons/cmdicons_373.png"
+  },
+  {
+    "index": 374,
+    "title": "Afterburners ON (Unused)",
+    "file": "assets/cmdicons/cmdicons_374.png"
+  },
+  {
+    "index": 375,
+    "title": "Afterburners OFF (Unused)",
+    "file": "assets/cmdicons/cmdicons_375.png"
+  },
+  {
+    "index": 376,
+    "title": "Lurker Aspect",
+    "file": "assets/cmdicons/cmdicons_376.png"
+  },
+  {
+    "index": 377,
+    "title": "Unknown378",
+    "file": "assets/cmdicons/cmdicons_377.png"
+  },
+  {
+    "index": 378,
+    "title": "Anabolic Synthesis",
+    "file": "assets/cmdicons/cmdicons_378.png"
+  },
+  {
+    "index": 379,
+    "title": "Chitinous Plating",
+    "file": "assets/cmdicons/cmdicons_379.png"
+  },
+  {
+    "index": 380,
+    "title": "Charon Boosters",
+    "file": "assets/cmdicons/cmdicons_380.png"
+  },
+  {
+    "index": 381,
+    "title": "Maelstrom",
+    "file": "assets/cmdicons/cmdicons_381.png"
+  },
+  {
+    "index": 382,
+    "title": "Subterranean Spines",
+    "file": "assets/cmdicons/cmdicons_382.png"
+  },
+  {
+    "index": 383,
+    "title": "Argus Jewel",
+    "file": "assets/cmdicons/cmdicons_383.png"
+  },
+  {
+    "index": 384,
+    "title": "Caduceus Reactor",
+    "file": "assets/cmdicons/cmdicons_384.png"
+  },
+  {
+    "index": 385,
+    "title": "Argus Talisman",
+    "file": "assets/cmdicons/cmdicons_385.png"
+  },
+  {
+    "index": 386,
+    "title": "Play (Replay)",
+    "file": "assets/cmdicons/cmdicons_386.png"
+  },
+  {
+    "index": 387,
+    "title": "Pause (Replay)",
+    "file": "assets/cmdicons/cmdicons_387.png"
+  },
+  {
+    "index": 388,
+    "title": "Speed Up (Replay)",
+    "file": "assets/cmdicons/cmdicons_388.png"
+  },
+  {
+    "index": 389,
+    "title": "Slow Down (Replay)",
+    "file": "assets/cmdicons/cmdicons_389.png"
+  }
+]

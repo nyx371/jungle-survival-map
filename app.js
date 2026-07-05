@@ -1,6 +1,8 @@
 const state = {
   content: null,
   sources: [],
+  icons: [],
+  iconByTitle: new Map(),
 };
 
 function escapeHtml(value) {
@@ -94,22 +96,54 @@ async function loadJson(path) {
   return response.json();
 }
 
-function featureIcon(title) {
-  const value = String(title).toLowerCase();
-  if (value.includes('ghost')) return 'G';
-  if (value.includes('night') || value.includes('swarm') || value.includes('zerg')) return 'Z';
-  if (value.includes('build') || value.includes('light')) return 'B';
-  if (value.includes('death')) return 'D';
-  if (value.includes('resource') || value.includes('harvest') || value.includes('mineral')) return 'R';
-  if (value.includes('jungle') || value.includes('critter')) return 'J';
-  return 'M';
+function normalizeIconTitle(value) {
+  return String(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function getIconByTitle(title) {
+  return state.iconByTitle.get(normalizeIconTitle(title));
+}
+
+function getIconByIndex(index) {
+  return state.icons[index];
+}
+
+function chooseIcon(item, fallbackTitle = 'Scanner Sweep') {
+  const text = `${item.title || ''} ${item.body || ''}`.toLowerCase();
+  const title = String(item.title || '').toLowerCase();
+  const pairs = [
+    [/maelstrom|mine|trap/, 'Maelstrom'],
+    [/ghost|commander|commando/, 'Ghost'],
+    [/night|swarm|zerg/, 'Dark Swarm'],
+    [/day|scout|vision/, 'Scanner Sweep'],
+    [/harvest|resource|mineral|vespene|trickle/, 'Gather'],
+    [/critter|jungle|wildlife/, 'Bengalaas (Jungle Critter)'],
+    [/build|construct|structure|light|safe pocket|turret|wall/, 'Terran Basic Buildings'],
+    [/death|die|respawn/, 'Restoration'],
+    [/weapon|rifle|sniper|shotgun|flamer|explosive/, 'C-10 Canister Rifle'],
+    [/upgrade|armor|shield|survival/, 'Plasma Shields'],
+    [/companion|robotic|squad|tame|resurrect/, 'Probe'],
+  ];
+
+  for (const [pattern, iconTitle] of pairs) {
+    if (pattern.test(text) || pattern.test(title)) {
+      return getIconByTitle(iconTitle) || getIconByTitle(fallbackTitle);
+    }
+  }
+
+  return getIconByTitle(fallbackTitle) || getIconByIndex(250);
+}
+
+function renderIcon(icon, fallbackText = 'JC') {
+  if (!icon) return `<span>${escapeHtml(fallbackText)}</span>`;
+  return `<img src="${escapeHtml(icon.file)}" alt="" loading="lazy"><span class="sr-only">${escapeHtml(icon.title)}</span>`;
 }
 
 function renderCardGrid(selector, items) {
   const grid = document.querySelector(selector);
   grid.innerHTML = items.map((item) => `
     <article class="card feature-card">
-      <div class="feature-icon" aria-hidden="true">${featureIcon(item.title)}</div>
+      <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(item), item.title.slice(0, 2))}</div>
       <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.body)}</p>
     </article>
@@ -128,16 +162,15 @@ function renderGameplayLoop(loop) {
   renderCardGrid('#loop-grid', loop);
 }
 
-function enemyIconName(base) {
-  const value = String(base).trim();
-  return value ? value.slice(0, 1).toUpperCase() : 'Z';
+function enemyIcon(base) {
+  return getIconByTitle(base) || getIconByTitle(String(base).replace(/^Zerg /, '')) || getIconByTitle('Zergling');
 }
 
 function renderEnemies(enemies) {
   const grid = document.querySelector('#enemy-grid');
   grid.innerHTML = enemies.map((enemy) => `
     <article class="card enemy-card">
-      <div class="feature-icon enemy-icon" aria-hidden="true">${escapeHtml(enemyIconName(enemy.base))}</div>
+      <div class="feature-icon enemy-icon" aria-hidden="true">${renderIcon(enemyIcon(enemy.base), enemy.base.slice(0, 2))}</div>
       <div class="card-kicker">${escapeHtml(enemy.base)}</div>
       <h3>${escapeHtml(enemy.role)}</h3>
       <div class="evolution-list">
@@ -158,7 +191,8 @@ function renderEnemies(enemies) {
 function renderUpgrades(upgrades) {
   const grid = document.querySelector('#upgrade-grid');
   grid.innerHTML = upgrades.map((group) => `
-    <article class="card">
+    <article class="card upgrade-card">
+      <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(group), group.title.slice(0, 2))}</div>
       <h3>${escapeHtml(group.title)}</h3>
       <ul class="checklist compact">
         ${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
@@ -209,6 +243,8 @@ async function init() {
   activateRouteFromHash({ smooth: false });
   try {
     state.content = await loadJson('data/site-content.json');
+    state.icons = await loadJson('data/cmdicons.json');
+    state.iconByTitle = new Map(state.icons.map((icon) => [normalizeIconTitle(icon.title), icon]));
     renderGameplayLoop(state.content.gameplayLoop);
     renderFeatures(state.content.features);
     renderResources(state.content.resources);
