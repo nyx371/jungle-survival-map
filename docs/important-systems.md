@@ -365,14 +365,16 @@ This system controls tactical footholds without letting players turtle forever.
 
 ### Player-facing behavior
 
-Players can build:
+Players can craft/construct one broad category of field objects:
 
 - light sources
 - walls
 - regeneration stations
 - turrets
+- Maelstrom Mines
+- future deployable traps or utility devices
 
-Everything can be deconstructed.
+Everything can be deconstructed unless a device is consumed on trigger.
 
 On death, all structures built by that player are lost.
 
@@ -390,6 +392,7 @@ On death, all structures built by that player are lost.
 - Destroy owned structures on player death.
 - Maintain active light zones.
 - Expose spawn-block checks to mob spawning.
+- Update deployable trap logic, including Maelstrom Mine arming and stun triggers.
 
 ### Main state
 
@@ -399,6 +402,11 @@ StructureOwner[index]
 StructureType[index]
 StructureAlive[index]
 StructureRefundValue[index]
+StructureArmed[index]
+StructureCooldown[index]
+StructureTriggerRadius[index]
+StructureEffectRadius[index]
+StructureEffectTimer[index]
 
 LightRadius[index]
 LightPower[index]
@@ -413,6 +421,13 @@ When player builds:
   Create structure
   Store owner/type
   If light: register light radius
+  If mine/trap: start arming timer and store trigger/effect radius
+
+Every frame for armed Maelstrom Mines:
+  If enemy enters trigger radius:
+    Burrow/activate visual if needed
+    Stun enemies in effect radius for MAELSTROM_STUN_FRAMES
+    Consume/remove mine or start cooldown, depending on balance target
 
 Every spawn attempt:
   If position inside active light no-spawn radius:
@@ -428,7 +443,7 @@ When player dies:
 
 ### Risk
 
-Brightness is likely local display logic, while spawn prevention is synchronized gameplay logic. Keep those separated to avoid desync.
+Brightness is likely local display logic, while spawn prevention and mine stun effects are synchronized gameplay logic. Keep those separated to avoid desync. Maelstrom Mines need an early prototype to verify the best stun implementation: Maelstrom order/effect, timer-based CUnit lockdown/stasis-style field, or custom order-freeze behavior.
 
 ---
 

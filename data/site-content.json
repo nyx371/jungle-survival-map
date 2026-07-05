@@ -21,6 +21,10 @@
       "body": "Craft weapons and upgrade your Ghost into the role you want: sniper, close-range brawler, explosives specialist, support survivor, or something in between."
     },
     {
+      "title": "Craft tactical constructs",
+      "body": "Buildables are one craft category: lights, walls, stations, turrets, companion tools, and deployable traps like Maelstrom Mines that burrow and stun nearby enemies."
+    },
+    {
       "title": "Death hurts without ending the run",
       "body": "If you die, you respawn somewhere in the jungle. You lose most minerals, structures, and companion units, but keep crafted weapons and upgrades."
     },
@@ -366,12 +370,13 @@
       ]
     },
     {
-      "title": "Utility and team upgrades",
+      "title": "Craftable constructs and utility",
       "items": [
         "Resource transfer menu",
         "Harvest efficiency",
-        "Temporary structures",
+        "Temporary structures and deployable traps",
         "Deconstruction refund improvements",
+        "Maelstrom Mines: burrowed traps that stun nearby enemies when triggered",
         "SFX/status alerts",
         "Future active abilities"
       ]
@@ -414,7 +419,7 @@
     },
     {
       "title": "Build safe pockets, then abandon them",
-      "body": "Light sources gradually brighten the nearby screen and suppress mob spawning in covered 16x16 areas. Walls, regeneration stations, and turrets help the squad hold ground \u2014 but death destroys your built structures, and the map pressures you to move."
+      "body": "Light sources gradually brighten the nearby screen and suppress mob spawning in covered 16x16 areas. Walls, regeneration stations, turrets, and Maelstrom Mines help the squad hold ground \u2014 but death destroys your built constructs, and the map pressures you to move."
     },
     {
       "title": "Death hurts, but progression survives",

@@ -4,13 +4,19 @@ const STRUCTURE_LIGHT = 0;
 const STRUCTURE_WALL = 1;
 const STRUCTURE_REGEN = 2;
 const STRUCTURE_TURRET = 3;
-const STRUCTURE_COUNT = 4;
+const STRUCTURE_MAELSTROM_MINE = 4;
+const STRUCTURE_COUNT = 5;
 const MAX_STRUCTURES = 128;
 
 const StructureOwner = EUDArray(MAX_STRUCTURES);
 const StructureType = EUDArray(MAX_STRUCTURES);
 const StructureAlive = EUDArray(MAX_STRUCTURES);
 const StructureRefund = EUDArray(MAX_STRUCTURES);
+const StructureArmed = EUDArray(MAX_STRUCTURES);
+const StructureCooldown = EUDArray(MAX_STRUCTURES);
+const StructureTriggerRadius = EUDArray(MAX_STRUCTURES);
+const StructureEffectRadius = EUDArray(MAX_STRUCTURES);
+const StructureEffectTimer = EUDArray(MAX_STRUCTURES);
 
 function initStructures() {
     foreach (i : py_range(MAX_STRUCTURES)) {
@@ -18,12 +24,18 @@ function initStructures() {
         StructureType[i] = 0;
         StructureAlive[i] = 0;
         StructureRefund[i] = 0;
+        StructureArmed[i] = 0;
+        StructureCooldown[i] = 0;
+        StructureTriggerRadius[i] = 0;
+        StructureEffectRadius[i] = 0;
+        StructureEffectTimer[i] = 0;
     }
 }
 
 function buildStructure(player, structureType) {
     // TODO: find free structure slot, validate cost, create structure near player/target.
     // If structureType == STRUCTURE_LIGHT, register with lights system.
+    // If structureType == STRUCTURE_MAELSTROM_MINE, create a burrowed/hidden trap and start its arming timer.
 }
 
 function deconstructStructure(player, structureIndex) {
@@ -43,6 +55,18 @@ function destroyPlayerStructures(player) {
     }
 }
 
+function updateMaelstromMines() {
+    foreach (i : py_range(MAX_STRUCTURES)) {
+        if (!StructureAlive[i] || StructureType[i] != STRUCTURE_MAELSTROM_MINE) continue;
+
+        // TODO: once armed, detect nearby enemy CUnits. When triggered, apply a stun window
+        // to enemies in StructureEffectRadius[i], then consume/remove the mine or start cooldown.
+        // Prototype options: native Maelstrom-like effect, lockdown/stasis-style timers,
+        // or custom order-freeze behavior on affected CUnits.
+    }
+}
+
 function updateStructures() {
     // Build/deconstruct is mostly menu/event driven.
+    updateMaelstromMines();
 }
