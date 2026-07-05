@@ -1381,3 +1381,16 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
   color: var(--muted);
   line-height: 1.65;
 }
+
+/* Force home header text to sit horizontally centered over the image */
+#home .game-hero-copy {
+  margin-inline: auto;
+  text-align: center;
+}
+
+#home .game-hero-copy h1,
+#home .game-hero-copy .eyebrow,
+#home .game-hero-copy .tagline {
+  margin-left: auto;
+  margin-right: auto;
+}

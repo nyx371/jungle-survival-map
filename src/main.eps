@@ -7,6 +7,7 @@ import day_night;
 import players;
 import resources;
 import critters;
+import companions;
 import weapons;
 import upgrades;
 import structures;
@@ -26,6 +27,7 @@ function onPluginStart() {
     initDayNight();
     initResources();
     initCritters();
+    initCompanions();
     initUpgrades();
     initWeapons();
     initStructures();
@@ -46,6 +48,7 @@ function beforeTriggerExec() {
     updatePlayers();
     updateResources();
     updateCritters();
+    updateCompanions();
     updateWeapons();
     updateUpgrades();
     updateStructures();

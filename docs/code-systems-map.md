@@ -235,6 +235,37 @@ onVictoryReady()
 
 ---
 
+### `systems/companions.eps`
+
+Small companion squad system.
+
+Gameplay rule:
+
+- The Ghost is still the commander and failure point.
+- Players may craft robotic fighters, tame Zerg, or resurrect Zerg into a small squad.
+- All companions owned by a player die when that player's Ghost dies.
+
+Responsibilities:
+
+- Track companion slots and ownership.
+- Enforce a max companion count per player.
+- Register crafted robotic fighters.
+- Register tamed Zerg.
+- Register resurrected Zerg.
+- Destroy owned companions on player death.
+
+Core state:
+
+```text
+CompanionActive[index]
+CompanionOwner[index]
+CompanionType[index]
+CompanionUnit[index]
+CompanionControlMode[index]
+```
+
+---
+
 ### `systems/resources.eps`
 
 Right-click harvesting and resource nodes.

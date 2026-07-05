@@ -1,0 +1,90 @@
+// Companion Squadron System
+// Optional small squads controlled by each Ghost: crafted robotic fighters, tamed Zerg, or resurrected Zerg.
+// Companions are owned by the player and are wiped when that player's Ghost dies.
+
+const MAX_COMPANIONS_PER_PLAYER = 6;
+const MAX_COMPANIONS = MAX_PLAYERS * MAX_COMPANIONS_PER_PLAYER;
+
+const COMPANION_ROBOTIC = 0;
+const COMPANION_TAMED_ZERG = 1;
+const COMPANION_RESURRECTED_ZERG = 2;
+
+const CompanionActive = EUDArray(MAX_COMPANIONS);
+const CompanionOwner = EUDArray(MAX_COMPANIONS);
+const CompanionType = EUDArray(MAX_COMPANIONS);
+const CompanionUnit = EUDArray(MAX_COMPANIONS);
+const CompanionControlMode = EUDArray(MAX_COMPANIONS);
+
+function initCompanions() {
+    foreach (i : py_range(MAX_COMPANIONS)) {
+        CompanionActive[i] = 0;
+        CompanionOwner[i] = -1;
+        CompanionType[i] = COMPANION_ROBOTIC;
+        CompanionUnit[i] = 0;
+        CompanionControlMode[i] = 0;
+    }
+}
+
+function getPlayerCompanionCount(player) {
+    const count = EUDVariable();
+    count = 0;
+    foreach (i : py_range(MAX_COMPANIONS)) {
+        if (CompanionActive[i] && CompanionOwner[i] == player) count += 1;
+    }
+    return count;
+}
+
+function findFreeCompanionSlot(player) {
+    if (getPlayerCompanionCount(player) >= MAX_COMPANIONS_PER_PLAYER) return -1;
+
+    foreach (i : py_range(MAX_COMPANIONS)) {
+        if (!CompanionActive[i]) return i;
+    }
+    return -1;
+}
+
+function registerCompanion(player, unit, companionType) {
+    const slot = findFreeCompanionSlot(player);
+    if (slot < 0) return -1;
+
+    CompanionActive[slot] = 1;
+    CompanionOwner[slot] = player;
+    CompanionType[slot] = companionType;
+    CompanionUnit[slot] = unit;
+    CompanionControlMode[slot] = 0;
+    return slot;
+}
+
+function craftRoboticFighter(player) {
+    // TODO: spend mineral/gas cost, create robotic fighter near Ghost, then registerCompanion(player, unit, COMPANION_ROBOTIC).
+}
+
+function tameZerg(player, target) {
+    // TODO: require stun/low HP/special tool, transfer control, then registerCompanion(player, target, COMPANION_TAMED_ZERG).
+}
+
+function resurrectZerg(player, corpseOrMarker) {
+    // TODO: spend gas/biomass, create revived Zerg unit, then registerCompanion(player, unit, COMPANION_RESURRECTED_ZERG).
+}
+
+function destroyPlayerCompanions(player) {
+    foreach (i : py_range(MAX_COMPANIONS)) {
+        if (CompanionActive[i] && CompanionOwner[i] == player) {
+            // TODO: kill/remove CompanionUnit[i]. These units die with their commander.
+            CompanionActive[i] = 0;
+            CompanionOwner[i] = -1;
+            CompanionUnit[i] = 0;
+        }
+    }
+}
+
+function updateCompanionOrders(player) {
+    // TODO: keep companions near the Ghost by default, allow focused attack/move through menu or command hooks.
+    // The player can control a small squad, but the Ghost remains the commander and failure point.
+}
+
+function updateCompanions() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        if (HeroAlive[p]) updateCompanionOrders(p);
+    }
+}

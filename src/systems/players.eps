@@ -30,6 +30,7 @@ function markPlayerDead(player) {
 
     loseMostMinerals(player, DEATH_RESOURCE_KEEP_PERCENT);
     loseMostGas(player, DEATH_RESOURCE_KEEP_PERCENT);
+    destroyPlayerCompanions(player);
     destroyPlayerStructures(player);
     clearHarvestState(player);
     clearAudioDangerState(player);

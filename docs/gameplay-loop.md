@@ -2,7 +2,7 @@
 
 ## Core Pitch
 
-Jungle Survival is a tactical co-op Ghost survival map for 1–5 players. Each player controls one Ghost commando, scavenges a hostile jungle, crafts weapons, builds temporary safe pockets, and survives an evolving Zerg ecosystem across multiple day/night cycles.
+Jungle Survival is a tactical co-op Ghost survival map for 1–5 players. Each player controls one Ghost commando, scavenges a hostile jungle, crafts weapons, can assemble a small companion squad, builds temporary safe pockets, and survives an evolving Zerg ecosystem across multiple day/night cycles.
 
 The map should feel tense and tactical: players are stronger together, but every expansion decision risks pulling the squad deeper into danger.
 
@@ -69,6 +69,7 @@ When a Ghost dies:
 - The player respawns at a random position.
 - The player loses most carried minerals and vespene gas.
 - All structures built by that player are destroyed/lost.
+- All robotic, tamed, or resurrected companion units owned by that player die.
 - The player keeps upgrades and progression.
 
 This creates risk and tension while preserving long-term build identity.

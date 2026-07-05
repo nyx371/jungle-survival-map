@@ -24,6 +24,10 @@
     "path": "src/systems/critters.eps"
   },
   {
+    "label": "systems/companions.eps",
+    "path": "src/systems/companions.eps"
+  },
+  {
     "label": "systems/day_night.eps",
     "path": "src/systems/day_night.eps"
   },
