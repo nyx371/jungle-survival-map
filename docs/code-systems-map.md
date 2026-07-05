@@ -15,6 +15,7 @@ onPluginStart
   ├─ dat_registry.init baseline DAT
   ├─ day_night.init
   ├─ resources.index candidate harvest nodes
+  ├─ critters.init fleeing neural wildlife
   ├─ lights.init
   ├─ structures.init
   ├─ weapons.init
@@ -28,6 +29,7 @@ beforeTriggerExec
   ├─ players scan/update hero state
   ├─ death/respawn handling
   ├─ harvest interaction handling
+  ├─ neural critter flee/stun/harvest handling
   ├─ weapon swap / crafting handling
   ├─ upgrade purchase handling
   ├─ structure build/deconstruct handling
@@ -66,6 +68,7 @@ src/
     players.eps            # player hero lookup, alive/dead state, respawn
     day_night.eps          # 22m day/night cycle, five-night victory trigger
     resources.eps          # right-click harvesting, node depletion, mineral rewards
+    critters.eps           # neural critters that flee unless stunned before harvest
     weapons.eps            # craft weapon, active weapon swap, DAT weapon apply
     upgrades.eps           # purchase upgrades, apply player-specific DAT changes
     structures.eps         # build, ownership tracking, deconstruct, death cleanup
@@ -265,6 +268,48 @@ ResourceNodeRemaining[node]
 Implementation note:
 
 The exact right-click detection may need experimentation with CUnit order fields. Start with a compile-tested simple version, then validate in-game.
+
+---
+
+### `systems/critters.eps`
+
+Neural critter hunt system.
+
+Gameplay rule:
+
+- Rare neural critters act like moving high-value resources.
+- They flee from nearby Ghosts and can escape if chased badly.
+- Players must stun or trap them before harvesting.
+- Stunned critters create a short reward window for neural biomass/minerals.
+
+Responsibilities:
+
+- Track active critters and state: idle, fleeing, stunned, harvested, escaped.
+- Detect nearby players and choose flee behavior.
+- Accept stun hooks from weapons/abilities/structures.
+- Let the resource system harvest only stunned critters.
+- Despawn or relocate critters that flee for too long.
+
+Core state:
+
+```text
+CritterActive[critter]
+CritterState[critter]
+CritterFleeTimer[critter]
+CritterStunTimer[critter]
+CritterReward[critter]
+CritterThreatPlayer[critter]
+```
+
+Important functions:
+
+```text
+initCritters()
+updateCritters()
+spawnNeuralCritter(x, y, reward)
+tryStunCritter(player, critter)
+tryHarvestCritter(player, critter)
+```
 
 ---
 

@@ -20,6 +20,10 @@
     "path": "src/systems/camera.eps"
   },
   {
+    "label": "systems/critters.eps",
+    "path": "src/systems/critters.eps"
+  },
+  {
     "label": "systems/day_night.eps",
     "path": "src/systems/day_night.eps"
   },

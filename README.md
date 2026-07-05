@@ -40,6 +40,7 @@ src/
     players.eps
     day_night.eps
     resources.eps
+    critters.eps
     weapons.eps
     upgrades.eps
     structures.eps

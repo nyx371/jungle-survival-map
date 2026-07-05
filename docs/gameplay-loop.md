@@ -30,28 +30,34 @@ The game gets progressively harder over time.
    - A Ghost cannot fire and harvest at the same time.
    - Minerals are the single token resource for clarity.
 
-3. **Players spend minerals**
+3. **Players hunt neural critters**
+   - Rare neutral critters carry valuable neural biomass.
+   - They run away from nearby Ghosts and may escape/despawn if pressured badly.
+   - Players need to stun, trap, or coordinate around them before harvesting.
+   - Stunned critters create a short high-value reward window.
+
+4. **Players spend minerals**
    - Craft weapons.
    - Upgrade Ghost stats.
    - Upgrade crafted weapons.
    - Build lights, walls, regeneration stations, and turrets.
    - Send resources to teammates.
 
-4. **Night arrives**
+5. **Night arrives**
    - Mob pressure intensifies.
    - Light matters more.
    - Players must use positioning, teamwork, and prepared structures to survive.
 
-5. **The jungle escalates**
+6. **The jungle escalates**
    - Zerg mobs evolve primarily by time.
    - Player actions such as heavy killing or deep exploration can accelerate threat scaling.
    - Enemy names and colors communicate threat level: Black → Brown → Orange → Red.
 
-6. **The squad relocates**
+7. **The squad relocates**
    - Players can deconstruct structures and move on.
    - Staying in one place forever should become unsafe.
 
-7. **Repeat until extraction/survival win**
+8. **Repeat until extraction/survival win**
    - Survive five nights, potentially with a final boss before victory, with possible endless continuation later.
 
 ## Player Death

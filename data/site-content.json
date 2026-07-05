@@ -13,6 +13,10 @@
       "body": "The swarm pushes harder after dark. Stay together, protect your lights, and decide when holding ground is no longer worth it."
     },
     {
+      "title": "Hunt neural critters",
+      "body": "Rare neural critters bolt away from nearby Ghosts and vanish into the jungle if chased poorly. Stun them first, then close in to harvest their valuable neural biomass before they recover."
+    },
+    {
       "title": "Builds stay personal",
       "body": "Craft weapons and upgrade your Ghost into the role you want: sniper, close-range brawler, explosives specialist, support survivor, or something in between."
     },
@@ -391,6 +395,10 @@
       "body": "Trees, bushes, rocks, crystals, and biological resources can all be harvested by right-clicking. Harvesting converts everything into one readable resource: minerals. While harvesting, your Ghost is committed to the job and cannot fire at the same time."
     },
     {
+      "title": "Stun neural critters before they flee",
+      "body": "Some neutral jungle critters are valuable but skittish. They run away from Ghosts, so players need a stun window or coordinated body-block before harvesting their neural biomass. Letting them recover gives them a chance to escape."
+    },
+    {
       "title": "Craft one active weapon at a time",
       "body": "Players craft weapons that replace the default Ghost attack. You can only equip one weapon at a time, but crafted weapons remain available, can be swapped back to, and can be upgraded over the run."
     },
@@ -427,6 +435,10 @@
     {
       "title": "Biomass",
       "body": "Resources taken from the living jungle. Useful, but often found closer to danger."
+    },
+    {
+      "title": "Neural critters",
+      "body": "Fast neutral wildlife that runs from players. Stun or trap them before harvesting; if they recover, they may sprint away and despawn."
     },
     {
       "title": "Harvesting tradeoff",

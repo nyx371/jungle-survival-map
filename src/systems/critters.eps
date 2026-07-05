@@ -1,0 +1,110 @@
+// Neural Critters
+// Rare neutral wildlife that flees from Ghosts. Players must stun them before harvesting.
+
+const MAX_NEURAL_CRITTERS = 24;
+const CRITTER_STATE_IDLE = 0;
+const CRITTER_STATE_FLEEING = 1;
+const CRITTER_STATE_STUNNED = 2;
+const CRITTER_STATE_HARVESTED = 3;
+const CRITTER_STATE_ESCAPED = 4;
+
+const CRITTER_DETECT_RADIUS = 7 * 32;
+const CRITTER_STUN_FRAMES = 5 * FRAMES_PER_GAME_SECOND;
+const CRITTER_ESCAPE_FRAMES = 10 * FRAMES_PER_GAME_SECOND;
+const CRITTER_BASE_REWARD = 35;
+
+const CritterActive = EUDArray(MAX_NEURAL_CRITTERS);
+const CritterState = EUDArray(MAX_NEURAL_CRITTERS);
+const CritterFleeTimer = EUDArray(MAX_NEURAL_CRITTERS);
+const CritterStunTimer = EUDArray(MAX_NEURAL_CRITTERS);
+const CritterReward = EUDArray(MAX_NEURAL_CRITTERS);
+const CritterThreatPlayer = EUDArray(MAX_NEURAL_CRITTERS);
+
+function initCritters() {
+    foreach (i : py_range(MAX_NEURAL_CRITTERS)) {
+        CritterActive[i] = 0;
+        CritterState[i] = CRITTER_STATE_IDLE;
+        CritterFleeTimer[i] = 0;
+        CritterStunTimer[i] = 0;
+        CritterReward[i] = CRITTER_BASE_REWARD;
+        CritterThreatPlayer[i] = -1;
+    }
+}
+
+function spawnNeuralCritter(x, y, reward) {
+    // TODO: find free critter slot and create a neutral critter/resource unit at x/y.
+    // TODO: store CUnit pointer/position once the harness has CUnit helpers.
+}
+
+function isPlayerNearCritter(player, critter) {
+    // TODO: distance check from player hero to critter CUnit.
+    return 0;
+}
+
+function tryStunCritter(player, critter) {
+    if (CritterActive[critter] && CritterState[critter] != CRITTER_STATE_HARVESTED) {
+        CritterState[critter] = CRITTER_STATE_STUNNED;
+        CritterStunTimer[critter] = CRITTER_STUN_FRAMES;
+        CritterThreatPlayer[critter] = player;
+        return 1;
+    }
+    return 0;
+}
+
+function tryHarvestCritter(player, critter) {
+    if (CritterActive[critter] && CritterState[critter] == CRITTER_STATE_STUNNED) {
+        addMinerals(player, CritterReward[critter]);
+        CritterState[critter] = CRITTER_STATE_HARVESTED;
+        CritterActive[critter] = 0;
+        DisplayTextAll("Neural biomass harvested.");
+        return 1;
+    }
+    return 0;
+}
+
+function updateCritterFlee(critter) {
+    // TODO: issue move/order away from CritterThreatPlayer[critter].
+    CritterFleeTimer[critter] += 1;
+    if (CritterFleeTimer[critter] >= CRITTER_ESCAPE_FRAMES) {
+        CritterState[critter] = CRITTER_STATE_ESCAPED;
+        CritterActive[critter] = 0;
+        // TODO: remove or relocate critter unit.
+    }
+}
+
+function updateCritterStun(critter) {
+    if (CritterStunTimer[critter] > 0) {
+        CritterStunTimer[critter] -= 1;
+    } else {
+        CritterState[critter] = CRITTER_STATE_FLEEING;
+        CritterFleeTimer[critter] = 0;
+    }
+}
+
+function updateCritter(critter) {
+    if (!CritterActive[critter]) return;
+
+    if (CritterState[critter] == CRITTER_STATE_STUNNED) {
+        updateCritterStun(critter);
+        return;
+    }
+
+    foreach (p : py_range(MAX_PLAYERS)) {
+        if (isPlayerNearCritter(p, critter)) {
+            CritterState[critter] = CRITTER_STATE_FLEEING;
+            CritterThreatPlayer[critter] = p;
+        }
+    }
+
+    if (CritterState[critter] == CRITTER_STATE_FLEEING) {
+        updateCritterFlee(critter);
+    } else if (CritterFleeTimer[critter] > 0) {
+        CritterFleeTimer[critter] -= 1;
+    }
+}
+
+function updateCritters() {
+    foreach (i : py_range(MAX_NEURAL_CRITTERS)) {
+        updateCritter(i);
+    }
+}

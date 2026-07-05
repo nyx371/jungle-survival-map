@@ -185,9 +185,57 @@ For each player:
     Restore normal weapon behavior
 ```
 
+### Neural critter hunt mechanic
+
+Neural critters are special neutral wildlife/resource units that turn harvesting into a small hunt.
+
+#### Player-facing behavior
+
+- Neural critters are rare, valuable moving resources.
+- They run away from nearby Ghosts instead of waiting to be harvested.
+- A fleeing critter can escape into the jungle or despawn if players chase poorly.
+- Players must stun, trap, or coordinate around the critter before harvesting it.
+- While stunned, the critter can be harvested for bonus neural biomass/minerals.
+
+#### Internal responsibilities
+
+- Track active neural critter units and their state.
+- Detect nearby players and switch critters into flee behavior.
+- Detect stun effects from weapons/abilities/structures.
+- Expose `tryStunCritter` and `tryHarvestCritter` hooks to weapons/resources.
+- Despawn or relocate critters that flee too long.
+
+#### Main state
+
+```text
+CritterCUnit[critter]
+CritterActive[critter]
+CritterState[critter]       // idle, fleeing, stunned, harvested, escaped
+CritterFleeTimer[critter]
+CritterStunTimer[critter]
+CritterReward[critter]
+CritterLastThreatPlayer[critter]
+```
+
+#### Update logic
+
+```text
+For each active critter:
+  If stunned:
+    Count down stun timer
+    Allow harvesting
+    If stun ends before harvest, resume fleeing
+  Else if player is nearby:
+    Move away from nearest/threatening player
+    Increase flee timer
+    If flee timer too high, escape/despawn
+  Else:
+    Wander/idle and slowly reset flee timer
+```
+
 ### Risk
 
-Right-click/order detection will require in-game validation against CUnit order fields. This should be one of the first prototypes.
+Right-click/order detection will require in-game validation against CUnit order fields. This should be one of the first prototypes. Critter flee/stun behavior also needs early prototype validation because StarCraft critter order control may require helper units, order resets, or a scripted movement approximation.
 
 ---
 
