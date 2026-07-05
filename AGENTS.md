@@ -15,6 +15,7 @@
 
 ## Product Notes
 
+- For epScript/eudplib implementation, prefer `EUDVariable`/array-backed state over death counters for new gameplay state; reserve death counters for native trigger interoperability or API-specific needs.
 - The site is both a design/planning page and source browser for the Jungle Commandos StarCraft map.
 - Keep Home/System visuals mobile-friendly and readable.
 - Prefer concrete gameplay diagrams, symbols, and visual callouts over plain text when explaining key systems.

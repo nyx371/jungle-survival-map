@@ -13,7 +13,7 @@ StarCraft triggers are fixed-size records:
 
 `RawTrigger` is the low-level preserved trigger object. `Trigger(...)` is the safer wrapper and can split oversized logic into multiple raw triggers when needed.
 
-Avoid `Wait`. eudplib warns against it because waits block trigger execution. Use counters, frame timers, and state machines instead.
+Avoid `Wait`. eudplib warns against it because waits block trigger execution. Use `EUDVariable`/array-backed state, frame timers, and state machines instead. Prefer EUDVariables over death counters for new gameplay state; use death counters mainly for native trigger interoperability or when a specific API requires them.
 
 ## TrgUnit
 
@@ -132,7 +132,7 @@ Important stock actions:
 - `DisplayText`, `DisplayExtText`, `PlayWAV`, `MinimapPing`
 - `SetMemory`, `SetMemoryEPD`, `SetCurrentPlayer`
 
-Avoid `Wait`. Prefer timers/counters.
+Avoid `Wait`. Prefer EUDVariable timers/counters.
 
 ### Trigger construction and flow
 
@@ -172,7 +172,7 @@ For this map, these are central for hero tracking, companion ownership, resource
 - `EUDStruct`, `EUDStack`, `ObjPool` for structured runtime state.
 - `EUDFunc`, `EUDTypedFunc`, `EUDFuncPtr`, `EUDReturn` for reusable functions.
 
-Likely project shape: arrays for fixed player/area tables; structs or parallel arrays for tracked units/resources; typed funcs where CUnit/TrgUnit conversions matter.
+Likely project shape: EUDVariable/EUDArray/EUDVArray state for fixed player/area tables; structs or parallel arrays for tracked units/resources; typed funcs where CUnit/TrgUnit conversions matter. Prefer EUDVariables over death counters unless a classic trigger condition/action specifically needs death-count storage.
 
 ### Memory IO / debug strings
 

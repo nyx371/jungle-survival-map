@@ -114,7 +114,7 @@ Create upgrade state per player and upgrade application functions.
 
 Suggested model:
 
-- Runtime variables hold upgrade levels per player.
+- `EUDVariable`/array-backed runtime variables hold upgrade levels per player; prefer these over death counters for new state.
 - Upgrade definition data maps levels to DAT changes.
 - Purchase handler checks minerals, increments level, applies DAT mutation.
 
@@ -163,7 +163,7 @@ Recommended approach:
 
 - Each player has `menuPage`, `menuCursor`, and optional `menuContext` state.
 - Menus render through text display.
-- Commands can be based on deaths/switches/unit commands depending on the chosen control scheme.
+- Commands can be based on EUDVariable-backed state, switches, unit commands, or death counters depending on the chosen control scheme. Prefer EUDVariables over death counters unless native trigger interoperability makes death counters simpler.
 
 Menu sections:
 
