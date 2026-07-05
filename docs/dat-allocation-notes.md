@@ -4,7 +4,7 @@
 
 StarCraft DAT edits are global. If every player uses `Terran Ghost` and `C-10 Canister Rifle`, then changing that unit or weapon changes it for everyone.
 
-Jungle Survival wants player-specific progression, so each player should get:
+Jungle Commandos wants player-specific progression, so each player should get:
 
 - a unique hero unit DAT ID
 - a unique weapon DAT ID

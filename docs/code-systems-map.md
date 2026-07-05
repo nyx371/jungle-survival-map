@@ -1,6 +1,6 @@
 # Code Systems Map
 
-This document maps the Jungle Survival gameplay strategy into epScript/euddraft systems.
+This document maps the Jungle Commandos gameplay strategy into epScript/euddraft systems.
 
 The goal is to keep the code modular, data-driven, and easy to compile-test system by system.
 

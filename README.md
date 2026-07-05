@@ -1,4 +1,4 @@
-# Jungle Survival Map
+# Jungle Commandos Map
 
 Tactical co-op Ghost survival map concept for StarCraft/euddraft/epScript.
 

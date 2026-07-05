@@ -1,6 +1,6 @@
 # Important Systems — Detailed Implementation Plan
 
-This file expands the systems that matter most for making Jungle Survival feel like a real tactical survival map.
+This file expands the systems that matter most for making Jungle Commandos feel like a real tactical survival map.
 
 ## 1. Day/Night Director
 

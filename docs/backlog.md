@@ -1,4 +1,4 @@
-# Jungle Survival Map Backlog
+# Jungle Commandos Map Backlog
 
 ## Vision
 

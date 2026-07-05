@@ -1,8 +1,8 @@
-# Jungle Survival Gameplay Loop
+# Jungle Commandos Gameplay Loop
 
 ## Core Pitch
 
-Jungle Survival is a tactical co-op Ghost survival map for 1–5 players. Each player controls one Ghost commando, scavenges a hostile jungle, crafts weapons, can assemble a small companion squad, builds temporary safe pockets, and survives an evolving Zerg ecosystem across multiple day/night cycles.
+Jungle Commandos is a tactical co-op Ghost survival map for 1–5 players. Each player controls one Ghost commando, scavenges a hostile jungle, crafts weapons, can assemble a small companion squad, builds temporary safe pockets, and survives an evolving Zerg ecosystem across multiple day/night cycles.
 
 The map should feel tense and tactical: players are stronger together, but every expansion decision risks pulling the squad deeper into danger.
 

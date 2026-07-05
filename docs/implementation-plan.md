@@ -1,4 +1,4 @@
-# Jungle Survival Implementation Plan
+# Jungle Commandos Implementation Plan
 
 ## Technical Direction
 

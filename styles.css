@@ -1400,3 +1400,21 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
   max-width: 700px;
   line-height: 1.55;
 }
+
+/* Larger Jungle Commandos home title block */
+#home .game-hero-copy {
+  min-height: 58%;
+  padding-block: clamp(2rem, 7vw, 5.5rem);
+}
+
+#home .game-hero-copy h1 {
+  font-size: clamp(3.4rem, 8.5vw, 7.8rem);
+  line-height: 1.02;
+  margin: 0.85rem auto 1.15rem;
+}
+
+#home .game-hero-copy .tagline {
+  max-width: 900px;
+  font-size: clamp(1.15rem, 2.45vw, 1.85rem);
+  line-height: 1.45;
+}
