@@ -23,6 +23,13 @@ function activateTab(tabName, options = {}) {
   document.getElementById(tabName)?.classList.add('active');
   document.querySelectorAll('.sub-tab').forEach((tab) => tab.classList.remove('active'));
 
+  const systemTabs = document.querySelector('.system-tabs');
+  if (systemTabs) {
+    const showSystemTabs = tabName === 'system';
+    systemTabs.hidden = !showSystemTabs;
+    systemTabs.setAttribute('aria-hidden', showSystemTabs ? 'false' : 'true');
+  }
+
   if (options.scroll !== false) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
