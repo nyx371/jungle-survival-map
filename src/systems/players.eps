@@ -1,7 +1,7 @@
 // Player Hero State, Death, and Respawn
 
 const RESPAWN_DELAY_FRAMES = 12 * FRAMES_PER_GAME_SECOND;
-const DEATH_MINERAL_KEEP_PERCENT = 20;
+const DEATH_RESOURCE_KEEP_PERCENT = 20;
 
 const HeroAlive = EUDArray(MAX_PLAYERS);
 const RespawnTimer = EUDArray(MAX_PLAYERS);
@@ -28,7 +28,8 @@ function markPlayerDead(player) {
     RespawnTimer[player] = RESPAWN_DELAY_FRAMES;
     DeathsThisRun[player] += 1;
 
-    loseMostMinerals(player, DEATH_MINERAL_KEEP_PERCENT);
+    loseMostMinerals(player, DEATH_RESOURCE_KEEP_PERCENT);
+    loseMostGas(player, DEATH_RESOURCE_KEEP_PERCENT);
     destroyPlayerStructures(player);
     clearHarvestState(player);
     clearAudioDangerState(player);

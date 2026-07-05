@@ -67,7 +67,7 @@ src/
   systems/
     players.eps            # player hero lookup, alive/dead state, respawn
     day_night.eps          # 22m day/night cycle, five-night victory trigger
-    resources.eps          # right-click harvesting, node depletion, mineral rewards
+    resources.eps          # right-click continuous mining, node depletion, mineral/gas trickles
     critters.eps           # neural critters that flee unless stunned before harvest
     weapons.eps            # craft weapon, active weapon swap, DAT weapon apply
     upgrades.eps           # purchase upgrades, apply player-specific DAT changes
@@ -243,7 +243,9 @@ Gameplay rule:
 
 - Right-click to harvest.
 - A Ghost cannot fire and harvest at the same time.
-- Trees, bushes, rocks, crystals, and biological resources all become minerals.
+- Trees, bushes, rocks, crystals, and organic growth all produce minerals and vespene gas.
+- Mining is continuous: every few seconds the active node trickles in its mineral/gas yield.
+- Each resource type has a different mineral/gas bias.
 
 Responsibilities:
 
@@ -251,7 +253,7 @@ Responsibilities:
 - Randomly activate weighted resource nodes.
 - Detect player harvesting command/state.
 - Lock out firing/weapon behavior while harvesting.
-- Award minerals over time or on completion.
+- Award minerals and vespene gas every few seconds while harvesting continues.
 - Deplete/remove resource nodes.
 
 Core state:
@@ -261,6 +263,9 @@ HarvestTarget[player]
 HarvestProgress[player]
 IsHarvesting[player]
 ResourceNodeType[node]
+ResourceMineralYield[node]
+ResourceGasYield[node]
+ResourceTickFrames[node]
 ResourceNodeValue[node]
 ResourceNodeRemaining[node]
 ```
@@ -280,7 +285,7 @@ Gameplay rule:
 - Rare neural critters act like moving high-value resources.
 - They flee from nearby Ghosts and can escape if chased badly.
 - Players must stun or trap them before harvesting.
-- Stunned critters create a short reward window for neural biomass/minerals.
+- Stunned critters create a short reward window for neural biomass/minerals/gas.
 
 Responsibilities:
 
@@ -795,8 +800,9 @@ RespawnRule
 ### Milestone 4 — Harvest Prototype
 
 - Right-click resource detection.
+- Continuous mining tick: minerals and vespene gas trickle in every few seconds.
+- Resource type yield profiles: mineral-heavy, gas-heavy, and balanced nodes.
 - Harvest lockout: cannot fire while harvesting.
-- Award minerals.
 - Deplete resource.
 
 ### Milestone 5 — Weapon Craft + Swap

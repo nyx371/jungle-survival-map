@@ -111,7 +111,7 @@ For each active player:
     Track CUnit pointer and position
   Else if hero was alive last frame:
     Mark dead
-    Apply mineral loss
+    Apply mineral and gas loss
     Destroy owned structures
     Start respawn timer
   Else if respawn timer complete:
@@ -121,7 +121,7 @@ For each active player:
 
 ### Design notes
 
-Death should hurt enough that players fear it, but not reset the whole build. Losing structures and most minerals creates tactical cost while preserving long-term progression.
+Death should hurt enough that players fear it, but not reset the whole build. Losing structures plus most carried minerals and gas creates tactical cost while preserving long-term progression.
 
 ---
 
@@ -137,8 +137,10 @@ This system creates the basic economy loop.
   - bushes
   - rocks
   - crystals
-  - biological resources
-- Everything converts into minerals.
+  - organic growth
+- Every node produces both minerals and vespene gas.
+- Mining is continuous: while the Ghost keeps harvesting, resources trickle in every few seconds.
+- Resource types have different mineral/gas profiles: some are mineral-heavy, some gas-heavy, some balanced.
 - A Ghost cannot fire and harvest at the same time.
 
 ### Internal responsibilities
@@ -146,9 +148,9 @@ This system creates the basic economy loop.
 - Spawn active resource nodes from candidate markers.
 - Detect when a Ghost is harvesting a node.
 - Lock out firing while harvesting.
-- Add harvest progress.
-- Award minerals.
-- Deplete/remove nodes.
+- Add harvest progress and tick timer.
+- Award mineral and vespene trickles per tick.
+- Deplete/remove nodes as their combined value is mined out.
 - Eventually respawn or reroll resources if desired.
 
 ### Main state
@@ -158,7 +160,9 @@ ResourceNodeCUnit[node]
 ResourceType[node]
 ResourceRemaining[node]
 ResourceMaxValue[node]
-ResourceHarvestRate[node]
+ResourceMineralYield[node]
+ResourceGasYield[node]
+ResourceTickFrames[node]
 ResourceActive[node]
 
 IsHarvesting[player]
@@ -175,10 +179,11 @@ For each player:
   If target is a resource node:
     IsHarvesting = true
     Disable/neutralize weapon firing
-    Add progress
-    If progress threshold reached:
-      Add minerals
-      Reduce node remaining
+    Count down harvest tick
+    If tick completes:
+      Add minerals and vespene from the node yield profile
+      Reduce node remaining value
+      Reset tick timer
       If depleted: remove node
   Else:
     IsHarvesting = false
@@ -195,7 +200,7 @@ Neural critters are special neutral wildlife/resource units that turn harvesting
 - They run away from nearby Ghosts instead of waiting to be harvested.
 - A fleeing critter can escape into the jungle or despawn if players chase poorly.
 - Players must stun, trap, or coordinate around the critter before harvesting it.
-- While stunned, the critter can be harvested for bonus neural biomass/minerals.
+- While stunned, the critter can be harvested for bonus neural biomass/minerals/gas.
 
 #### Internal responsibilities
 

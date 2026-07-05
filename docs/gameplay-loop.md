@@ -25,10 +25,10 @@ The game gets progressively harder over time.
    - Pressure exists, but is not constant.
 
 2. **Players harvest resources**
-   - Trees, bushes, rocks, crystals, and biological resources all convert into minerals.
-   - Harvesting is done by right-clicking resources.
+   - Trees, bushes, rocks, crystals, and organic growth all produce minerals and vespene gas.
+   - Harvesting is continuous: right-click a node and resources trickle in every few seconds while the Ghost keeps working.
+   - Each resource type has a different mineral/gas bias: trees and rocks lean minerals, crystals lean vespene, bushes and organic growth sit between them.
    - A Ghost cannot fire and harvest at the same time.
-   - Minerals are the single token resource for clarity.
 
 3. **Players hunt neural critters**
    - Rare neutral critters carry valuable neural biomass.
@@ -36,12 +36,12 @@ The game gets progressively harder over time.
    - Players need to stun, trap, or coordinate around them before harvesting.
    - Stunned critters create a short high-value reward window.
 
-4. **Players spend minerals**
-   - Craft weapons.
+4. **Players spend resources**
+   - Craft weapons with mineral/gas costs.
    - Upgrade Ghost stats.
    - Upgrade crafted weapons.
    - Build lights, walls, regeneration stations, and turrets.
-   - Send resources to teammates.
+   - Send minerals or vespene gas to teammates.
 
 5. **Night arrives**
    - Mob pressure intensifies.
@@ -67,7 +67,7 @@ Death should punish mistakes without removing players from the run.
 When a Ghost dies:
 
 - The player respawns at a random position.
-- The player loses most carried resources.
+- The player loses most carried minerals and vespene gas.
 - All structures built by that player are destroyed/lost.
 - The player keeps upgrades and progression.
 

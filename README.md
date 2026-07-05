@@ -2,7 +2,7 @@
 
 Tactical co-op Ghost survival map concept for StarCraft/euddraft/epScript.
 
-Players survive five escalating nights in the jungle by scavenging resources, crafting weapons, building lighted safe pockets, and fighting evolving Zerg-based mobs.
+Players survive five escalating nights in the jungle by continuously mining minerals and vespene gas, crafting weapons, building lighted safe pockets, and fighting evolving Zerg-based mobs.
 
 ## Live site
 

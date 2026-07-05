@@ -72,7 +72,7 @@ Acceptance criteria:
 
 #### Simple resource reward system
 
-- All kill/harvest/resource actions award minerals.
+- Harvest/resource actions award minerals and vespene gas according to resource type yield profiles.
 - Different sources give different mineral amounts.
 
 Acceptance criteria:

@@ -205,7 +205,7 @@ Acceptance criteria:
 
 - Resources spawn differently across runs.
 - Rewards are consistent and visible.
-- Players can transfer minerals.
+- Players can transfer minerals and vespene gas.
 
 ## Phase 6 — Mob System
 
@@ -250,7 +250,7 @@ Acceptance criteria:
 
 - At least one structure can be built.
 - It can be deconstructed.
-- Deconstruction clears the structure and returns minerals.
+- Deconstruction clears the structure and returns minerals/gas according to the structure cost profile.
 
 ## Phase 8 — SFX and Feedback
 

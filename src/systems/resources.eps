@@ -1,14 +1,26 @@
 // Resource Harvesting
-// Right-click harvesting. Harvesting locks out firing until complete.
+// Right-click continuous mining. Harvesting locks out firing while mineral/gas trickles arrive.
 
 const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
 const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
-const RESOURCE_BIOMASS = 4;
+const RESOURCE_ORGANIC_GROWTH = 4;
 
-const HARVEST_TICK_FRAMES = 8;
+const HARVEST_TICK_FRAMES = 3 * FRAMES_PER_GAME_SECOND;
 const HARVEST_WEAPON_LOCKOUT = 1;
+
+// Baseline trickle profile per harvest tick. Final values should be tuned by map pacing.
+const TREE_MINERALS_PER_TICK = 4;
+const TREE_GAS_PER_TICK = 1;
+const BUSH_MINERALS_PER_TICK = 2;
+const BUSH_GAS_PER_TICK = 2;
+const ROCK_MINERALS_PER_TICK = 6;
+const ROCK_GAS_PER_TICK = 1;
+const CRYSTAL_MINERALS_PER_TICK = 2;
+const CRYSTAL_GAS_PER_TICK = 5;
+const ORGANIC_MINERALS_PER_TICK = 3;
+const ORGANIC_GAS_PER_TICK = 3;
 
 const IsHarvesting = EUDArray(MAX_PLAYERS);
 const HarvestTarget = EUDArray(MAX_PLAYERS);
@@ -21,9 +33,23 @@ function addMinerals(player, amount) {
     // Conceptually: SetResources(CurrentPlayer/player, Add, amount, Ore).
 }
 
+function addGas(player, amount) {
+    // TODO: replace with exact player resource mutation helper once harness is compile-tested.
+    // Conceptually: SetResources(CurrentPlayer/player, Add, amount, Gas).
+}
+
+function addHarvestResources(player, minerals, gas) {
+    if (minerals > 0) addMinerals(player, minerals);
+    if (gas > 0) addGas(player, gas);
+}
+
 function loseMostMinerals(player, keepPercent) {
     // TODO: read current minerals, keep keepPercent, subtract the rest.
     // Death keeps progression but destroys momentum.
+}
+
+function loseMostGas(player, keepPercent) {
+    // TODO: read current vespene gas, keep keepPercent, subtract the rest.
 }
 
 function initResources() {
@@ -54,10 +80,35 @@ function startHarvest(player, target) {
     setPlayerHarvestLockout(player, HARVEST_WEAPON_LOCKOUT);
 }
 
+function getHarvestMineralsPerTick(resourceType) {
+    if (resourceType == RESOURCE_TREE) return TREE_MINERALS_PER_TICK;
+    if (resourceType == RESOURCE_BUSH) return BUSH_MINERALS_PER_TICK;
+    if (resourceType == RESOURCE_ROCK) return ROCK_MINERALS_PER_TICK;
+    if (resourceType == RESOURCE_CRYSTAL) return CRYSTAL_MINERALS_PER_TICK;
+    if (resourceType == RESOURCE_ORGANIC_GROWTH) return ORGANIC_MINERALS_PER_TICK;
+    return 1;
+}
+
+function getHarvestGasPerTick(resourceType) {
+    if (resourceType == RESOURCE_TREE) return TREE_GAS_PER_TICK;
+    if (resourceType == RESOURCE_BUSH) return BUSH_GAS_PER_TICK;
+    if (resourceType == RESOURCE_ROCK) return ROCK_GAS_PER_TICK;
+    if (resourceType == RESOURCE_CRYSTAL) return CRYSTAL_GAS_PER_TICK;
+    if (resourceType == RESOURCE_ORGANIC_GROWTH) return ORGANIC_GAS_PER_TICK;
+    return 0;
+}
+
+function getHarvestTargetResourceType(target) {
+    // TODO: map target unit/CUnit/custom value to RESOURCE_* type.
+    return RESOURCE_TREE;
+}
+
 function finishHarvestTick(player) {
-    // TODO: read target resource type/value.
-    // TODO: add minerals and reduce remaining node value.
-    addMinerals(player, 1);
+    const resourceType = getHarvestTargetResourceType(HarvestTarget[player]);
+    const minerals = getHarvestMineralsPerTick(resourceType);
+    const gas = getHarvestGasPerTick(resourceType);
+    addHarvestResources(player, minerals, gas);
+    // TODO: reduce remaining node value by minerals + gas, deplete/remove at zero.
 }
 
 function updateHarvesting(player) {
@@ -72,6 +123,7 @@ function updateHarvesting(player) {
         }
 
         // TODO: cancel harvest if player gives another order, target depletes, or danger interrupt occurs.
+        // Mining is continuous: every HARVEST_TICK_FRAMES, the active node trickles resources.
     }
 }
 

@@ -6,7 +6,7 @@
     },
     {
       "title": "Days are your chance to breathe",
-      "body": "Scout the jungle, harvest resources, craft weapons, and set up a temporary safe pocket before night returns."
+      "body": "Scout the jungle, harvest mineral/gas trickles, craft weapons, and set up a temporary safe pocket before night returns."
     },
     {
       "title": "Nights are when plans get tested",
@@ -391,8 +391,8 @@
       "body": "Each player controls a single Ghost hero and must micro it carefully. The camera is free by default, with optional camera follow for players who want it. Movement is unconstrained: the whole jungle is open."
     },
     {
-      "title": "Harvest everything into minerals",
-      "body": "Trees, bushes, rocks, crystals, and biological resources can all be harvested by right-clicking. Harvesting converts everything into one readable resource: minerals. While harvesting, your Ghost is committed to the job and cannot fire at the same time."
+      "title": "Harvest minerals and vespene over time",
+      "body": "Trees, bushes, rocks, crystals, and organic growth all produce both minerals and vespene gas while a Ghost keeps harvesting. Every few seconds, resources trickle in; each node type has its own mineral/gas bias."
     },
     {
       "title": "Stun neural critters before they flee",
@@ -418,23 +418,23 @@
   "resources": [
     {
       "title": "Trees",
-      "body": "Common daytime harvest targets. Good for steady minerals while scouting the edges of safer areas."
+      "body": "Common daytime harvest targets with a mineral-heavy trickle and a little vespene. Good for steady early income while scouting safer edges."
     },
     {
       "title": "Bushes",
-      "body": "Fast, small resource pickups that reward movement and checking side paths."
+      "body": "Fast, small organic harvest targets. They trickle modest minerals and slightly better gas than trees, rewarding movement and side-path checks."
     },
     {
       "title": "Rocks",
-      "body": "Slower to harvest, but worth more. Best taken when the squad has secured enough light or cover."
+      "body": "Slow, mineral-rich nodes with low gas output. Best taken when the squad has secured enough light or cover for a longer harvest."
     },
     {
       "title": "Crystals",
-      "body": "High-value finds that create a reason to push deeper into risky jungle territory."
+      "body": "High-value vespene-rich finds with a smaller mineral trickle. They create a reason to push deeper into risky jungle territory."
     },
     {
-      "title": "Biomass",
-      "body": "Resources taken from the living jungle. Useful, but often found closer to danger."
+      "title": "Organic growth",
+      "body": "Organic growth produces a balanced mineral/gas trickle and is often found closer to danger."
     },
     {
       "title": "Neural critters",
@@ -442,7 +442,7 @@
     },
     {
       "title": "Harvesting tradeoff",
-      "body": "Right-click to harvest. While harvesting, your Ghost is committed and cannot fire, so teammates and timing matter."
+      "body": "Right-click to begin continuous harvesting. Every few seconds minerals and vespene trickle in until the node depletes, the Ghost is interrupted, or the player moves. While harvesting, your Ghost cannot fire."
     }
   ]
 }
