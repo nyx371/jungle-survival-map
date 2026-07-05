@@ -160,7 +160,7 @@
             <p class="eyebrow">Scavenging</p>
             <h2>Resources</h2>
             <p>
-              Everything you harvest becomes minerals, keeping the economy readable while still making the jungle feel varied.
+              Harvesting trickles minerals and vespene gas over time, with each resource type leaning toward different yields.
             </p>
           </div>
           <div id="resource-grid" class="grid"></div>
@@ -191,14 +191,55 @@
       </section>
 
       <section id="source" class="tab-panel">
-        <div class="panel section-heading vertical">
-          <p class="eyebrow">Generated source browser</p>
-          <h2>EPS source code</h2>
-          <p>
-            This tab loads the committed epScript source files from the repository. As systems are
-            implemented, this becomes the quick in-browser source viewer for the map logic.
-          </p>
-        </div>
+        <section class="source-system-map panel" aria-label="Jungle Survival source system map">
+          <div class="source-map-copy">
+            <p class="eyebrow">EPS system map</p>
+            <h2>How the map code is wired</h2>
+            <p>
+              `main.eps` stays orchestration-only: it initializes every system, then each frame updates
+              the survival loop, resource economy, critter hunts, combat, structures, mobs, and victory state.
+            </p>
+          </div>
+          <div class="source-map-grid">
+            <article class="source-map-node core">
+              <span>01</span>
+              <strong>Core</strong>
+              <em>constants · DAT registry</em>
+            </article>
+            <article class="source-map-node loop">
+              <span>02</span>
+              <strong>Loop</strong>
+              <em>day/night · players · camera</em>
+            </article>
+            <article class="source-map-node economy">
+              <span>03</span>
+              <strong>Economy</strong>
+              <em>resources · neural critters · transfers</em>
+            </article>
+            <article class="source-map-node combat">
+              <span>04</span>
+              <strong>Combat</strong>
+              <em>weapons · upgrades · audio</em>
+            </article>
+            <article class="source-map-node base">
+              <span>05</span>
+              <strong>Safe pockets</strong>
+              <em>structures · lights</em>
+            </article>
+            <article class="source-map-node threat">
+              <span>06</span>
+              <strong>Threat</strong>
+              <em>mobs · evolution · victory</em>
+            </article>
+          </div>
+          <div class="source-map-flow" aria-hidden="true">
+            <span>onPluginStart()</span>
+            <b>→</b>
+            <span>beforeTriggerExec()</span>
+            <b>→</b>
+            <span>win / endless</span>
+          </div>
+        </section>
         <div class="source-layout panel">
           <aside id="source-list" class="source-list" aria-label="EPS source files"></aside>
           <article class="source-viewer">
