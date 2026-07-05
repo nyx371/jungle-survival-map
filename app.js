@@ -12,6 +12,8 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+const systemSectionIds = ['system-loop', 'system-resources', 'system-enemies', 'system-upgrades'];
+
 function activateTab(tabName, options = {}) {
   document.querySelectorAll('.tab').forEach((tab) => {
     const active = tab.dataset.tab === tabName;
@@ -35,20 +37,56 @@ function activateTab(tabName, options = {}) {
   }
 }
 
+function activateSystemSection(sectionId, options = {}) {
+  activateTab('system', { scroll: false });
+  document.querySelectorAll('.sub-tab').forEach((tab) => {
+    tab.classList.toggle('active', tab.dataset.systemTarget === sectionId);
+  });
+
+  if (options.scroll !== false) {
+    requestAnimationFrame(() => {
+      document.getElementById(sectionId)?.scrollIntoView({
+        behavior: options.smooth === false ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    });
+  }
+}
+
+function activateRouteFromHash(options = {}) {
+  const hash = window.location.hash.replace(/^#/, '');
+  if (systemSectionIds.includes(hash)) {
+    activateSystemSection(hash, options);
+    return;
+  }
+
+  if (hash === 'system' || hash === 'home' || hash === 'source') {
+    activateTab(hash, options);
+    return;
+  }
+
+  activateTab('home', { scroll: false });
+}
+
 function setupTabs() {
   document.querySelectorAll('.tab').forEach((button) => {
-    button.addEventListener('click', () => activateTab(button.dataset.tab));
+    button.addEventListener('click', () => {
+      activateTab(button.dataset.tab);
+      history.replaceState(null, '', `#${button.dataset.tab}`);
+    });
   });
 
   document.querySelectorAll('[data-system-target]').forEach((button) => {
     button.addEventListener('click', () => {
-      activateTab('system', { scroll: false });
-      document.querySelectorAll('.sub-tab').forEach((tab) => tab.classList.remove('active'));
-      button.classList.add('active');
-      document.getElementById(button.dataset.systemTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const target = button.dataset.systemTarget;
+      history.replaceState(null, '', `#${target}`);
+      activateSystemSection(target);
     });
   });
+
+  window.addEventListener('hashchange', () => activateRouteFromHash());
 }
+
 
 async function loadJson(path) {
   const response = await fetch(path, { cache: 'no-store' });
@@ -162,6 +200,7 @@ function renderSourceList(files) {
 
 async function init() {
   setupTabs();
+  activateRouteFromHash({ smooth: false });
   try {
     state.content = await loadJson('data/site-content.json');
     renderGameplayLoop(state.content.gameplayLoop);
