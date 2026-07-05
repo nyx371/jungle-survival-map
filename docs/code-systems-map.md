@@ -4,7 +4,7 @@ This document maps the Jungle Commandos gameplay strategy into epScript/euddraft
 
 The goal is to keep the code modular, data-driven, and easy to compile-test system by system.
 
-For deeper implementation notes on the highest-priority gameplay systems, see [`important-systems.md`](important-systems.md).
+For deeper implementation notes on the highest-priority gameplay systems, see [`important-systems.md`](important-systems.md). For eudplib trigger/CUnit/TrgUnit implementation notes, see [`eudplib-trigger-notes.md`](eudplib-trigger-notes.md).
 
 ## Top-Level Runtime Flow
 
