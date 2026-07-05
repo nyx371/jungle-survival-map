@@ -4,7 +4,7 @@
 
 - This repo is `nyx371/jungle-survival-map` and publishes to the GitHub Pages site at `https://nyx371.github.io/jungle-survival-map/`.
 - Push changes directly to `main` immediately.
-- GitHub Pages currently serves from the `gh-pages` branch because the legacy `main /` Pages deploy path wedged on 2026-07-05. After site changes, also mirror the same commit/content to `gh-pages` with `git push origin HEAD:gh-pages` and verify the live page.
+- GitHub Pages deploys through `.github/workflows/pages.yml` from `main`. Do not use the old `gh-pages` mirror workaround unless Actions Pages breaks again.
 - Do not open PRs for this repo unless K explicitly asks for one.
 - After code/UI/content changes, run the smallest meaningful validation before pushing, for example:
   - `node --check app.js`
