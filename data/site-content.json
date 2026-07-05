@@ -384,7 +384,7 @@
     },
     {
       "title": "Scavenge by day, endure the night",
-      "body": "Pressure comes in waves instead of constant attacks. Days give players room to scout, harvest, expand, and prepare. Nights are more intense, with heavier mob pressure and a greater need for light, teamwork, and smart positioning."
+      "body": "Pressure comes in waves instead of constant attacks. The 256x256 map is divided into 16x16-tile spawn areas; each area watches player presence, light coverage, and mob density before spawning or draining pressure. Nights raise the respawn pressure."
     },
     {
       "title": "Control one Ghost, not an army",
@@ -404,7 +404,7 @@
     },
     {
       "title": "Build safe pockets, then abandon them",
-      "body": "Light sources gradually brighten the nearby screen and prevent mob spawning in their area. Walls, regeneration stations, and turrets help the squad hold ground \u2014 but death destroys your built structures, and the map pressures you to move."
+      "body": "Light sources gradually brighten the nearby screen and suppress mob spawning in covered 16x16 areas. Walls, regeneration stations, and turrets help the squad hold ground \u2014 but death destroys your built structures, and the map pressures you to move."
     },
     {
       "title": "Death hurts, but progression survives",

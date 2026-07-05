@@ -480,9 +480,12 @@ Area-based mob spawning and respawn.
 
 Responsibilities:
 
-- Divide map into jungle zones.
-- Track mob density per zone.
-- Spawn mobs when zone density is below target.
+- Divide the 256x256 tile map into 16x16 tile areas: 16 columns × 16 rows = 256 areas.
+- Index preplaced Flag placeholder units as spawn markers at map start.
+- Store spawn marker x/y positions and map each marker to its area.
+- Track mob density, player presence, cooldown, threat budget, and light level per area.
+- Spawn mobs when an active area is below target density.
+- Despawn or drain idle pressure in fully lit areas.
 - Increase spawn intensity at night.
 - Avoid spawning inside lit/no-spawn areas.
 - Scale for 1–5 players.
@@ -490,19 +493,30 @@ Responsibilities:
 Core state:
 
 ```text
-ZoneMobCount[zone]
-ZoneTargetDensity[zone]
-ZoneThreatWeight[zone]
-ZoneSpawnCooldown[zone]
+AreaCurrentDensity[area]
+AreaTargetDensity[area]
+AreaThreatBudget[area]
+AreaSpawnCooldown[area]
+AreaPlayerPresence[area]
+AreaLightLevel[area]
+AreaSpawnStart[area]
+AreaSpawnCount[area]
+SpawnMarkerX[index]
+SpawnMarkerY[index]
+SpawnMarkerArea[index]
+SpawnMarkerActive[index]
 ```
 
 Important functions:
 
 ```text
-updateMobSpawns()
-spawnMobInZone(zone, family)
-canSpawnAt(position)
-getSpawnBudget(zone)
+indexMobSpawnMarkers()
+refreshAreaPlayerPresence()
+refreshAreaLightLevels()
+updateMobs()
+spawnMobInArea(area)
+canSpawnAt(x, y)
+getAreaSpawnBudget(area)
 ```
 
 ---

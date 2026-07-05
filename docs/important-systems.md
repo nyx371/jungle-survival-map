@@ -438,7 +438,8 @@ This system makes the jungle feel alive and increasingly hostile.
 
 ### Player-facing behavior
 
-- Mobs spawn by jungle area, not just fixed points.
+- The 256x256 tile map is divided into 16x16 tile areas, creating a 16x16 grid of 256 mob areas.
+- Mobs spawn by area using map-authored spawn markers, not purely random coordinates.
 - Pressure comes in waves.
 - Nights are more dangerous.
 - Mobs evolve over time.
@@ -463,9 +464,11 @@ This system makes the jungle feel alive and increasingly hostile.
 
 ### Internal responsibilities
 
-- Track zones.
-- Track zone density.
-- Spawn mobs if a zone is below target density.
+- Index preplaced Flag placeholder units on map start.
+- Store each marker position in arrays mapped to its 16x16 area.
+- Track area density, player presence, spawn cooldown, and light level.
+- Spawn mobs if an area is below target density and has valid unlit markers.
+- Despawn or drain idle mobs in fully lit areas.
 - Block spawning near lights.
 - Scale spawn pressure for 1–5 players.
 - Apply evolution tiers using DAT changes.
@@ -474,10 +477,18 @@ This system makes the jungle feel alive and increasingly hostile.
 ### Main state
 
 ```text
-ZoneTargetDensity[zone]
-ZoneCurrentDensity[zone]
-ZoneSpawnCooldown[zone]
-ZoneThreatBudget[zone]
+AreaTargetDensity[area]
+AreaCurrentDensity[area]
+AreaSpawnCooldown[area]
+AreaThreatBudget[area]
+AreaPlayerPresence[area]
+AreaLightLevel[area]
+AreaSpawnStart[area]
+AreaSpawnCount[area]
+SpawnMarkerX[index]
+SpawnMarkerY[index]
+SpawnMarkerArea[index]
+SpawnMarkerActive[index]
 
 GlobalMobTier
 MobFamilyTier[family]
@@ -488,14 +499,23 @@ NightSpawnMultiplier
 ### Update logic
 
 ```text
+On map start:
+  Scan preplaced Flag placeholder units
+  Convert each flag position into a 16x16 area index
+  Store marker x/y/area in spawn arrays
+  Hide or remove placeholder flags
+
 Every spawn tick:
-  For each zone:
-    Calculate target density
+  Refresh which area each living player is inside
+  Refresh synchronized light suppression per area
+  For each area:
+    If fully lit: despawn/drain idle area mobs
+    Else calculate target density
     Apply day/night multiplier
     Apply player count scaling
-    If density below target:
+    If density below target and area should be active:
       Pick mob family
-      Pick spawn point not blocked by light
+      Pick a Flag marker in that area not blocked by light
       Spawn mob
 
 Every evolution tick:

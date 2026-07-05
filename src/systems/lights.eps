@@ -37,6 +37,12 @@ function isSpawnBlockedAt(x, y) {
     return 0;
 }
 
+function getAreaSpawnBlockLightLevel(area) {
+    // TODO: synchronized area coverage query for 16x16 mob areas.
+    // Return 0 for no light, 1-99 for partial suppression, 100 for full no-spawn/despawn pressure.
+    return 0;
+}
+
 function updateLocalBrightness(player) {
     // TODO: local-only brightness/vision effect based on nearby lights.
     // Must not affect synchronized gameplay state.

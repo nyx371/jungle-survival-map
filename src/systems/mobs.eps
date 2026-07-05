@@ -1,18 +1,95 @@
 // Area Mob Spawning and Respawn
+// 256x256 map tiles divided into 16x16 tile areas = 16x16 spawn areas.
+// Map authors pre-place Flag placeholder units to mark valid mob spawn positions.
 
-const MAX_ZONES = 16;
-const ZoneTargetDensity = EUDArray(MAX_ZONES);
-const ZoneCurrentDensity = EUDArray(MAX_ZONES);
-const ZoneSpawnCooldown = EUDArray(MAX_ZONES);
-const ZoneThreatBudget = EUDArray(MAX_ZONES);
+const MAP_TILE_WIDTH = 256;
+const MAP_TILE_HEIGHT = 256;
+const MOB_AREA_TILE_SIZE = 16;
+const MOB_AREA_COLUMNS = MAP_TILE_WIDTH / MOB_AREA_TILE_SIZE;
+const MOB_AREA_ROWS = MAP_TILE_HEIGHT / MOB_AREA_TILE_SIZE;
+const MAX_MOB_AREAS = MOB_AREA_COLUMNS * MOB_AREA_ROWS;
+
+// Tune after map pass. This is the total number of Flag markers we can index.
+const MAX_MOB_SPAWN_MARKERS = 1024;
+const MOB_SPAWN_PLACEHOLDER_UNIT = $U("Flag");
+
+const AreaTargetDensity = EUDArray(MAX_MOB_AREAS);
+const AreaCurrentDensity = EUDArray(MAX_MOB_AREAS);
+const AreaSpawnCooldown = EUDArray(MAX_MOB_AREAS);
+const AreaThreatBudget = EUDArray(MAX_MOB_AREAS);
+const AreaPlayerPresence = EUDArray(MAX_MOB_AREAS);
+const AreaLightLevel = EUDArray(MAX_MOB_AREAS);
+const AreaSpawnStart = EUDArray(MAX_MOB_AREAS);
+const AreaSpawnCount = EUDArray(MAX_MOB_AREAS);
+
+const SpawnMarkerX = EUDArray(MAX_MOB_SPAWN_MARKERS);
+const SpawnMarkerY = EUDArray(MAX_MOB_SPAWN_MARKERS);
+const SpawnMarkerArea = EUDArray(MAX_MOB_SPAWN_MARKERS);
+const SpawnMarkerActive = EUDArray(MAX_MOB_SPAWN_MARKERS);
+const SpawnMarkerCount = EUDVariable();
+
+function getMobAreaFromTile(tileX, tileY) {
+    const areaX = tileX / MOB_AREA_TILE_SIZE;
+    const areaY = tileY / MOB_AREA_TILE_SIZE;
+    return areaY * MOB_AREA_COLUMNS + areaX;
+}
+
+function getMobAreaFromPosition(x, y) {
+    // StarCraft positions are pixels; terrain tiles are 32x32 pixels.
+    return getMobAreaFromTile(x / 32, y / 32);
+}
+
+function getAreaMinTileX(area) { return (area % MOB_AREA_COLUMNS) * MOB_AREA_TILE_SIZE; }
+function getAreaMinTileY(area) { return (area / MOB_AREA_COLUMNS) * MOB_AREA_TILE_SIZE; }
+function getAreaMaxTileX(area) { return getAreaMinTileX(area) + MOB_AREA_TILE_SIZE - 1; }
+function getAreaMaxTileY(area) { return getAreaMinTileY(area) + MOB_AREA_TILE_SIZE - 1; }
+
+function clearMobAreaState(area) {
+    AreaTargetDensity[area] = 4;
+    AreaCurrentDensity[area] = 0;
+    AreaSpawnCooldown[area] = 0;
+    AreaThreatBudget[area] = 100;
+    AreaPlayerPresence[area] = 0;
+    AreaLightLevel[area] = 0;
+    AreaSpawnStart[area] = 0;
+    AreaSpawnCount[area] = 0;
+}
+
+function indexMobSpawnMarker(markerUnit) {
+    const markerIndex = SpawnMarkerCount;
+    if (markerIndex >= MAX_MOB_SPAWN_MARKERS) return;
+
+    const x = getUnitX(markerUnit);
+    const y = getUnitY(markerUnit);
+    const area = getMobAreaFromPosition(x, y);
+
+    SpawnMarkerX[markerIndex] = x;
+    SpawnMarkerY[markerIndex] = y;
+    SpawnMarkerArea[markerIndex] = area;
+    SpawnMarkerActive[markerIndex] = 1;
+    AreaSpawnCount[area] += 1;
+    SpawnMarkerCount += 1;
+
+    // TODO: remove or hide the placeholder unit after indexing so players never see flags.
+}
+
+function indexMobSpawnMarkers() {
+    SpawnMarkerCount = 0;
+    foreach (area : py_range(MAX_MOB_AREAS)) {
+        AreaSpawnStart[area] = 0;
+        AreaSpawnCount[area] = 0;
+    }
+
+    // TODO: scan all preplaced Flag units and call indexMobSpawnMarker(flagUnit).
+    // Important implementation detail: if we need fast contiguous ranges per area,
+    // either place/index flags area-by-area or compact/sort markers after scanning.
+}
 
 function initMobs() {
-    foreach (z : py_range(MAX_ZONES)) {
-        ZoneTargetDensity[z] = 4;
-        ZoneCurrentDensity[z] = 0;
-        ZoneSpawnCooldown[z] = 0;
-        ZoneThreatBudget[z] = 100;
+    foreach (area : py_range(MAX_MOB_AREAS)) {
+        clearMobAreaState(area);
     }
+    indexMobSpawnMarkers();
 }
 
 function getPlayerCountSpawnScale() {
@@ -20,35 +97,106 @@ function getPlayerCountSpawnScale() {
     return 100;
 }
 
-function getZoneSpawnBudget(zone) {
-    return ZoneThreatBudget[zone] * getNightSpawnMultiplier() / 100 * getPlayerCountSpawnScale() / 100;
+function refreshAreaPlayerPresence() {
+    foreach (area : py_range(MAX_MOB_AREAS)) {
+        AreaPlayerPresence[area] = 0;
+    }
+
+    foreach (p : py_range(MAX_PLAYERS)) {
+        if (HeroAlive[p]) {
+            const hero = getPlayerHeroUnit(p);
+            const area = getMobAreaFromPosition(getUnitX(hero), getUnitY(hero));
+            AreaPlayerPresence[area] += 1;
+        }
+    }
+}
+
+function refreshAreaLightLevels() {
+    foreach (area : py_range(MAX_MOB_AREAS)) {
+        // TODO: ask lights.eps for synchronized gameplay light coverage in this 16x16 area.
+        // AreaLightLevel should represent spawn suppression, not local screen brightness.
+        AreaLightLevel[area] = getAreaSpawnBlockLightLevel(area);
+    }
+}
+
+function getAreaSpawnBudget(area) {
+    const baseBudget = AreaThreatBudget[area] * getNightSpawnMultiplier() / 100 * getPlayerCountSpawnScale() / 100;
+    if (AreaPlayerPresence[area] > 0) return baseBudget;
+    return baseBudget / 2;
+}
+
+function shouldSpawnInArea(area) {
+    if (AreaSpawnCount[area] == 0) return 0;
+    if (AreaLightLevel[area] >= 100) return 0;
+    if (AreaCurrentDensity[area] >= AreaTargetDensity[area]) return 0;
+
+    // Areas containing players get active pressure; nearby/empty areas can refill more slowly.
+    if (AreaPlayerPresence[area] > 0) return 1;
+    return getNightSpawnMultiplier() > 100;
+}
+
+function shouldDespawnAreaMobs(area) {
+    // Lit safe pockets should drain pressure instead of endlessly fighting spawn attempts.
+    if (AreaLightLevel[area] >= 100) return 1;
+    return 0;
 }
 
 function canSpawnAt(x, y) {
     if (isSpawnBlockedAt(x, y)) return 0;
-    // TODO: reject if too close to player hero or invalid terrain.
+    // TODO: reject if too close to player hero, invalid terrain, or inside hard no-spawn zones.
     return 1;
 }
 
-function spawnMobInZone(zone) {
-    // TODO: choose family based on zone budget, current tier, day/night.
-    // TODO: choose spawn point inside zone where canSpawnAt(x, y) == 1.
+function chooseSpawnMarkerInArea(area) {
+    // TODO: choose a random active marker where SpawnMarkerArea[index] == area.
+    // Placeholder returns the first active marker in the area.
+    foreach (i : py_range(MAX_MOB_SPAWN_MARKERS)) {
+        if (SpawnMarkerActive[i] && SpawnMarkerArea[i] == area) return i;
+    }
+    return -1;
 }
 
-function updateZoneSpawning(zone) {
-    if (ZoneSpawnCooldown[zone] > 0) {
-        ZoneSpawnCooldown[zone] -= 1;
+function spawnMobInArea(area) {
+    const marker = chooseSpawnMarkerInArea(area);
+    if (marker < 0) return;
+
+    const x = SpawnMarkerX[marker];
+    const y = SpawnMarkerY[marker];
+    if (!canSpawnAt(x, y)) return;
+
+    // TODO: choose family based on area budget, current tier, day/night, and nearby players.
+    // TODO: create the chosen mob at x/y and tag it with its area for density/despawn tracking.
+    AreaCurrentDensity[area] += 1;
+}
+
+function despawnAreaMobs(area) {
+    // TODO: remove idle/unengaged mobs tagged to this area when light fully suppresses it.
+    // Do not delete mobs actively fighting a player unless the design wants lights to purge them.
+    AreaCurrentDensity[area] = 0;
+}
+
+function updateAreaSpawning(area) {
+    if (shouldDespawnAreaMobs(area)) {
+        despawnAreaMobs(area);
         return;
     }
 
-    if (ZoneCurrentDensity[zone] < ZoneTargetDensity[zone]) {
-        spawnMobInZone(zone);
-        ZoneSpawnCooldown[zone] = 4 * FRAMES_PER_GAME_SECOND;
+    if (AreaSpawnCooldown[area] > 0) {
+        AreaSpawnCooldown[area] -= 1;
+        return;
+    }
+
+    if (shouldSpawnInArea(area)) {
+        spawnMobInArea(area);
+        AreaSpawnCooldown[area] = 4 * FRAMES_PER_GAME_SECOND;
     }
 }
 
 function updateMobs() {
-    foreach (z : py_range(MAX_ZONES)) {
-        updateZoneSpawning(z);
+    refreshAreaPlayerPresence();
+    refreshAreaLightLevels();
+
+    foreach (area : py_range(MAX_MOB_AREAS)) {
+        updateAreaSpawning(area);
     }
 }
