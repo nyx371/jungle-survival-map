@@ -1071,227 +1071,229 @@ a { color: var(--accent); }
   }
 }
 
-/* Classic Battle.net / StarCraft Compendium inspired skin */
+/* SCMSCX-inspired skin: dark map database, Michroma titles, green links, red nav borders */
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Nanum+Gothic:wght@400;700&display=swap');
+
 :root {
-  --bg: #050303;
-  --panel: rgba(18, 9, 6, 0.92);
-  --panel-strong: rgba(34, 16, 9, 0.96);
-  --text: #d7c79c;
-  --muted: #a88962;
-  --accent: #72d76b;
-  --accent-2: #f2cf65;
-  --danger: #c85b3a;
-  --border: #5d321d;
-  --battle-red: #2a0805;
-  --battle-gold: #c4a35a;
-  --battle-green: #50c850;
+  --bg: #000;
+  --panel: #050505;
+  --panel-strong: #0b0b0b;
+  --text: #cfd3dc;
+  --muted: #8f96a3;
+  --accent: #4cc428;
+  --accent-2: #a4b4f8;
+  --danger: #780000;
+  --border: #20242c;
 }
 
 body {
-  font-family: Verdana, Arial, Helvetica, sans-serif;
-  font-size: 13px;
+  margin: 0;
+  font-family: Michroma, "Nanum Gothic", Verdana, sans-serif;
+  font-size: 14px;
   color: var(--text);
-  background:
-    url("https://classic.battle.net/images/battle/scc/zerg/pix/topback.gif") repeat-x top,
-    radial-gradient(circle at 50% 0%, rgba(91, 33, 20, 0.5), transparent 420px),
-    #050303;
+  background: #000;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 8px 8px;
-  opacity: 0.45;
-}
+body::before { display: none; }
 
 main, footer {
-  width: min(980px, calc(100% - 1rem));
+  width: min(1180px, calc(100% - 2rem));
 }
 
-.battle-header {
-  width: min(980px, calc(100% - 1rem));
-  margin: 0.35rem auto 0.5rem;
-  min-height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  padding: 0 0.45rem;
-  border: 1px solid #3a1e13;
-  background: #020202;
-  color: #8f7d5d;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
+main { padding-top: 1.1rem; }
 
-.battle-header img {
-  max-height: 25px;
-  image-rendering: pixelated;
-}
+.battle-header,
+.classic-title-art { display: none !important; }
 
 .top-nav {
-  position: static;
-  width: min(980px, 100%);
-  border-radius: 0;
-  border-color: #6d351d #2f160d #180a06 #6d351d;
-  background:
-    url("https://classic.battle.net/images/battle/scc/zerg/pix/linkbarleft.gif") no-repeat left center,
-    url("https://classic.battle.net/images/battle/scc/zerg/pix/linkbarright.gif") no-repeat right center,
-    linear-gradient(#210b07, #080302);
-  box-shadow: inset 0 1px #9d6d3d, 0 4px 16px rgba(0,0,0,.65);
-  padding: 0.35rem 0.7rem;
+  position: sticky;
+  top: .75rem;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto 2.5rem;
+  padding: .35rem;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(0,0,0,.88);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
 }
 
 .tabs, .primary-tabs, .system-tabs {
-  border-radius: 0;
-}
-
-.tab, .sub-tab, .source-file {
-  border-radius: 0;
-  border: 1px solid #3d2214;
-  color: #69cc58;
-  background: #120804;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.5rem 0.75rem;
-}
-
-.tab:hover, .sub-tab:hover, .source-file:hover {
-  color: #ffff99;
-  background: #260d06;
-}
-
-.tab.active, .source-file.active, .sub-tab.active {
-  color: #0a0502;
-  background: linear-gradient(#d9ba69, #8d5a28);
-  border-color: #f0dc8d #704018 #321407 #d7a447;
+  gap: .45rem;
+  background: transparent;
+  border: 0;
   box-shadow: none;
 }
 
-.status-card, .panel, .tabs, .game-hero, .briefing-strip, .card, .loop-node,
-.mission-card, .night-card, .source-system-map, .source-layout, .tactical-map {
-  border-radius: 0 !important;
-  border-color: #7e4324 #30170d #180905 #7e4324;
-  background:
-    linear-gradient(180deg, rgba(49, 19, 10, 0.96), rgba(12, 5, 3, 0.98));
-  box-shadow: inset 1px 1px rgba(236, 175, 90, 0.22), inset -1px -1px rgba(0,0,0,.8), 0 8px 24px rgba(0,0,0,.55);
+.system-tabs {
+  border-left: 0;
+  padding-left: .25rem;
+}
+
+.tab, .sub-tab, .source-file {
+  border: 3px solid #780000;
+  border-radius: 9px;
+  color: #4cc428;
+  background: transparent;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 6px 10px;
+}
+
+.tab:hover, .sub-tab:hover, .source-file:hover,
+.tab.active, .sub-tab.active, .source-file.active {
+  color: #a4b4f8;
+  background: transparent;
+  border-color: #a00000;
+  box-shadow: none;
+}
+
+.game-hero,
+.panel,
+.card,
+.mission-card,
+.night-card,
+.briefing-strip,
+.tactical-map,
+.loop-node,
+.source-system-map,
+.source-layout,
+.status-card {
+  border: 1px solid #20242c;
+  border-radius: 14px !important;
+  background: #050505;
+  box-shadow: none;
   backdrop-filter: none;
 }
 
 .game-hero {
-  min-height: 520px;
-  padding: 1.25rem;
+  min-height: auto;
+  grid-template-columns: minmax(0, 1fr) 340px;
   align-items: center;
+  margin-bottom: 1.4rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
   background:
-    linear-gradient(90deg, rgba(7, 3, 2, 0.96), rgba(19, 8, 5, 0.82)),
-    url("https://classic.battle.net/images/battle/scc/zerg/pix/overview1.gif") right bottom / auto 80% no-repeat,
-    #080302;
+    radial-gradient(circle at 82% 18%, rgba(76,196,40,.12), transparent 22rem),
+    radial-gradient(circle at 18% 80%, rgba(164,180,248,.12), transparent 24rem),
+    #050505;
 }
 
-.game-hero::before {
-  background: url("https://classic.battle.net/images/battle/scc/pix/top.gif") repeat-x top;
-  opacity: .55;
-  mask-image: none;
-}
+.game-hero::before,
+.game-hero::after { display: none; }
 
-.game-hero::after {
-  content: "COMPENDIUM";
-  color: rgba(196, 163, 90, 0.08);
-  font-family: Georgia, "Times New Roman", serif;
-  letter-spacing: .08em;
-}
-
-.classic-title-art {
-  display: block;
-  max-width: min(430px, 100%);
-  margin: 0.25rem 0 0.7rem;
-  border: 1px solid #3d2214;
-  image-rendering: auto;
-}
-
-h1, h2, h3 {
-  font-family: Georgia, "Times New Roman", serif;
-  color: #f0d179;
-  text-shadow: 2px 2px #000;
+h1, h2, h3, h4 {
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  text-shadow: none;
+  color: #a4b4f8;
   letter-spacing: 0;
 }
 
 h1 {
-  font-size: clamp(2.6rem, 6vw, 5.2rem);
+  font-size: clamp(2.2rem, 5vw, 4.6rem);
+  line-height: 1.15;
+  margin: 2.2rem 0;
+}
+
+h2 { color: #4cc428; font-size: clamp(1.35rem, 3vw, 2.4rem); }
+h3 { color: #a4b4f8; font-size: 1.05rem; }
+
+.tagline, .lede, .game-summary,
+.card p, .showcase-copy p, .section-heading p:not(.eyebrow), .mission-card li,
+.night-card p, .source-map-copy p:not(.eyebrow) {
+  font-family: "Nanum Gothic", Verdana, sans-serif;
+  color: var(--muted);
+  line-height: 1.65;
 }
 
 .eyebrow, .card-kicker {
-  color: #66cc66;
-  font-size: 10px;
-  letter-spacing: 0.09em;
+  color: #4cc428;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-transform: none;
 }
 
-a, #source-link {
-  color: #66cc66;
+a, #source-link { color: #4cc428; }
+a:hover, #source-link:hover { color: #a4b4f8; }
+
+.grid, .grid.wide {
+  gap: .9rem;
 }
 
-a:hover, #source-link:hover {
-  color: #ffff99;
+.card {
+  padding: 1rem;
 }
+
+.feature-card {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  column-gap: .85rem;
+  align-items: start;
+}
+
+.feature-card h3,
+.feature-card p { grid-column: 2; }
 
 .feature-icon {
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  padding: 3px;
-  border: 2px ridge #7e4324;
-  background: #060302;
-  color: #f0d179;
-  font-size: 1.3rem;
+  grid-row: span 2;
+  width: 38px;
+  height: 38px;
+  border: 2px solid #780000;
+  border-radius: 8px;
+  background: #000;
+  color: #4cc428;
+  font-size: .9rem;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
 }
 
-.feature-icon img {
-  max-width: 46px;
-  max-height: 46px;
-  image-rendering: pixelated;
+.feature-icon img { display: none; }
+.enemy-icon { float: right; margin-left: .7rem; }
+
+.briefing-strip {
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  background: transparent;
+  border: 0;
+  padding: 0;
+  gap: .75rem;
 }
 
-.enemy-icon {
-  float: right;
-  margin-left: .7rem;
+.briefing-strip div,
+.evolution,
+.source-map-node,
+.source-map-flow span,
+.night-card-top {
+  border: 1px solid #20242c;
+  border-radius: 10px !important;
+  background: #050505;
 }
 
-.briefing-strip div, .evolution, .source-map-node, .night-card-top, .source-map-flow span {
-  border-radius: 0 !important;
-  border: 1px solid #4c2817;
-  background: #100603;
+.briefing-strip span,
+.loop-step,
+.source-map-node span,
+.color-chip {
+  border-radius: 7px !important;
+  color: #000;
+  background: #4cc428;
 }
 
-.briefing-strip span, .loop-step, .source-map-node span, .color-chip {
-  border-radius: 0 !important;
-  color: #0b0502;
-  background: #c4a35a;
+.tactical-map,
+.source-system-map {
+  background:
+    linear-gradient(rgba(164,180,248,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(164,180,248,.05) 1px, transparent 1px),
+    #030303;
+  background-size: 32px 32px;
 }
 
-pre, code {
-  color: #d7c79c;
-  background: #050201;
-}
-
-.source-list {
-  border-right-color: #4c2817;
-}
-
-footer {
-  color: #8f7d5d;
-  border-top: 1px solid #3a1e13;
-  padding-top: 1rem;
-}
+.source-map-node span { background: #a4b4f8; }
+pre, code { background: #000; color: #cfd3dc; }
+footer { color: #6f7480; border-top: 1px solid #20242c; }
 
 @media (max-width: 780px) {
-  .battle-header { justify-content: center; flex-wrap: wrap; }
   .game-hero { grid-template-columns: 1fr; }
+  .briefing-strip { grid-template-columns: 1fr 1fr; }
+  .top-nav { position: static; }
 }

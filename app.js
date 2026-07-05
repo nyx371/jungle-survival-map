@@ -94,24 +94,22 @@ async function loadJson(path) {
   return response.json();
 }
 
-const classicIconBase = 'https://classic.battle.net/images/battle/scc';
-
 function featureIcon(title) {
   const value = String(title).toLowerCase();
-  if (value.includes('ghost')) return `${classicIconBase}/pix/i-terran2.gif`;
-  if (value.includes('night') || value.includes('swarm') || value.includes('zerg')) return `${classicIconBase}/zerg/pix/units/Zergling1.gif`;
-  if (value.includes('build') || value.includes('light')) return `${classicIconBase}/protoss/pix/menu/i-prot.gif`;
-  if (value.includes('death')) return `${classicIconBase}/zerg/pix/units/Hydralisk1.gif`;
-  if (value.includes('resource') || value.includes('harvest') || value.includes('mineral')) return `${classicIconBase}/terran/PICS/min.gif`;
-  if (value.includes('jungle') || value.includes('critter')) return `${classicIconBase}/pix/i-zerg2.gif`;
-  return `${classicIconBase}/pix/i-gen2.gif`;
+  if (value.includes('ghost')) return 'G';
+  if (value.includes('night') || value.includes('swarm') || value.includes('zerg')) return 'Z';
+  if (value.includes('build') || value.includes('light')) return 'B';
+  if (value.includes('death')) return 'D';
+  if (value.includes('resource') || value.includes('harvest') || value.includes('mineral')) return 'R';
+  if (value.includes('jungle') || value.includes('critter')) return 'J';
+  return 'M';
 }
 
 function renderCardGrid(selector, items) {
   const grid = document.querySelector(selector);
   grid.innerHTML = items.map((item) => `
     <article class="card feature-card">
-      <div class="feature-icon" aria-hidden="true"><img src="${featureIcon(item.title)}" alt="" loading="lazy" /></div>
+      <div class="feature-icon" aria-hidden="true">${featureIcon(item.title)}</div>
       <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.body)}</p>
     </article>
@@ -131,24 +129,15 @@ function renderGameplayLoop(loop) {
 }
 
 function enemyIconName(base) {
-  const value = String(base).toLowerCase();
-  if (value.includes('hydralisk')) return 'Hydralisk';
-  if (value.includes('ultralisk')) return 'Ultralisk';
-  if (value.includes('mutalisk')) return 'Mutalisk';
-  if (value.includes('guardian')) return 'Guardian';
-  if (value.includes('queen')) return 'Queen';
-  if (value.includes('defiler')) return 'Defiler';
-  if (value.includes('lurker')) return 'Lurker';
-  if (value.includes('drone')) return 'Drone';
-  if (value.includes('broodling')) return 'Broodling';
-  return 'Zergling';
+  const value = String(base).trim();
+  return value ? value.slice(0, 1).toUpperCase() : 'Z';
 }
 
 function renderEnemies(enemies) {
   const grid = document.querySelector('#enemy-grid');
   grid.innerHTML = enemies.map((enemy) => `
     <article class="card enemy-card">
-      <div class="feature-icon enemy-icon" aria-hidden="true"><img src="${classicIconBase}/zerg/pix/units/${enemyIconName(enemy.base)}1.gif" alt="" loading="lazy" /></div>
+      <div class="feature-icon enemy-icon" aria-hidden="true">${escapeHtml(enemyIconName(enemy.base))}</div>
       <div class="card-kicker">${escapeHtml(enemy.base)}</div>
       <h3>${escapeHtml(enemy.role)}</h3>
       <div class="evolution-list">
