@@ -16,6 +16,10 @@
     "path": "docs/eudplib-trigger-notes.md"
   },
   {
+    "label": "docs/prior-map-eps-lessons.md",
+    "path": "docs/prior-map-eps-lessons.md"
+  },
+  {
     "label": "systems/audio.eps",
     "path": "src/systems/audio.eps"
   },
