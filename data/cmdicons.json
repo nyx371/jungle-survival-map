@@ -1,13 +1,33 @@
 [
   {
+    "index": 0,
+    "title": "Marine",
+    "file": "assets/cmdicons/cmdicons_000.png"
+  },
+  {
     "index": 1,
     "title": "Ghost",
     "file": "assets/cmdicons/cmdicons_001.png"
   },
   {
-    "index": 13,
-    "title": "Vulture Spider Mine",
-    "file": "assets/cmdicons/cmdicons_013.png"
+    "index": 3,
+    "title": "Goliath",
+    "file": "assets/cmdicons/cmdicons_003.png"
+  },
+  {
+    "index": 16,
+    "title": "Sarah Kerrigan (Ghost)",
+    "file": "assets/cmdicons/cmdicons_016.png"
+  },
+  {
+    "index": 32,
+    "title": "Firebat",
+    "file": "assets/cmdicons/cmdicons_032.png"
+  },
+  {
+    "index": 34,
+    "title": "Medic",
+    "file": "assets/cmdicons/cmdicons_034.png"
   },
   {
     "index": 37,
@@ -75,6 +95,16 @@
     "file": "assets/cmdicons/cmdicons_176.png"
   },
   {
+    "index": 177,
+    "title": "Mineral Cluster (Type 2)",
+    "file": "assets/cmdicons/cmdicons_177.png"
+  },
+  {
+    "index": 178,
+    "title": "Mineral Cluster (Type 3)",
+    "file": "assets/cmdicons/cmdicons_178.png"
+  },
+  {
     "index": 188,
     "title": "Vespene Geyser",
     "file": "assets/cmdicons/cmdicons_188.png"
@@ -85,9 +115,29 @@
     "file": "assets/cmdicons/cmdicons_219.png"
   },
   {
+    "index": 224,
+    "title": "Blank (Zerg Vespene Sac Type 1)",
+    "file": "assets/cmdicons/cmdicons_224.png"
+  },
+  {
+    "index": 225,
+    "title": "Blank (Zerg Vespene Sac Type 2)",
+    "file": "assets/cmdicons/cmdicons_225.png"
+  },
+  {
     "index": 231,
     "title": "Gather",
     "file": "assets/cmdicons/cmdicons_231.png"
+  },
+  {
+    "index": 232,
+    "title": "Repair",
+    "file": "assets/cmdicons/cmdicons_232.png"
+  },
+  {
+    "index": 233,
+    "title": "Return Resources",
+    "file": "assets/cmdicons/cmdicons_233.png"
   },
   {
     "index": 234,
@@ -95,9 +145,64 @@
     "file": "assets/cmdicons/cmdicons_234.png"
   },
   {
+    "index": 237,
+    "title": "Use Stimpack",
+    "file": "assets/cmdicons/cmdicons_237.png"
+  },
+  {
+    "index": 240,
+    "title": "Lockdown",
+    "file": "assets/cmdicons/cmdicons_240.png"
+  },
+  {
+    "index": 241,
+    "title": "EMP Shockwave",
+    "file": "assets/cmdicons/cmdicons_241.png"
+  },
+  {
+    "index": 242,
+    "title": "Irradiate",
+    "file": "assets/cmdicons/cmdicons_242.png"
+  },
+  {
+    "index": 243,
+    "title": "Use Spider Mines",
+    "file": "assets/cmdicons/cmdicons_243.png"
+  },
+  {
+    "index": 249,
+    "title": "Ocular Implants",
+    "file": "assets/cmdicons/cmdicons_249.png"
+  },
+  {
     "index": 250,
     "title": "Scanner Sweep",
     "file": "assets/cmdicons/cmdicons_250.png"
+  },
+  {
+    "index": 252,
+    "title": "Cloak",
+    "file": "assets/cmdicons/cmdicons_252.png"
+  },
+  {
+    "index": 254,
+    "title": "Patrol",
+    "file": "assets/cmdicons/cmdicons_254.png"
+  },
+  {
+    "index": 255,
+    "title": "Hold Position",
+    "file": "assets/cmdicons/cmdicons_255.png"
+  },
+  {
+    "index": 256,
+    "title": "Moebius Reactor",
+    "file": "assets/cmdicons/cmdicons_256.png"
+  },
+  {
+    "index": 259,
+    "title": "Burrow",
+    "file": "assets/cmdicons/cmdicons_259.png"
   },
   {
     "index": 270,
@@ -105,9 +210,29 @@
     "file": "assets/cmdicons/cmdicons_270.png"
   },
   {
+    "index": 288,
+    "title": "Infantry Weapons",
+    "file": "assets/cmdicons/cmdicons_288.png"
+  },
+  {
+    "index": 292,
+    "title": "Infantry Armor",
+    "file": "assets/cmdicons/cmdicons_292.png"
+  },
+  {
     "index": 310,
     "title": "Plasma Shields",
     "file": "assets/cmdicons/cmdicons_310.png"
+  },
+  {
+    "index": 311,
+    "title": "Nuclear Strike",
+    "file": "assets/cmdicons/cmdicons_311.png"
+  },
+  {
+    "index": 323,
+    "title": "Gauss Rifle",
+    "file": "assets/cmdicons/cmdicons_323.png"
   },
   {
     "index": 324,
@@ -115,9 +240,84 @@
     "file": "assets/cmdicons/cmdicons_324.png"
   },
   {
-    "index": 364,
-    "title": "Spider Mine",
-    "file": "assets/cmdicons/cmdicons_364.png"
+    "index": 325,
+    "title": "Fragmentation Grenade",
+    "file": "assets/cmdicons/cmdicons_325.png"
+  },
+  {
+    "index": 326,
+    "title": "Twin Autocannons",
+    "file": "assets/cmdicons/cmdicons_326.png"
+  },
+  {
+    "index": 327,
+    "title": "Hellfire Missile Pack",
+    "file": "assets/cmdicons/cmdicons_327.png"
+  },
+  {
+    "index": 329,
+    "title": "Fusion Cutter",
+    "file": "assets/cmdicons/cmdicons_329.png"
+  },
+  {
+    "index": 330,
+    "title": "Fusion Cutter (Harvest)",
+    "file": "assets/cmdicons/cmdicons_330.png"
+  },
+  {
+    "index": 331,
+    "title": "Gemini Missiles",
+    "file": "assets/cmdicons/cmdicons_331.png"
+  },
+  {
+    "index": 335,
+    "title": "Flame Thrower",
+    "file": "assets/cmdicons/cmdicons_335.png"
+  },
+  {
+    "index": 338,
+    "title": "Claws",
+    "file": "assets/cmdicons/cmdicons_338.png"
+  },
+  {
+    "index": 339,
+    "title": "Needle Spines",
+    "file": "assets/cmdicons/cmdicons_339.png"
+  },
+  {
+    "index": 340,
+    "title": "Kaiser Blades",
+    "file": "assets/cmdicons/cmdicons_340.png"
+  },
+  {
+    "index": 341,
+    "title": "Toxic Spores",
+    "file": "assets/cmdicons/cmdicons_341.png"
+  },
+  {
+    "index": 342,
+    "title": "Spines",
+    "file": "assets/cmdicons/cmdicons_342.png"
+  },
+  {
+    "index": 343,
+    "title": "Flyer Attack",
+    "file": "assets/cmdicons/cmdicons_343.png"
+  },
+  {
+    "index": 344,
+    "title": "Acid Spore",
+    "file": "assets/cmdicons/cmdicons_344.png"
+  },
+  {
+    "index": 345,
+    "title": "Glave Wurm",
+    "file": "assets/cmdicons/cmdicons_345.png"
+  },
+  {
+    "index": 365,
+    "title": "Heal",
+    "file": "assets/cmdicons/cmdicons_365.png"
   },
   {
     "index": 367,
@@ -125,8 +325,28 @@
     "file": "assets/cmdicons/cmdicons_367.png"
   },
   {
+    "index": 371,
+    "title": "Mind Control",
+    "file": "assets/cmdicons/cmdicons_371.png"
+  },
+  {
+    "index": 373,
+    "title": "Optical Flare",
+    "file": "assets/cmdicons/cmdicons_373.png"
+  },
+  {
+    "index": 376,
+    "title": "Lurker Aspect",
+    "file": "assets/cmdicons/cmdicons_376.png"
+  },
+  {
     "index": 381,
     "title": "Maelstrom",
     "file": "assets/cmdicons/cmdicons_381.png"
+  },
+  {
+    "index": 382,
+    "title": "Subterranean Spines",
+    "file": "assets/cmdicons/cmdicons_382.png"
   }
 ]

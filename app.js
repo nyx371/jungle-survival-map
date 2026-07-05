@@ -105,10 +105,79 @@ function getIconByTitle(title) {
 }
 
 function getIconByIndex(index) {
-  return state.icons[index];
+  return state.icons.find((icon) => icon.index === index);
+}
+
+const exactIconTitles = new Map(Object.entries({
+  'One Ghost, real decisions': 'Sarah Kerrigan (Ghost)',
+  'Days are your chance to breathe': 'Scanner Sweep',
+  'Nights are when plans get tested': 'Dark Swarm',
+  'Hunt neural critters': 'Bengalaas (Jungle Critter)',
+  'Builds stay personal': 'C-10 Canister Rifle',
+  'Craft tactical constructs': 'Use Spider Mines',
+  'Death hurts without ending the run': 'Restoration',
+  'The jungle does not stay still': 'Zergling',
+  'Survive five nights in the jungle': 'Hold Position',
+  'Scavenge by day, endure the night': 'Patrol',
+  'Command one Ghost and a small squad': 'Marine',
+  'Harvest minerals and vespene over time': 'Fusion Cutter (Harvest)',
+  'Stun neural critters before they flee': 'Maelstrom',
+  'Craft one active weapon at a time': 'Gauss Rifle',
+  'Build safe pockets, then abandon them': 'Terran Basic Buildings',
+  'Death hurts, but progression survives': 'Heal',
+  'The swarm evolves with time': 'Lurker Aspect',
+  'Trees': 'Mineral Cluster (Type 1)',
+  'Bushes': 'Blank (Zerg Vespene Sac Type 1)',
+  'Rocks': 'Mineral Cluster (Type 3)',
+  'Crystals': 'Khaydarin Crystal',
+  'Organic growth': 'Blank (Zerg Vespene Sac Type 2)',
+  'Neural critters': 'Bengalaas (Jungle Critter)',
+  'Harvesting tradeoff': 'Gather',
+  'Crafted weapons': 'Gauss Rifle',
+  'Weapon upgrades': 'Infantry Weapons',
+  'Survival upgrades': 'Plasma Shields',
+  'Craftable constructs and utility': 'Terran Basic Buildings',
+  'Companion squad upgrades': 'Probe',
+}));
+
+function iconTitleForText(value) {
+  const text = String(value).toLowerCase();
+  const pairs = [
+    [/shotgun|burst/, 'Fragmentation Grenade'],
+    [/sniper|long range|range/, 'C-10 Canister Rifle'],
+    [/flamer|flame/, 'Flame Thrower'],
+    [/acid/, 'Acid Spore'],
+    [/explosive|splash|radius/, 'Hellfire Missile Pack'],
+    [/rifle|default ghost|damage/, 'Gauss Rifle'],
+    [/cooldown|fire rate/, 'Use Stimpack'],
+    [/target flags|air-ground|air ground/, 'Gemini Missiles'],
+    [/weapon behavior|crafted weapon type|weapon type/, 'Cloak'],
+    [/health|max health|durability/, 'Medic'],
+    [/armor/, 'Infantry Armor'],
+    [/shield|shields/, 'Plasma Shields'],
+    [/energy/, 'Moebius Reactor'],
+    [/movement speed|vision/, 'Ocular Implants'],
+    [/resource transfer/, 'Return Resources'],
+    [/harvest efficiency|harvest/, 'Fusion Cutter (Harvest)'],
+    [/temporary structures|structures|buildables/, 'Terran Basic Buildings'],
+    [/deconstruction|refund|repair/, 'Repair'],
+    [/maelstrom|mine|trap/, 'Maelstrom'],
+    [/sfx|status|alerts/, 'Optical Flare'],
+    [/active abilities/, 'EMP Shockwave'],
+    [/robotic|fighters/, 'Goliath'],
+    [/tame|weakened zerg/, 'Mind Control'],
+    [/resurrect|corpses|biomass/, 'Restoration'],
+    [/companion count|companion/, 'Probe'],
+    [/ghost dies|die|death/, 'Nuclear Strike'],
+  ];
+  const match = pairs.find(([pattern]) => pattern.test(text));
+  return match?.[1];
 }
 
 function chooseIcon(item, fallbackTitle = 'Scanner Sweep') {
+  const exactTitle = exactIconTitles.get(String(item.title || ''));
+  if (exactTitle) return getIconByTitle(exactTitle) || getIconByTitle(fallbackTitle);
+
   const text = `${item.title || ''} ${item.body || ''}`.toLowerCase();
   const title = String(item.title || '').toLowerCase();
   const pairs = [
@@ -120,7 +189,7 @@ function chooseIcon(item, fallbackTitle = 'Scanner Sweep') {
     [/critter|jungle|wildlife/, 'Bengalaas (Jungle Critter)'],
     [/build|construct|structure|light|safe pocket|turret|wall/, 'Terran Basic Buildings'],
     [/death|die|respawn/, 'Restoration'],
-    [/weapon|rifle|sniper|shotgun|flamer|explosive/, 'C-10 Canister Rifle'],
+    [/weapon|rifle|sniper|shotgun|flamer|explosive/, 'Gauss Rifle'],
     [/upgrade|armor|shield|survival/, 'Plasma Shields'],
     [/companion|robotic|squad|tame|resurrect/, 'Probe'],
   ];
@@ -195,7 +264,10 @@ function renderUpgrades(upgrades) {
       <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(group), group.title.slice(0, 2))}</div>
       <h3>${escapeHtml(group.title)}</h3>
       <ul class="checklist compact">
-        ${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+        ${group.items.map((item) => {
+          const icon = getIconByTitle(iconTitleForText(item)) || chooseIcon(group);
+          return `<li><span class="mini-icon" aria-hidden="true">${renderIcon(icon, item.slice(0, 2))}</span><span>${escapeHtml(item)}</span></li>`;
+        }).join('')}
       </ul>
     </article>
   `).join('');
