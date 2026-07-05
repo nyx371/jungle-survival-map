@@ -49,10 +49,22 @@ async function loadJson(path) {
   return response.json();
 }
 
+function featureIcon(title) {
+  const value = String(title).toLowerCase();
+  if (value.includes('ghost')) return '◉';
+  if (value.includes('day')) return '☀';
+  if (value.includes('night')) return '☾';
+  if (value.includes('build')) return '⌁';
+  if (value.includes('death')) return '✚';
+  if (value.includes('jungle')) return '☣';
+  return '✦';
+}
+
 function renderCardGrid(selector, items) {
   const grid = document.querySelector(selector);
   grid.innerHTML = items.map((item) => `
-    <article class="card">
+    <article class="card feature-card">
+      <div class="feature-icon" aria-hidden="true">${featureIcon(item.title)}</div>
       <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.body)}</p>
     </article>
