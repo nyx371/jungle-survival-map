@@ -98,3 +98,93 @@ Rule of thumb:
 
 - `TrgUnit("Terran Ghost").maxHp` changes what the unit type is
 - `ghostCUnit.hp` changes one specific Ghost currently alive on the map
+
+## Useful eudplib function groups
+
+`eudplib/docs/funclist.txt` is a broad function index. The most relevant groups for this project are below.
+
+### Map and encoding helpers
+
+- `LoadMap`, `SaveMap`, `GetChkTokenized` for map load/save and raw CHK access.
+- `MPQAddFile`, `MPQAddWave` for bundling assets.
+- `EUDOnStart(func)` for map-start initialization.
+- `EncodeUnit`, `EncodeLocation`, `EncodePlayer`, `EncodeString`, `EncodeSwitch`, etc. convert names/constants into trigger IDs.
+- `GetUnitIndex`, `GetLocationIndex`, `GetStringIndex`, `GetSwitchIndex` are index helpers.
+- `UnitProperty(...)` builds property records for `CreateUnitWithProperties`.
+
+For Jungle Commandos, keep raw CHK/TRIG mutations rare; normal eudplib APIs are safer.
+
+### Trigger conditions/actions
+
+Important stock conditions:
+
+- `Always`, `Never`
+- `Bring`, `Command`, `Deaths`, `Accumulate`, `ElapsedTime`, `Switch`
+- `Memory`, `MemoryEPD` for EUD memory checks
+
+Important stock actions:
+
+- `CreateUnit`, `CreateUnitWithProperties`
+- `GiveUnits`, `MoveUnit`, `MoveLocation`, `Order`
+- `KillUnit`, `KillUnitAt`, `RemoveUnit`, `RemoveUnitAt`
+- `SetDeaths`, `SetResources`, `SetScore`, `SetSwitch`
+- `ModifyUnitHitPoints`, `ModifyUnitShields`, `ModifyUnitEnergy`, `ModifyUnitResourceAmount`
+- `DisplayText`, `DisplayExtText`, `PlayWAV`, `MinimapPing`
+- `SetMemory`, `SetMemoryEPD`, `SetCurrentPlayer`
+
+Avoid `Wait`. Prefer timers/counters.
+
+### Trigger construction and flow
+
+- `Trigger(...)` and `DoActions(...)` are high-level preserved trigger helpers.
+- `PTrigger(players, conditions, actions)` gates execution by current player and pairs well with player loops.
+- `RawTrigger(...)`, `NextTrigger`, `SetNextPtr`, trigger scopes, and jumps are lower-level control tools.
+- `Disabled(...)` disables a condition or action.
+
+Use high-level `Trigger`/`DoActions` unless link-level control is needed.
+
+### Control structures
+
+- `EUDIf`, `EUDIfNot`, `EUDElse`, `EUDElseIf`, `EUDEndIf`
+- `EUDWhile`, `EUDWhileNot`, `EUDEndWhile`
+- `EUDLoopN`, `EUDLoopRange`, `EUDInfLoop`
+- `EUDPlayerLoop` for active player iteration
+- `EUDSwitch`, cases/default, `EUDBreak`, `EUDContinue`
+- `EUDAnd`, `EUDOr`, `EUDNot`, `EUDTernary`
+
+Use these to write readable state-machine logic instead of manually stitching raw triggers.
+
+### Unit/list loops
+
+- `EUDLoopCUnit()` scans active CUnits.
+- `EUDLoopPlayerCUnit(player)` scans one player's unit list.
+- `EUDLoopNewCUnit()` scans newly-created CUnits.
+- `EUDLoopBullet()` and `EUDLoopSprite()` exist if projectile/sprite-level effects are needed later.
+- `EUDLoopList(header_offset, break_offset)` is the generic linked-list loop.
+
+For this map, these are central for hero tracking, companion ownership, resource-node indexing, mob density scans, and light structures.
+
+### Variables, arrays, structs
+
+- `EUDVariable`, `EUDCreateVariables`, `SetVariables`, `SeqCompute`, `VProc`
+- `EUDArray` for simple arrays.
+- `EUDVArray` for full-variable arrays with faster constant-index access.
+- `EUDStruct`, `EUDStack`, `ObjPool` for structured runtime state.
+- `EUDFunc`, `EUDTypedFunc`, `EUDFuncPtr`, `EUDReturn` for reusable functions.
+
+Likely project shape: arrays for fixed player/area tables; structs or parallel arrays for tracked units/resources; typed funcs where CUnit/TrgUnit conversions matter.
+
+### Memory IO / debug strings
+
+- `f_dwepdread_epd`, `f_dwread_epd`, `f_epdread_epd` read memory via EPD.
+- `f_dwepdread_cp`, `f_dwread_cp`, `f_epdread_cp` are faster CurrentPlayer-relative reads.
+- `f_getcurpl`, `f_setcurpl` should be used instead of raw `0x6509B0` reads/writes.
+- `f_bread/f_bwrite`, `f_wread/f_wwrite`, `f_dwread/f_dwwrite` are pointer-based read/write helpers.
+- `f_dwbreak`, `f_bitsplit`, bitwise helpers, and mask helpers are useful for packed fields.
+- `DBString`, `f_dbstr_print`, `f_simpleprint` are useful debug/status output tools.
+
+### Random/math/game commands
+
+- `f_rand`, `f_dwrand`, `f_srand`, `f_randomize` for procedural choices.
+- `f_atan2`, `f_lengthdir`, `f_sqrt` for movement/geometry.
+- `QueueGameCommand_RightClick`, `QueueGameCommand_Select`, and related helpers can synthesize commands if needed, but should be used carefully.
