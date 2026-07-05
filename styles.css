@@ -1418,3 +1418,19 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
   font-size: clamp(1.15rem, 2.45vw, 1.85rem);
   line-height: 1.45;
 }
+
+/* Small neutral all-caps header kicker */
+#home .game-hero-copy .hero-kicker {
+  max-width: 700px;
+  margin: 0 auto 0.75rem;
+  color: #aeb4c0;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  font-size: clamp(0.68rem, 1.25vw, 0.9rem);
+  letter-spacing: 0.16em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+#home .game-hero-copy .tagline {
+  max-width: 980px;
+}
