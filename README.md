@@ -15,9 +15,9 @@ This repo currently contains:
 - a static GitHub Pages design site
 - gameplay loop and feature documentation
 - a code systems architecture map
-- epScript skeleton modules for the main gameplay systems
+- a compiling epScript/euddraft project for the main gameplay systems
 
-The epScript source is an implementation map, not yet a compile-ready euddraft project. The next milestone is a compileable `.eds` harness and one vertical slice.
+The epScript source now compiles and builds cleanly end-to-end (`onPluginStart`/`beforeTriggerExec` across all systems) via `check-syntax.bat` / `jc.eds`, with a first working vertical slice: per-player hero creation and tracking, resource node placeholder replacement, a mining-order workaround with visual feedback, and debug screen output. Most individual systems still have real gameplay logic left as TODOs (see `docs/backlog.md`).
 
 ## Important docs
 
@@ -36,13 +36,16 @@ src/
   core/
     constants.eps
     dat_registry.eps
+    utils.eps
   systems/
     players.eps
     day_night.eps
     resources.eps
     critters.eps
+    companions.eps
     weapons.eps
     upgrades.eps
+    abilities.eps
     structures.eps
     lights.eps
     mobs.eps
@@ -63,3 +66,11 @@ python3 -m http.server 8000
 ```
 
 Then open <http://localhost:8000>.
+
+## epScript build check
+
+`check-syntax.bat` compiles `src/main.eps` through euddraft against an isolated copy of the source map (never the live one) and reports a clean build or the first compile/runtime error:
+
+```bash
+./check-syntax.bat
+```

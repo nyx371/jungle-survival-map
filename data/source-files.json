@@ -12,6 +12,10 @@
     "path": "src/core/dat_registry.eps"
   },
   {
+    "label": "core/utils.eps",
+    "path": "src/core/utils.eps"
+  },
+  {
     "label": "docs/eudplib-trigger-notes.md",
     "path": "docs/eudplib-trigger-notes.md"
   },
