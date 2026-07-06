@@ -2227,3 +2227,9 @@ pre code .tok-function { color: #f4d35e; }
   border: 0;
   background: rgba(255, 255, 255, 0.2);
 }
+
+.day-cycle-transition .cycle-phase-list .phase-label {
+  font-size: clamp(0.82rem, 1.25vw, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
