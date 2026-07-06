@@ -2141,3 +2141,29 @@ pre code .tok-function { color: #f4d35e; }
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
 }
+
+.day-cycle-transition .cycle-phase-list button {
+  overflow: hidden;
+}
+
+.day-cycle-transition .cycle-phase-list .phase-label {
+  position: relative;
+  z-index: 2;
+}
+
+.day-cycle-transition .cycle-phase-list .phase-progress {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: auto;
+  bottom: 0;
+  width: 0%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 -8px 22px rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.day-cycle-transition .cycle-phase-list button.active .phase-progress {
+  transition: width 80ms linear;
+}

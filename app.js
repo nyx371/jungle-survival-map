@@ -103,6 +103,7 @@ function setupDayCycleTransition() {
   const count = container.querySelector('[data-cycle-count]');
   const label = container.querySelector('[data-cycle-label]');
   const progressBar = container.querySelector('[data-cycle-progress]');
+  const phaseProgressBars = labels.map((button) => button.querySelector('.phase-progress'));
   const loopNodes = [...container.querySelectorAll('[data-cycle-node]')];
   const phaseDurationMs = 7200;
   const crossfadeMs = 2600;
@@ -130,6 +131,10 @@ function setupDayCycleTransition() {
       node.classList.toggle('active', nodeIndex === activeIndex);
     });
 
+    phaseProgressBars.forEach((bar) => {
+      if (bar) bar.style.width = '0%';
+    });
+
     if (count) count.textContent = String(activeIndex + 1).padStart(2, '0');
     if (label) label.textContent = images[activeIndex].dataset.phase || labels[activeIndex]?.textContent || '';
   }
@@ -151,6 +156,11 @@ function setupDayCycleTransition() {
       progressBar.style.left = `${(activeIndex * segmentWidth).toFixed(3)}%`;
       progressBar.style.width = `${(progress * segmentWidth).toFixed(3)}%`;
     }
+
+    phaseProgressBars.forEach((bar, barIndex) => {
+      if (!bar) return;
+      bar.style.width = barIndex === activeIndex ? `${(progress * 100).toFixed(1)}%` : '0%';
+    });
 
     if (elapsed >= phaseDurationMs) {
       setPhase(nextIndex);
