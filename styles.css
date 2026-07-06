@@ -372,35 +372,6 @@ h3 { margin-top: 0; }
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.briefing-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  margin: 1.25rem 0;
-}
-
-.briefing-strip div {
-  min-height: 96px;
-  display: grid;
-  align-content: space-between;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.07);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.2);
-}
-
-.briefing-strip span {
-  color: var(--accent);
-  font-weight: 950;
-  font-size: 0.8rem;
-}
-
-.briefing-strip strong {
-  font-size: clamp(1rem, 2vw, 1.35rem);
-  line-height: 1.05;
-}
-
 .home-showcase {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
@@ -1240,13 +1211,8 @@ a { color: var(--accent); }
     border-radius: 26px;
   }
 
-  .briefing-strip,
   .home-showcase {
     grid-template-columns: 1fr;
-  }
-
-  .briefing-strip div {
-    min-height: 82px;
   }
 
   .game-hero h1 {
@@ -1428,7 +1394,6 @@ main { padding-top: 1.1rem; }
 .card,
 .mission-card,
 .night-card,
-.briefing-strip,
 .tactical-map,
 .loop-node,
 .source-system-map,
@@ -1658,15 +1623,6 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 .upgrade-card .feature-icon { grid-row: span 2; margin-bottom: 0; }
 .upgrade-card .checklist { grid-column: 2; }
 
-.briefing-strip {
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  background: transparent;
-  border: 0;
-  padding: 0;
-  gap: .75rem;
-}
-
-.briefing-strip div,
 .evolution,
 .source-map-node,
 .source-map-flow span,
@@ -1676,7 +1632,6 @@ a:hover, #source-link:hover { color: #a4b4f8; }
   background: #050505;
 }
 
-.briefing-strip span,
 .loop-step,
 .source-map-node span,
 .color-chip {
@@ -1700,7 +1655,6 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
 
 @media (max-width: 780px) {
   .game-hero { grid-template-columns: 1fr; }
-  .briefing-strip { grid-template-columns: 1fr 1fr; }
   .top-nav { position: static; }
 }
 
