@@ -2,35 +2,35 @@
   "features": [
     {
       "title": "One Ghost, real decisions",
-      "body": "Your Ghost is the commander and failure point. You can build a small squadron of robotic fighters, tamed Zerg, or resurrected Zerg, but they all die if your Ghost dies."
+      "body": "Your Ghost is the commander and failure point. Extra units help, but the run still revolves around keeping each commando alive."
     },
     {
       "title": "Days are your chance to breathe",
-      "body": "Scout the jungle, harvest mineral/gas trickles, craft weapons, and set up a temporary safe pocket before night returns."
+      "body": "Scout, harvest, craft, and choose where the squad will try to hold before night returns."
     },
     {
       "title": "Nights are when plans get tested",
-      "body": "The swarm pushes harder after dark. Stay together, protect your lights, and decide when holding ground is no longer worth it."
+      "body": "The swarm pushes harder after dark. Stay near light, cover each other, and know when to abandon a position."
     },
     {
       "title": "Hunt neural critters",
-      "body": "Rare neural critters bolt away from nearby Ghosts and vanish into the jungle if chased poorly. Stun them first, then close in to harvest their valuable neural biomass before they recover."
+      "body": "Rare critters flee from Ghosts. Stun them first, then harvest before they recover."
     },
     {
       "title": "Builds stay personal",
-      "body": "Craft weapons and upgrade your Ghost into the role you want: sniper, close-range brawler, explosives specialist, support survivor, or something in between."
+      "body": "Upgrade toward a role: sniper, brawler, explosives, support survivor, or hybrid."
     },
     {
       "title": "Craft tactical constructs",
-      "body": "Buildables are one craft category: lights, walls, stations, turrets, companion tools, and deployable traps like Maelstrom Mines that burrow and stun nearby enemies."
+      "body": "Build lights, walls, stations, turrets, companion tools, and Maelstrom Mine traps from one utility category."
     },
     {
       "title": "Death hurts without ending the run",
-      "body": "If you die, you respawn somewhere in the jungle. You lose most minerals, structures, and companion units, but keep crafted weapons and upgrades."
+      "body": "Death costs momentum: resources, structures, and companions are lost, but crafted progression survives."
     },
     {
       "title": "The jungle does not stay still",
-      "body": "Enemies evolve over time and pressure comes in waves. Safe spots are temporary, so the squad has to keep adapting."
+      "body": "Enemy pressure evolves over time, so safe pockets are temporary."
     }
   ],
   "enemies": [
@@ -338,149 +338,149 @@
   "upgrades": [
     {
       "title": "Weapon unlocks",
-      "body": "Level 1 in a weapon path unlocks the craft. Once unlocked, that weapon becomes part of your permanent arsenal and can be equipped again later."
+      "body": "Level 1 unlocks a weapon craft permanently."
     },
     {
       "title": "Weapon switching",
-      "body": "You can only run one main crafted weapon at a time, but you can switch back to any weapon you have previously crafted instead of losing access."
+      "body": "Only one main weapon is equipped at a time, but crafted weapons stay available."
     },
     {
       "title": "Rifle path",
-      "body": "Reliable single-target damage. Further upgrades can improve damage, cooldown, range, and passive attack effects."
+      "body": "Reliable single-target damage with straightforward damage, range, and cooldown upgrades."
     },
     {
       "title": "Shotgun path",
-      "body": "Short-range burst weapon. Upgrades can add stronger close damage, wider hit patterns, or attack-linked knockback/control effects."
+      "body": "Short-range burst that can grow into wider close-control attacks."
     },
     {
       "title": "Sniper path",
-      "body": "Long-range, slower cooldown, high damage. Later upgrades can emphasize elite picking, bonus range, or high-value target passives."
+      "body": "Long-range, slow, high-damage picking for elite targets."
     },
     {
       "title": "Flamer or acid path",
-      "body": "Area-control weapon concept. Upgrades can create lingering zones, damage-over-time pressure, or debuffs tied to basic attacks."
+      "body": "Area-control concept built around lingering damage or debuffs."
     },
     {
       "title": "Explosive path",
-      "body": "Anti-pack splash option. Upgrades can tune radius, splash falloff, friendly-risk tradeoffs, and burst timing."
+      "body": "Anti-pack splash with radius and burst tradeoffs."
     },
     {
       "title": "Survival: max health",
-      "body": "Raises Ghost durability so death is less sudden, especially during night collapses or failed relocations."
+      "body": "More Ghost durability for bad surrounds and night collapses."
     },
     {
       "title": "Survival: armor and shields",
-      "body": "Adds defensive layers such as armor, shield capacity, and possible shield regeneration."
+      "body": "Defensive layers such as armor, shield capacity, or regeneration."
     },
     {
       "title": "Mobility and vision",
-      "body": "Improves movement speed and sight range so players can scout, kite, regroup, and escape bad holds more cleanly."
+      "body": "Move, scout, kite, and regroup more safely."
     },
     {
       "title": "Harvest efficiency",
-      "body": "Improves resource trickle and reduces downtime when gathering from trees, rocks, crystals, bushes, and organic growth."
+      "body": "Faster income and less downtime at resource nodes."
     },
     {
       "title": "Construct utility",
-      "body": "Improves temporary structures, deconstruction refunds, repair value, alerts, and deployable trap support."
+      "body": "Better refunds, repairs, alerts, and deployable support."
     },
     {
       "title": "Maelstrom Mines",
-      "body": "Burrowed traps that stun nearby enemies when triggered. Upgrades can change arm time, radius, duration, or elite interrupt value."
+      "body": "Burrowed stun traps with upgrade hooks for radius, duration, and arm time."
     },
     {
       "title": "Companion unlocks",
-      "body": "Craft robotic fighters, tame stunned or weakened Zerg, or resurrect Zerg from corpses/biomass into a small support squad."
+      "body": "Robotic fighters, tamed Zerg, or resurrected Zerg support."
     },
     {
       "title": "Companion upgrades",
-      "body": "Improve companion count, durability, or roles. They add tactical power, but still die when the Ghost dies."
+      "body": "More durable or specialized companions; still tied to Ghost survival."
     }
   ],
   "gameplayLoop": [
     {
       "title": "Survive five nights in the jungle",
-      "body": "Victory comes after surviving five nights in the jungle. The current target is a five-night run, potentially ending with a final boss before extraction or victory. Endless mode can layer on later for players who want to keep pushing."
+      "body": "Victory targets a five-night run, with room for a final extraction threat later."
     },
     {
       "title": "Scavenge by day, endure the night",
-      "body": "Pressure comes in waves instead of constant attacks. The 256x256 map is divided into 16x16-tile spawn areas; each area watches player presence, light coverage, and mob density before spawning or draining pressure. Nights raise the respawn pressure."
+      "body": "Days favor preparation. Nights raise spawn pressure and test whether the squad chose a good hold."
     },
     {
       "title": "Command one Ghost and a small squad",
-      "body": "Each player controls one Ghost hero as the commander. Over time, they can craft robotic fighters, tame Zerg, or resurrect Zerg into a small controllable squadron. The squad adds tactical options, but it is tied to the Ghost."
+      "body": "Each player controls one Ghost. Companions add options, but they are secondary to the commando."
     },
     {
       "title": "Harvest minerals and vespene over time",
-      "body": "Trees, bushes, rocks, crystals, and organic growth all produce both minerals and vespene gas while a Ghost keeps harvesting. Every few seconds, resources trickle in; each node type has its own mineral/gas bias."
+      "body": "Resource nodes trickle minerals and gas while the Ghost keeps harvesting."
     },
     {
       "title": "Stun neural critters before they flee",
-      "body": "Some neutral jungle critters are valuable but skittish. They run away from Ghosts, so players need a stun window or coordinated body-block before harvesting their neural biomass. Letting them recover gives them a chance to escape."
+      "body": "Skittish critters need a stun window or coordinated body-block before harvest."
     },
     {
       "title": "Craft one active weapon at a time",
-      "body": "Weapon paths are unlocked by buying level 1, which grants access to craft that weapon. After that you can keep upgrading the path, and you can switch back to any previously crafted weapon while still equipping only one main weapon at a time."
+      "body": "Level 1 unlocks a weapon path. You can keep upgrading it and switch back to any weapon you already crafted."
     },
     {
       "title": "Build safe pockets, then abandon them",
-      "body": "Light sources gradually brighten the nearby screen and suppress mob spawning in covered 16x16 areas. Walls, regeneration stations, turrets, and Maelstrom Mines help the squad hold ground \u2014 but death destroys your built constructs, and the map pressures you to move."
+      "body": "Lights suppress spawns; walls, stations, turrets, and mines buy time. None are meant to last forever."
     },
     {
       "title": "Death hurts, but progression survives",
-      "body": "When a Ghost dies, the player respawns at a random position. They lose most carried resources, all structures they built, and all companion units, but keep upgrades and unlocked progression."
+      "body": "Death removes most carried momentum but keeps long-term unlocks and upgrades."
     },
     {
       "title": "The swarm evolves with time",
-      "body": "Enemy evolution is mainly time-based, but player actions like heavy killing or deep exploration can accelerate the threat. The map scales for 1\u20135 players, rewarding collaboration because the squad is stronger together."
+      "body": "Enemy color signals threat level as the jungle adapts."
     }
   ],
   "resources": [
     {
       "title": "Trees",
-      "body": "Common daytime harvest targets with a mineral-heavy trickle and a little vespene. Good for steady early income while scouting safer edges."
+      "body": "Common mineral-heavy nodes with a little gas. Good early income while scouting."
     },
     {
       "title": "Bushes",
-      "body": "Fast, small organic harvest targets. They trickle modest minerals and slightly better gas than trees, rewarding movement and side-path checks."
+      "body": "Fast organic nodes with balanced value, useful while moving through side paths."
     },
     {
       "title": "Rocks",
-      "body": "Slow, mineral-rich nodes with low gas output. Best taken when the squad has secured enough light or cover for a longer harvest."
+      "body": "Slow mineral-rich nodes. Best harvested after the area is somewhat safe."
     },
     {
       "title": "Crystals",
-      "body": "High-value vespene-rich finds with a smaller mineral trickle. They create a reason to push deeper into risky jungle territory."
+      "body": "Gas-rich finds that justify pushing deeper into riskier terrain."
     },
     {
       "title": "Organic growth",
-      "body": "Organic growth produces a balanced mineral/gas trickle and is often found closer to danger."
+      "body": "Balanced mineral/gas nodes, often closer to danger."
     },
     {
       "title": "Neural critters",
-      "body": "Fast neutral wildlife that runs from players. Stun or trap them before harvesting; if they recover, they may sprint away and despawn."
+      "body": "Fast wildlife that must be stunned or trapped before harvest."
     },
     {
       "title": "Harvesting tradeoff",
-      "body": "Right-click to begin continuous harvesting. Every few seconds minerals and vespene trickle in until the node depletes, the Ghost is interrupted, or the player moves. While harvesting, your Ghost cannot fire."
+      "body": "Harvesting pays out over time, but your Ghost cannot fight while channeling it."
     }
   ],
   "notes": [
     {
       "title": "Reuse unused abilities as spells",
-      "body": "Audit dormant StarCraft abilities and rebuild them into simple commando spells where possible. Prefer effects players can read instantly: burst damage, area control, debuffs, rescue tools, and squad utility."
+      "body": "Audit dormant StarCraft abilities and rebuild only the ones that read clearly in combat."
     },
     {
       "title": "Command card stays readable",
-      "body": "Most player power should come from passive attack-linked abilities instead of a crowded hotbar. The command card should be obvious to casual players: attack, move, build/interact, and only a few active choices."
+      "body": "Keep the command card obvious. Most power should come from attack passives, not extra buttons."
     },
     {
       "title": "Few active hotbar abilities",
-      "body": "Keep active abilities focused around Heal, Speed, and Stun. These can upgrade over the run, and higher tiers may change behavior instead of only adding numbers."
+      "body": "Focus active buttons around Heal, Speed, and Stun; upgrades can change their behavior."
     },
     {
       "title": "Psi Emitter feasibility",
-      "body": "Investigate whether a Psi Emitter-style construct can be built from scratch. Best candidate: a deployable lure/beacon that redirects Zerg pressure, creates a risky hold point, or powers nearby spell/passive effects."
+      "body": "Test a deployable lure/beacon that redirects pressure or powers nearby effects."
     }
   ]
 }

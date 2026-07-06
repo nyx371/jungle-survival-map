@@ -26,7 +26,7 @@
           <div class="game-hero-copy">
             <p class="hero-kicker">StarCraft co-op survival map</p>
             <h1>Jungle Commandos</h1>
-            <p class="tagline">Survive five nights as Ghost commanders: mine minerals and gas, build lighted footholds, craft weapons and companion squads, then relocate before the jungle overruns you.</p>
+            <p class="tagline">Survive five nights as Ghost commandos: scout by day, hold by night, and move before the jungle overruns you.</p>
           </div>
           <div class="hero-visual-stack">
             <div class="tactical-map" aria-label="Jungle survival tactical map illustration">
@@ -66,9 +66,8 @@
             <p class="eyebrow">What you play</p>
             <h2>A survival map about small decisions under pressure.</h2>
             <p>
-              You are not building a giant base or ordering an army around. You are trying to keep one
-              Ghost alive long enough to make the next decision: push into the dark for better resources,
-              hold the line a little longer, or tear everything down and move before the jungle catches up.
+              You are not building a giant base. You are keeping one Ghost alive long enough to decide:
+              push into the dark, hold a little longer, or tear down and move.
             </p>
           </div>
           <div class="night-card panel" aria-label="Night threat meter">
@@ -94,8 +93,7 @@
           <p class="eyebrow">How the map works</p>
           <h2>The survival system</h2>
           <p>
-            The loop, resources, enemies, and upgrades all feed into the same pressure cycle:
-            prepare while you can, survive when the jungle pushes back, then move before your safe pocket becomes a trap.
+            Prepare while you can, survive when the jungle pushes back, then move before your safe pocket becomes a trap.
           </p>
         </div>
 
@@ -104,7 +102,7 @@
             <p class="eyebrow">Core loop</p>
             <h2>Scavenge, build, survive, move.</h2>
             <p>
-              Each day and night lasts 22 minutes. Days are for scouting and preparation. Nights are for holding your nerve.
+Each day and night lasts 22 minutes: scout and prepare, then hold your nerve.
             </p>
           </div>
           <div class="day-cycle-transition" data-day-cycle aria-label="Jungle time of day transition: sunrise, day, sunset, night">
@@ -121,22 +119,22 @@
                 <article class="loop-node day active" data-cycle-node="0">
                   <span class="loop-step">01</span>
                   <h3>Morning: Scout & Harvest</h3>
-                  <p>Explore freely, find resource pockets, and trickle minerals plus vespene from trees, rocks, crystals, bushes, and organic growth.</p>
+                  <p>Explore, harvest, and choose where the squad can safely commit.</p>
                 </article>
                 <article class="loop-node craft" data-cycle-node="1">
                   <span class="loop-step">02</span>
                   <h3>Day: Craft & Build</h3>
-                  <p>Craft one active weapon, upgrade your Ghost, share minerals, then place lights, walls, turrets, and regeneration stations.</p>
+                  <p>Craft, upgrade, share resources, and build a temporary foothold.</p>
                 </article>
                 <article class="loop-node move" data-cycle-node="2">
                   <span class="loop-step">03</span>
                   <h3>Sunset: Move or Commit</h3>
-                  <p>Decide whether to hold, deconstruct, relocate, or make one last resource push before the jungle turns dangerous.</p>
+                  <p>Commit to the hold or relocate before the jungle turns dangerous.</p>
                 </article>
                 <article class="loop-node night" data-cycle-node="3">
                   <span class="loop-step">04</span>
                   <h3>Night: Survive & Adapt</h3>
-                  <p>Zerg pressure spikes while mobs evolve Black → Brown → Orange → Red. Control, weapon choice, teamwork, and light placement matter most.</p>
+                  <p>Pressure spikes. Control, weapon choice, teamwork, and light placement matter most.</p>
                 </article>
               </div>
             </div>
@@ -148,9 +146,6 @@
               <button type="button" data-cycle-jump="3" aria-pressed="false"><span class="phase-label">Night</span><span class="phase-progress" aria-hidden="true"></span></button>
             </div>
           </div>
-          <div class="loop-outcome panel">
-            <strong>Death penalty:</strong> respawn at a random position, lose most minerals and your built structures, but keep upgrades and crafted progression.
-          </div>
           <div id="loop-grid" class="grid"></div>
         </section>
 
@@ -159,7 +154,7 @@
             <p class="eyebrow">Scavenging</p>
             <h2>Resources</h2>
             <p>
-              Harvesting trickles minerals and vespene gas over time, with each resource type leaning toward different yields.
+Harvesting pays out over time. Each resource type has a different mineral/gas bias.
             </p>
           </div>
           <div id="resource-grid" class="grid"></div>
@@ -170,8 +165,7 @@
             <p class="eyebrow">Zerg threat ladder</p>
             <h2>Enemies</h2>
             <p>
-              Zerg units are the base mob families. Each line evolves automatically as the run progresses.
-              Enemy name and color tell players the threat level: Black → Brown → Orange → Red.
+Enemy families evolve as the run progresses. Color tells players the threat level: Black → Brown → Orange → Red.
             </p>
           </div>
           <article class="apex-threat panel" aria-label="Apex Zerg threat concept">
@@ -179,9 +173,7 @@
               <p class="eyebrow">Apex threat</p>
               <h3>Something stronger waits after the jungle adapts.</h3>
               <p>
-                This creature represents the kind of late-run Zerg presence that should feel different from the normal mob ladder:
-                a boss-scale predator, elite night event, or final extraction blocker that forces the squad to spend saved weapons,
-                Maelstrom Mines, lights, and companion units all at once.
+A late-run presence should feel different from the normal mob ladder: boss pressure, elite night event, or final extraction blocker.
               </p>
               <div class="apex-tags" aria-label="Apex threat traits">
                 <span>Boss pressure</span>
@@ -221,7 +213,7 @@
             <p class="eyebrow">Commando progression</p>
             <h2>Upgrades and craftable weapons</h2>
             <p>
-              Each player grows independently. You keep unlocks and upgrades through death, but bad fights still cost resources and structures.
+Each player grows independently. Unlocks persist, but bad fights still cost momentum.
             </p>
           </div>
           <div id="upgrade-grid" class="grid"></div>
@@ -233,7 +225,7 @@
           <p class="eyebrow">Design notes</p>
           <h2>Spell, command card, and utility experiments</h2>
           <p>
-            Scratchpad for active abilities and player-facing controls: keep the hotbar small, move most power into readable attack passives, and test whether unused StarCraft abilities can become clean Jungle Commandos spells.
+Scratchpad for ability/control experiments: keep the hotbar small and make power readable.
           </p>
         </div>
 
@@ -243,7 +235,7 @@
           <div>
             <p class="eyebrow">Hotbar focus</p>
             <h3>Three actives, many passive synergies</h3>
-            <p>Heal, Speed, and Stun should be the few deliberate button presses. Weapon paths, attack passives, and upgrades can do the rest of the build expression.</p>
+            <p>Heal, Speed, and Stun stay as the deliberate buttons; builds mostly express through weapons and passives.</p>
           </div>
           <div class="ability-lanes">
             <article>
