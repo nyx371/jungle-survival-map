@@ -1782,3 +1782,38 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
 #home .game-hero-copy .tagline {
   max-width: 980px;
 }
+
+@media (max-width: 720px) {
+  .apex-threat {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.85rem;
+    overflow: hidden;
+  }
+
+  .apex-threat-copy,
+  .apex-threat-image {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .apex-threat h3 {
+    font-size: clamp(1.35rem, 9vw, 2rem);
+    letter-spacing: -0.04em;
+  }
+
+  .apex-threat-image,
+  .apex-threat-image img {
+    min-height: 220px;
+    max-width: 100%;
+  }
+
+  .apex-tags {
+    gap: 0.35rem;
+  }
+
+  .apex-tags span {
+    font-size: 0.68rem;
+    padding: 0.28rem 0.48rem;
+  }
+}
