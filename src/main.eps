@@ -22,47 +22,47 @@ import systems.camera;
 import systems.victory;
 
 function onPluginStart() {
-    initConstants();
-    initDatRegistry();
-    initPlayers();
-    initDayNight();
-    initResources();
-    initCritters();
-    initCompanions();
-    initUpgrades();
-    initWeapons();
-    initAbilities();
-    initStructures();
-    initLights();
-    initMobs();
-    initMobEvolution();
-    initMenus();
-    initTransfers();
-    initAudio();
-    initCamera();
-    initVictory();
+    constants.initConstants();
+    dat_registry.initDatRegistry();
+    players.initPlayers();
+    day_night.initDayNight();
+    resources.initResources();
+    critters.initCritters();
+    companions.initCompanions();
+    upgrades.initUpgrades();
+    weapons.initWeapons();
+    abilities.initAbilities();
+    structures.initStructures();
+    lights.initLights();
+    mobs.initMobs();
+    mob_evolution.initMobEvolution();
+    menus.initMenus();
+    transfers.initTransfers();
+    audio.initAudio();
+    camera.initCamera();
+    victory.initVictory();
 
     DisplayTextAll("Jungle Commandos systems loaded");
 }
 
 function beforeTriggerExec() {
-    updateDayNight();
-    updatePlayers();
-    updateResources();
-    updateCritters();
-    updateCompanions();
-    updateWeapons();
-    updateUpgrades();
-    updateAbilities();
-    updateStructures();
-    updateLights();
-    updateMobEvolution();
-    updateMobs();
-    updateTransfers();
-    updateAudio();
-    updateCamera();
-    updateMenus();
-    updateVictory();
+    day_night.updateDayNight();
+    players.updatePlayers();
+    resources.updateResources();
+    critters.updateCritters();
+    companions.updateCompanions();
+    weapons.updateWeapons();
+    upgrades.updateUpgrades();
+    abilities.updateAbilities();
+    structures.updateStructures();
+    lights.updateLights();
+    mob_evolution.updateMobEvolution();
+    mobs.updateMobs();
+    transfers.updateTransfers();
+    audio.updateAudio();
+    camera.updateCamera();
+    menus.updateMenus();
+    victory.updateVictory();
 }
 
 function afterTriggerExec() {

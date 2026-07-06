@@ -1,6 +1,8 @@
 // Central DAT allocation registry. Final safe IDs are TBD and must be tested.
 
-const PlayerHeroUnits = py_list(
+import core.constants;
+
+const PlayerHeroUnits = list(
     TrgUnit("Terran Ghost"),
     TrgUnit("Sarah Kerrigan"),
     TrgUnit("Samir Duran"),
@@ -8,8 +10,8 @@ const PlayerHeroUnits = py_list(
     TrgUnit("Alexei Stukov")
 );
 
-const PlayerPrimaryWeapons = py_list(
-    Weapon("C-10 Canister Rifle"),
+const PlayerPrimaryWeapons = list(
+    Weapon("C-10 Concussion Rifle"),
     Weapon("Gauss Rifle"),
     Weapon("Fragmentation Grenade"),
     Weapon("Gemini Missiles"),
@@ -17,7 +19,7 @@ const PlayerPrimaryWeapons = py_list(
 );
 
 function initDatRegistry() {
-    foreach (i : py_range(MAX_PLAYERS)) {
+    foreach (i : py_range(constants.MAX_PLAYERS)) {
         const hero = PlayerHeroUnits[i];
         const weapon = PlayerPrimaryWeapons[i];
         hero.groundWeapon = weapon;

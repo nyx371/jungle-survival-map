@@ -1,5 +1,10 @@
 // Hero and Weapon Upgrade System
 
+import core.constants;
+import core.dat_registry;
+import systems.players;
+import systems.weapons;
+
 const HERO_UPGRADE_HP = 0;
 const HERO_UPGRADE_ARMOR = 1;
 const HERO_UPGRADE_SHIELDS = 2;
@@ -13,23 +18,22 @@ const WEAPON_UPGRADE_COOLDOWN = 2;
 const WEAPON_UPGRADE_SPLASH = 3;
 const WEAPON_UPGRADE_COUNT = 4;
 
-const HeroUpgradeLevel = EUDArray(MAX_PLAYERS * HERO_UPGRADE_COUNT);
-const WeaponUpgradeLevel = EUDArray(MAX_PLAYERS * WEAPON_COUNT * WEAPON_UPGRADE_COUNT);
-
+const HeroUpgradeLevel = EUDArray(constants.MAX_PLAYERS * HERO_UPGRADE_COUNT);
+const WeaponUpgradeLevel = EUDArray(constants.MAX_PLAYERS * weapons.WEAPON_COUNT * WEAPON_UPGRADE_COUNT);
 function heroUpgradeIndex(player, upgradeId) {
     return player * HERO_UPGRADE_COUNT + upgradeId;
 }
 
 function weaponUpgradeIndex(player, weaponType, upgradeId) {
-    return (player * WEAPON_COUNT + weaponType) * WEAPON_UPGRADE_COUNT + upgradeId;
+    return (player * weapons.WEAPON_COUNT + weaponType) * WEAPON_UPGRADE_COUNT + upgradeId;
 }
 
 function initUpgrades() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         foreach (h : py_range(HERO_UPGRADE_COUNT)) {
             HeroUpgradeLevel[heroUpgradeIndex(p, h)] = 0;
         }
-        foreach (w : py_range(WEAPON_COUNT)) {
+        foreach (w : py_range(weapons.WEAPON_COUNT)) {
             foreach (u : py_range(WEAPON_UPGRADE_COUNT)) {
                 WeaponUpgradeLevel[weaponUpgradeIndex(p, w, u)] = 0;
             }
@@ -37,20 +41,8 @@ function initUpgrades() {
     }
 }
 
-function purchaseHeroUpgrade(player, upgradeId) {
-    // TODO: validate cost and max level.
-    HeroUpgradeLevel[heroUpgradeIndex(player, upgradeId)] += 1;
-    applyHeroUpgradeDat(player);
-}
-
-function purchaseWeaponUpgrade(player, weaponType, upgradeId) {
-    // TODO: validate weapon unlocked, cost, and max level.
-    WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, upgradeId)] += 1;
-    applyWeaponUpgradeDat(player, weaponType);
-}
-
 function applyHeroUpgradeDat(player) {
-    const hero = PlayerHeroUnits[player];
+    const hero = dat_registry.PlayerHeroUnits[player];
     const hp = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_HP)];
     const armor = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_ARMOR)];
     const shields = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_SHIELDS)];
@@ -60,12 +52,18 @@ function applyHeroUpgradeDat(player) {
     hero.armor = armor;
     hero.hasShield = 1;
     hero.maxShield = 20 + shields * 10;
-    PlayerEnergyMax[player] = HERO_BASE_ENERGY_MAX + energy * 25 * 256;
-    if (PlayerEnergy[player] > PlayerEnergyMax[player]) PlayerEnergy[player] = PlayerEnergyMax[player];
+    players.PlayerEnergyMax[player] = players.HERO_BASE_ENERGY_MAX + energy * 25 * 256;
+    if (players.PlayerEnergy[player] > players.PlayerEnergyMax[player]) players.PlayerEnergy[player] = players.PlayerEnergyMax[player];
+}
+
+function purchaseHeroUpgrade(player, upgradeId) {
+    // TODO: validate cost and max level.
+    HeroUpgradeLevel[heroUpgradeIndex(player, upgradeId)] += 1;
+    applyHeroUpgradeDat(player);
 }
 
 function applyWeaponUpgradeDat(player, weaponType) {
-    const weapon = PlayerPrimaryWeapons[player];
+    const weapon = dat_registry.PlayerPrimaryWeapons[player];
     const damage = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, WEAPON_UPGRADE_DAMAGE)];
     const range = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, WEAPON_UPGRADE_RANGE)];
     const cooldown = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, WEAPON_UPGRADE_COOLDOWN)];
@@ -75,6 +73,12 @@ function applyWeaponUpgradeDat(player, weaponType) {
     if (cooldown > 0) {
         weapon.cooldown -= cooldown;
     }
+}
+
+function purchaseWeaponUpgrade(player, weaponType, upgradeId) {
+    // TODO: validate weapon unlocked, cost, and max level.
+    WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, upgradeId)] += 1;
+    applyWeaponUpgradeDat(player, weaponType);
 }
 
 function updateUpgrades() {

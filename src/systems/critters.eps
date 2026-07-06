@@ -1,6 +1,9 @@
 // Neural Critters
 // Rare neutral wildlife that flees from Ghosts. Players must stun them before harvesting.
 
+import core.constants;
+import systems.resources;
+
 const MAX_NEURAL_CRITTERS = 24;
 const CRITTER_STATE_IDLE = 0;
 const CRITTER_STATE_FLEEING = 1;
@@ -9,8 +12,8 @@ const CRITTER_STATE_HARVESTED = 3;
 const CRITTER_STATE_ESCAPED = 4;
 
 const CRITTER_DETECT_RADIUS = 7 * 32;
-const CRITTER_STUN_FRAMES = 5 * FRAMES_PER_GAME_SECOND;
-const CRITTER_ESCAPE_FRAMES = 10 * FRAMES_PER_GAME_SECOND;
+const CRITTER_STUN_FRAMES = 5 * constants.FRAMES_PER_GAME_SECOND;
+const CRITTER_ESCAPE_FRAMES = 10 * constants.FRAMES_PER_GAME_SECOND;
 const CRITTER_BASE_REWARD = 35;
 
 const CritterActive = EUDArray(MAX_NEURAL_CRITTERS);
@@ -53,7 +56,7 @@ function tryStunCritter(player, critter) {
 
 function tryHarvestCritter(player, critter) {
     if (CritterActive[critter] && CritterState[critter] == CRITTER_STATE_STUNNED) {
-        addMinerals(player, CritterReward[critter]);
+        resources.addMinerals(player, CritterReward[critter]);
         CritterState[critter] = CRITTER_STATE_HARVESTED;
         CritterActive[critter] = 0;
         DisplayTextAll("Neural biomass harvested.");
@@ -89,7 +92,7 @@ function updateCritter(critter) {
         return;
     }
 
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         if (isPlayerNearCritter(p, critter)) {
             CritterState[critter] = CRITTER_STATE_FLEEING;
             CritterThreatPlayer[critter] = p;

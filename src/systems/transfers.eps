@@ -1,10 +1,12 @@
 // Team Resource Transfers
 
-const TransferTarget = EUDArray(MAX_PLAYERS);
-const TransferAmount = EUDArray(MAX_PLAYERS);
+import core.constants;
+
+const TransferTarget = EUDArray(constants.MAX_PLAYERS);
+const TransferAmount = EUDArray(constants.MAX_PLAYERS);
 
 function initTransfers() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         TransferTarget[p] = 0;
         TransferAmount[p] = 0;
     }

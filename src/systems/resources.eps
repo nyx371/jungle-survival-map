@@ -1,13 +1,15 @@
 // Resource Harvesting
 // Right-click continuous mining. Harvesting locks out firing while mineral/gas trickles arrive.
 
+import core.constants;
+
 const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
 const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
 const RESOURCE_ORGANIC_GROWTH = 4;
 
-const HARVEST_TICK_FRAMES = 3 * FRAMES_PER_GAME_SECOND;
+const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
 const HARVEST_WEAPON_LOCKOUT = 1;
 
 // Baseline trickle profile per harvest tick. Final values should be tuned by map pacing.
@@ -22,11 +24,10 @@ const CRYSTAL_GAS_PER_TICK = 5;
 const ORGANIC_MINERALS_PER_TICK = 3;
 const ORGANIC_GAS_PER_TICK = 3;
 
-const IsHarvesting = EUDArray(MAX_PLAYERS);
-const HarvestTarget = EUDArray(MAX_PLAYERS);
-const HarvestProgress = EUDArray(MAX_PLAYERS);
-const HarvestTick = EUDArray(MAX_PLAYERS);
-
+const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
+const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
+const HarvestProgress = EUDArray(constants.MAX_PLAYERS);
+const HarvestTick = EUDArray(constants.MAX_PLAYERS);
 
 function addMinerals(player, amount) {
     // TODO: replace with exact player resource mutation helper once harness is compile-tested.
@@ -52,11 +53,9 @@ function loseMostGas(player, keepPercent) {
     // TODO: read current vespene gas, keep keepPercent, subtract the rest.
 }
 
-function initResources() {
-    foreach (p : py_range(MAX_PLAYERS)) {
-        clearHarvestState(p);
-    }
-    // TODO: scan preplaced candidate units and activate weighted resource nodes.
+function setPlayerHarvestLockout(player, enabled) {
+    // TODO: while enabled, prevent the player's Ghost weapon from firing.
+    // Likely implemented by order control, weapon swap to harmless dummy, or attack interruption.
 }
 
 function clearHarvestState(player) {
@@ -67,9 +66,11 @@ function clearHarvestState(player) {
     setPlayerHarvestLockout(player, 0);
 }
 
-function setPlayerHarvestLockout(player, enabled) {
-    // TODO: while enabled, prevent the player's Ghost weapon from firing.
-    // Likely implemented by order control, weapon swap to harmless dummy, or attack interruption.
+function initResources() {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        clearHarvestState(p);
+    }
+    // TODO: scan preplaced candidate units and activate weighted resource nodes.
 }
 
 function startHarvest(player, target) {
@@ -128,7 +129,7 @@ function updateHarvesting(player) {
 }
 
 function updateResources() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         updateHarvesting(p);
     }
 }

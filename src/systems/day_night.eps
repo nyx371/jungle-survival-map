@@ -1,6 +1,10 @@
 // Day/Night Director
 // 22 minute day/night cycle. Victory after five nights, with optional final boss.
 
+import core.constants;
+import systems.mob_evolution;
+import systems.victory;
+
 var GlobalFrame = 0;
 var CycleFrame = 0;
 var IsNight = 0;
@@ -10,8 +14,8 @@ var NightsSurvived = 0;
 var NightIntensity = 0;
 var VictoryPending = 0;
 
-const DAY_FRAMES = DAY_SECONDS * FRAMES_PER_GAME_SECOND;
-const NIGHT_FRAMES = NIGHT_SECONDS * FRAMES_PER_GAME_SECOND;
+const DAY_FRAMES = constants.DAY_SECONDS * constants.FRAMES_PER_GAME_SECOND;
+const NIGHT_FRAMES = constants.NIGHT_SECONDS * constants.FRAMES_PER_GAME_SECOND;
 
 function initDayNight() {
     GlobalFrame = 0;
@@ -29,7 +33,7 @@ function startNight() {
     CycleFrame = 0;
     CurrentNight += 1;
     NightIntensity = CurrentNight;
-    addEvolutionPressure(25 + CurrentNight * 10);
+    mob_evolution.addEvolutionPressure(25 + CurrentNight * 10);
     DisplayTextAll("Night falls. Stay near light.");
 }
 
@@ -38,9 +42,9 @@ function endNight() {
     CycleFrame = 0;
     NightsSurvived += 1;
 
-    if (NightsSurvived >= TARGET_NIGHTS_TO_WIN) {
+    if (NightsSurvived >= constants.TARGET_NIGHTS_TO_WIN) {
         VictoryPending = 1;
-        requestVictorySequence();
+        victory.requestVictorySequence();
     } else {
         CurrentDay += 1;
         DisplayTextAll("Dawn breaks. Scavenge while you can.");

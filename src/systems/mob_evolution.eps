@@ -9,12 +9,6 @@ const MOB_TIER_RED = 3;
 var GlobalMobTier = MOB_TIER_BLACK;
 var EvolutionPressure = 0;
 
-function initMobEvolution() {
-    GlobalMobTier = MOB_TIER_BLACK;
-    EvolutionPressure = 0;
-    applyAllMobTierDat(GlobalMobTier);
-}
-
 function addEvolutionPressure(amount) {
     EvolutionPressure += amount;
 }
@@ -24,12 +18,6 @@ function getEvolutionThresholdForNextTier() {
     if (GlobalMobTier == MOB_TIER_BROWN) return 250;
     if (GlobalMobTier == MOB_TIER_ORANGE) return 500;
     return 999999;
-}
-
-function applyAllMobTierDat(tier) {
-    applyZerglingTierDat(tier);
-    applyHydraliskTierDat(tier);
-    // TODO: apply Drone, Broodling, Lurker, Queen, Mutalisk, Guardian, Defiler, Ultralisk.
 }
 
 function applyZerglingTierDat(tier) {
@@ -76,6 +64,18 @@ function applyHydraliskTierDat(tier) {
         weapon.cooldown = 10;
         weapon.maxRange = 6 * 32;
     }
+}
+
+function applyAllMobTierDat(tier) {
+    applyZerglingTierDat(tier);
+    applyHydraliskTierDat(tier);
+    // TODO: apply Drone, Broodling, Lurker, Queen, Mutalisk, Guardian, Defiler, Ultralisk.
+}
+
+function initMobEvolution() {
+    GlobalMobTier = MOB_TIER_BLACK;
+    EvolutionPressure = 0;
+    applyAllMobTierDat(GlobalMobTier);
 }
 
 function updateMobEvolution() {

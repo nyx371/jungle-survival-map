@@ -1,15 +1,17 @@
 // Audio Feedback: hurt sounds, heartbeat, Ghost breathing.
 
-const LOW_HP_PERCENT = 30;
-const HURT_SOUND_COOLDOWN = 3 * FRAMES_PER_GAME_SECOND;
-const HEARTBEAT_COOLDOWN = 2 * FRAMES_PER_GAME_SECOND;
+import core.constants;
 
-const LastHp = EUDArray(MAX_PLAYERS);
-const HurtSoundTimer = EUDArray(MAX_PLAYERS);
-const HeartbeatTimer = EUDArray(MAX_PLAYERS);
+const LOW_HP_PERCENT = 30;
+const HURT_SOUND_COOLDOWN = 3 * constants.FRAMES_PER_GAME_SECOND;
+const HEARTBEAT_COOLDOWN = 2 * constants.FRAMES_PER_GAME_SECOND;
+
+const LastHp = EUDArray(constants.MAX_PLAYERS);
+const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
+const HeartbeatTimer = EUDArray(constants.MAX_PLAYERS);
 
 function initAudio() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         LastHp[p] = 0;
         HurtSoundTimer[p] = 0;
         HeartbeatTimer[p] = 0;
@@ -28,7 +30,7 @@ function updateAudioForPlayer(player) {
 }
 
 function updateAudio() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         updateAudioForPlayer(p);
     }
 }

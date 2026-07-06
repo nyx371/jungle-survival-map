@@ -2,8 +2,11 @@
 // Optional small squads controlled by each Ghost: crafted robotic fighters, tamed Zerg, or resurrected Zerg.
 // Companions are owned by the player and are wiped when that player's Ghost dies.
 
+import core.constants;
+import systems.players;
+
 const MAX_COMPANIONS_PER_PLAYER = 6;
-const MAX_COMPANIONS = MAX_PLAYERS * MAX_COMPANIONS_PER_PLAYER;
+const MAX_COMPANIONS = constants.MAX_PLAYERS * MAX_COMPANIONS_PER_PLAYER;
 
 const COMPANION_ROBOTIC = 0;
 const COMPANION_TAMED_ZERG = 1;
@@ -26,8 +29,7 @@ function initCompanions() {
 }
 
 function getPlayerCompanionCount(player) {
-    const count = EUDVariable();
-    count = 0;
+    var count = 0;
     foreach (i : py_range(MAX_COMPANIONS)) {
         if (CompanionActive[i] && CompanionOwner[i] == player) count += 1;
     }
@@ -84,7 +86,7 @@ function updateCompanionOrders(player) {
 }
 
 function updateCompanions() {
-    foreach (p : py_range(MAX_PLAYERS)) {
-        if (HeroAlive[p]) updateCompanionOrders(p);
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        if (players.HeroAlive[p]) updateCompanionOrders(p);
     }
 }

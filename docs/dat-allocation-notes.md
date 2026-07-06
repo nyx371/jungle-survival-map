@@ -2,7 +2,7 @@
 
 ## Why unique DAT IDs per player?
 
-StarCraft DAT edits are global. If every player uses `Terran Ghost` and `C-10 Canister Rifle`, then changing that unit or weapon changes it for everyone.
+StarCraft DAT edits are global. If every player uses `Terran Ghost` and `C-10 Concussion Rifle`, then changing that unit or weapon changes it for everyone.
 
 Jungle Commandos wants player-specific progression, so each player should get:
 
@@ -15,7 +15,7 @@ That lets Player 1 upgrade damage, cooldown, HP, armor, shields, energy, etc. wi
 
 ```js
 const p1Hero = TrgUnit("Terran Ghost");
-const p1Weapon = Weapon("C-10 Canister Rifle");
+const p1Weapon = Weapon("C-10 Concussion Rifle");
 
 const p2Hero = TrgUnit("Sarah Kerrigan");
 const p2Weapon = Weapon("Gauss Rifle");

@@ -1,0 +1,5 @@
+[main]
+input: dist/jc_source_check.scx
+output: dist/jc-check.scx
+
+[src/main.eps]

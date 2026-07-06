@@ -1,5 +1,7 @@
 // Deep Menu Router
 
+import core.constants;
+
 const MENU_CLOSED = 0;
 const MENU_MAIN = 1;
 const MENU_WEAPONS = 2;
@@ -9,12 +11,12 @@ const MENU_STRUCTURES = 5;
 const MENU_TRANSFER = 6;
 const MENU_OPTIONS = 7;
 
-const MenuPage = EUDArray(MAX_PLAYERS);
-const MenuCursor = EUDArray(MAX_PLAYERS);
-const MenuContext = EUDArray(MAX_PLAYERS);
+const MenuPage = EUDArray(constants.MAX_PLAYERS);
+const MenuCursor = EUDArray(constants.MAX_PLAYERS);
+const MenuContext = EUDArray(constants.MAX_PLAYERS);
 
 function initMenus() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         MenuPage[p] = MENU_CLOSED;
         MenuCursor[p] = 0;
         MenuContext[p] = 0;
@@ -39,7 +41,7 @@ function renderMenu(player) {
 }
 
 function updateMenus() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         if (MenuPage[p] != MENU_CLOSED) {
             handleMenuInput(p);
             renderMenu(p);

@@ -9,19 +9,9 @@ var VictoryState = VICTORY_RUNNING;
 var FinalBossEnabled = 1;
 var FinalBossSpawned = 0;
 var EndlessModeEnabled = 0;
-
 function initVictory() {
     VictoryState = VICTORY_RUNNING;
     FinalBossSpawned = 0;
-}
-
-function requestVictorySequence() {
-    if (FinalBossEnabled) {
-        VictoryState = VICTORY_FINAL_BOSS;
-        spawnFinalBoss();
-    } else {
-        completeVictory();
-    }
 }
 
 function spawnFinalBoss() {
@@ -39,6 +29,15 @@ function completeVictory() {
     } else {
         VictoryState = VICTORY_COMPLETE;
         Victory();
+    }
+}
+
+function requestVictorySequence() {
+    if (FinalBossEnabled) {
+        VictoryState = VICTORY_FINAL_BOSS;
+        spawnFinalBoss();
+    } else {
+        completeVictory();
     }
 }
 

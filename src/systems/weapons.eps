@@ -1,5 +1,9 @@
 // Weapon Crafting and Active Weapon Swapping
 
+import core.constants;
+import core.dat_registry;
+import systems.upgrades;
+
 const WEAPON_RIFLE = 0;
 const WEAPON_SHOTGUN = 1;
 const WEAPON_SNIPER = 2;
@@ -7,44 +11,19 @@ const WEAPON_EXPLOSIVE = 3;
 const WEAPON_ACID = 4;
 const WEAPON_COUNT = 5;
 
-const ActiveWeapon = EUDArray(MAX_PLAYERS);
+const ActiveWeapon = EUDArray(constants.MAX_PLAYERS);
 // TODO: represent UnlockedWeapon[player][weapon] with flattened array.
-const UnlockedWeapon = EUDArray(MAX_PLAYERS * WEAPON_COUNT);
-
+const UnlockedWeapon = EUDArray(constants.MAX_PLAYERS * WEAPON_COUNT);
 function weaponIndex(player, weaponType) {
     return player * WEAPON_COUNT + weaponType;
-}
-
-function initWeapons() {
-    foreach (p : py_range(MAX_PLAYERS)) {
-        ActiveWeapon[p] = WEAPON_RIFLE;
-        foreach (w : py_range(WEAPON_COUNT)) {
-            UnlockedWeapon[weaponIndex(p, w)] = 0;
-        }
-        UnlockedWeapon[weaponIndex(p, WEAPON_RIFLE)] = 1;
-        applyActiveWeaponDat(p);
-    }
 }
 
 function isWeaponUnlocked(player, weaponType) {
     return UnlockedWeapon[weaponIndex(player, weaponType)];
 }
 
-function craftWeapon(player, weaponType) {
-    // TODO: check mineral cost from weapon definition table.
-    UnlockedWeapon[weaponIndex(player, weaponType)] = 1;
-    switchWeapon(player, weaponType);
-}
-
-function switchWeapon(player, weaponType) {
-    if (isWeaponUnlocked(player, weaponType)) {
-        ActiveWeapon[player] = weaponType;
-        applyActiveWeaponDat(player);
-    }
-}
-
 function applyActiveWeaponDat(player) {
-    const weapon = PlayerPrimaryWeapons[player];
+    const weapon = dat_registry.PlayerPrimaryWeapons[player];
     const active = ActiveWeapon[player];
 
     if (active == WEAPON_RIFLE) {
@@ -73,7 +52,31 @@ function applyActiveWeaponDat(player) {
         // TODO: choose behavior/explosion type for area denial.
     }
 
-    applyWeaponUpgradeDat(player, active);
+    upgrades.applyWeaponUpgradeDat(player, active);
+}
+
+function initWeapons() {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        ActiveWeapon[p] = WEAPON_RIFLE;
+        foreach (w : py_range(WEAPON_COUNT)) {
+            UnlockedWeapon[weaponIndex(p, w)] = 0;
+        }
+        UnlockedWeapon[weaponIndex(p, WEAPON_RIFLE)] = 1;
+        applyActiveWeaponDat(p);
+    }
+}
+
+function switchWeapon(player, weaponType) {
+    if (isWeaponUnlocked(player, weaponType)) {
+        ActiveWeapon[player] = weaponType;
+        applyActiveWeaponDat(player);
+    }
+}
+
+function craftWeapon(player, weaponType) {
+    // TODO: check mineral cost from weapon definition table.
+    UnlockedWeapon[weaponIndex(player, weaponType)] = 1;
+    switchWeapon(player, weaponType);
 }
 
 function updateWeapons() {

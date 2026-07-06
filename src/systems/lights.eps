@@ -3,6 +3,11 @@
 // Adopted from the earlier map.eps pattern: count nearby light sources, ease brightness
 // toward a target level, and keep local brightness separate from synchronized gameplay state.
 
+import core.constants;
+import systems.day_night;
+import systems.mobs;
+import systems.players;
+
 const MAX_LIGHTS = 64;
 const DEFAULT_LIGHT_RADIUS = 9 * 32;
 const DEFAULT_NO_SPAWN_RADIUS = 12 * 32;
@@ -25,7 +30,7 @@ const LightX = EUDArray(MAX_LIGHTS);
 const LightY = EUDArray(MAX_LIGHTS);
 const LightRadius = EUDArray(MAX_LIGHTS);
 const LightNoSpawnRadius = EUDArray(MAX_LIGHTS);
-const PlayerBrightness = EUDArray(MAX_PLAYERS);
+const PlayerBrightness = EUDArray(constants.MAX_PLAYERS);
 
 function initLights() {
     foreach (i : py_range(MAX_LIGHTS)) {
@@ -38,7 +43,7 @@ function initLights() {
         LightNoSpawnRadius[i] = DEFAULT_NO_SPAWN_RADIUS;
     }
 
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         PlayerBrightness[p] = DAY_BRIGHTNESS;
     }
 }
@@ -116,8 +121,8 @@ function isSpawnBlockedAt(x, y) {
 }
 
 function getAreaSpawnBlockLightLevel(area) {
-    const areaX = area % MOB_AREA_COLUMNS;
-    const areaY = area / MOB_AREA_COLUMNS;
+    const areaX = area % mobs.MOB_AREA_COLUMNS;
+    const areaY = area / mobs.MOB_AREA_COLUMNS;
     const centerX = (areaX * LIGHT_AREA_TILE_SIZE + LIGHT_AREA_TILE_SIZE / 2) * LIGHT_TILE_SIZE;
     const centerY = (areaY * LIGHT_AREA_TILE_SIZE + LIGHT_AREA_TILE_SIZE / 2) * LIGHT_TILE_SIZE;
 
@@ -137,7 +142,7 @@ function getAreaSpawnBlockLightLevel(area) {
 }
 
 function brightnessForLightCount(lightCount) {
-    if (!IsNight) return DAY_BRIGHTNESS;
+    if (!day_night.IsNight) return DAY_BRIGHTNESS;
     if (lightCount >= 4) return NIGHT_BRIGHTNESS_L4;
     if (lightCount >= 3) return NIGHT_BRIGHTNESS_L3;
     if (lightCount >= 2) return NIGHT_BRIGHTNESS_L2;
@@ -157,10 +162,10 @@ function applyLocalBrightness(player) {
 }
 
 function updateLocalBrightness(player) {
-    if (!HeroAlive[player]) return;
+    if (!players.HeroAlive[player]) return;
 
-    const hero = getPlayerHeroUnit(player);
-    const lightCount = countLightsNear(getUnitX(hero), getUnitY(hero));
+    const hero = players.getPlayerHeroUnit(player);
+    const lightCount = countLightsNear(hero.posX, hero.posY);
     const targetBrightness = brightnessForLightCount(lightCount);
 
     easePlayerBrightness(player, targetBrightness);
@@ -168,7 +173,7 @@ function updateLocalBrightness(player) {
 }
 
 function updateLights() {
-    foreach (p : py_range(MAX_PLAYERS)) {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
         updateLocalBrightness(p);
     }
 }

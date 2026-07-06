@@ -2,6 +2,11 @@
 // 256x256 map tiles divided into 16x16 tile areas = 16x16 spawn areas.
 // Map authors pre-place Flag placeholder units to mark valid mob spawn positions.
 
+import core.constants;
+import systems.day_night;
+import systems.lights;
+import systems.players;
+
 const MAP_TILE_WIDTH = 256;
 const MAP_TILE_HEIGHT = 256;
 const MOB_AREA_TILE_SIZE = 16;
@@ -26,7 +31,7 @@ const SpawnMarkerX = EUDArray(MAX_MOB_SPAWN_MARKERS);
 const SpawnMarkerY = EUDArray(MAX_MOB_SPAWN_MARKERS);
 const SpawnMarkerArea = EUDArray(MAX_MOB_SPAWN_MARKERS);
 const SpawnMarkerActive = EUDArray(MAX_MOB_SPAWN_MARKERS);
-const SpawnMarkerCount = EUDVariable();
+var SpawnMarkerCount = 0;
 
 function getMobAreaFromTile(tileX, tileY) {
     const areaX = tileX / MOB_AREA_TILE_SIZE;
@@ -59,8 +64,8 @@ function indexMobSpawnMarker(markerUnit) {
     const markerIndex = SpawnMarkerCount;
     if (markerIndex >= MAX_MOB_SPAWN_MARKERS) return;
 
-    const x = getUnitX(markerUnit);
-    const y = getUnitY(markerUnit);
+    const x = markerUnit.posX;
+    const y = markerUnit.posY;
     const area = getMobAreaFromPosition(x, y);
 
     SpawnMarkerX[markerIndex] = x;
@@ -74,7 +79,6 @@ function indexMobSpawnMarker(markerUnit) {
 }
 
 function indexMobSpawnMarkers() {
-    SpawnMarkerCount = 0;
     foreach (area : py_range(MAX_MOB_AREAS)) {
         AreaSpawnStart[area] = 0;
         AreaSpawnCount[area] = 0;
@@ -102,10 +106,10 @@ function refreshAreaPlayerPresence() {
         AreaPlayerPresence[area] = 0;
     }
 
-    foreach (p : py_range(MAX_PLAYERS)) {
-        if (HeroAlive[p]) {
-            const hero = getPlayerHeroUnit(p);
-            const area = getMobAreaFromPosition(getUnitX(hero), getUnitY(hero));
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        if (players.HeroAlive[p]) {
+            const hero = players.getPlayerHeroUnit(p);
+            const area = getMobAreaFromPosition(hero.posX, hero.posY);
             AreaPlayerPresence[area] += 1;
         }
     }
@@ -115,12 +119,12 @@ function refreshAreaLightLevels() {
     foreach (area : py_range(MAX_MOB_AREAS)) {
         // TODO: ask lights.eps for synchronized gameplay light coverage in this 16x16 area.
         // AreaLightLevel should represent spawn suppression, not local screen brightness.
-        AreaLightLevel[area] = getAreaSpawnBlockLightLevel(area);
+        AreaLightLevel[area] = lights.getAreaSpawnBlockLightLevel(area);
     }
 }
 
 function getAreaSpawnBudget(area) {
-    const baseBudget = AreaThreatBudget[area] * getNightSpawnMultiplier() / 100 * getPlayerCountSpawnScale() / 100;
+    const baseBudget = AreaThreatBudget[area] * day_night.getNightSpawnMultiplier() / 100 * getPlayerCountSpawnScale() / 100;
     if (AreaPlayerPresence[area] > 0) return baseBudget;
     return baseBudget / 2;
 }
@@ -132,7 +136,7 @@ function shouldSpawnInArea(area) {
 
     // Areas containing players get active pressure; nearby/empty areas can refill more slowly.
     if (AreaPlayerPresence[area] > 0) return 1;
-    return getNightSpawnMultiplier() > 100;
+    return day_night.getNightSpawnMultiplier() > 100;
 }
 
 function shouldDespawnAreaMobs(area) {
@@ -142,7 +146,7 @@ function shouldDespawnAreaMobs(area) {
 }
 
 function canSpawnAt(x, y) {
-    if (isSpawnBlockedAt(x, y)) return 0;
+    if (lights.isSpawnBlockedAt(x, y)) return 0;
     // TODO: reject if too close to player hero, invalid terrain, or inside hard no-spawn zones.
     return 1;
 }
@@ -188,7 +192,7 @@ function updateAreaSpawning(area) {
 
     if (shouldSpawnInArea(area)) {
         spawnMobInArea(area);
-        AreaSpawnCooldown[area] = 4 * FRAMES_PER_GAME_SECOND;
+        AreaSpawnCooldown[area] = 4 * constants.FRAMES_PER_GAME_SECOND;
     }
 }
 

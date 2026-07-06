@@ -86,8 +86,8 @@ const PlayerHeroUnit = py_list(
     // etc, final safe IDs TBD
 );
 
-const PlayerWeapon = py_list(
-    Weapon("C-10 Canister Rifle"),
+const PlayerWeapon = list(
+    Weapon("C-10 Concussion Rifle"),
     Weapon("Gauss Rifle"),
     // etc, final safe IDs TBD
 );

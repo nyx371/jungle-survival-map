@@ -1,5 +1,9 @@
 // Structures: lights, walls, regeneration stations, turrets.
 
+import core.constants;
+import systems.lights;
+import systems.resources;
+
 const STRUCTURE_LIGHT = 0;
 const STRUCTURE_WALL = 1;
 const STRUCTURE_REGEN = 2;
@@ -21,7 +25,7 @@ const StructureHp = EUDArray(MAX_STRUCTURES);
 const StructureMaxHp = EUDArray(MAX_STRUCTURES);
 const StructureRepairTimer = EUDArray(MAX_STRUCTURES);
 
-const STRUCTURE_REPAIR_TICK_FRAMES = 2 * FRAMES_PER_GAME_SECOND;
+const STRUCTURE_REPAIR_TICK_FRAMES = 2 * constants.FRAMES_PER_GAME_SECOND;
 const STRUCTURE_REPAIR_AMOUNT = 8 * 256;
 const WALL_BASE_HP = 120 * 256;
 const LIGHT_BASE_HP = 70 * 256;
@@ -80,16 +84,16 @@ function buildStructure(player, structureType) {
     StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
 
     // TODO: create structure CUnit near player/target. If this is a light, call
-    // registerLightForStructure(slot, player, x, y, DEFAULT_LIGHT_RADIUS, DEFAULT_NO_SPAWN_RADIUS).
+    // lights.registerLightForStructure(slot, player, x, y, lights.DEFAULT_LIGHT_RADIUS, lights.DEFAULT_NO_SPAWN_RADIUS).
     return slot;
 }
 
 function deconstructStructure(player, structureIndex) {
     if (StructureOwner[structureIndex] == player && StructureAlive[structureIndex]) {
-        addMinerals(player, StructureRefund[structureIndex]);
+        resources.addMinerals(player, StructureRefund[structureIndex]);
         StructureAlive[structureIndex] = 0;
         StructureHp[structureIndex] = 0;
-        unregisterLightByStructure(structureIndex);
+        lights.unregisterLightByStructure(structureIndex);
         // TODO: remove CUnit.
     }
 }
@@ -99,7 +103,7 @@ function destroyPlayerStructures(player) {
         if (StructureOwner[i] == player && StructureAlive[i]) {
             StructureAlive[i] = 0;
             StructureHp[i] = 0;
-            unregisterLightByStructure(i);
+            lights.unregisterLightByStructure(i);
             // TODO: remove structure CUnit without refund.
         }
     }
