@@ -84,7 +84,7 @@ function initResourceNodes() {
         const marker = CUnit(found.popleft());
         const x = marker.posX;
         const y = marker.posY;
-        marker.die();
+        utils.removeCUnit(marker);
 
         setloc($L("_Place"), x, y);
         const node = CUnit(utils.createUnitAndGetEpd(1, TERRAN_COVERT_OPS, $L("_Place"), P7));

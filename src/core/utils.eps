@@ -9,3 +9,23 @@ function createUnitAndGetEpd(count, unitType, location, player) {
     CreateUnit(count, unitType, location, player);
     return epd;
 }
+
+
+function createImageSpriteAtLocation(image, location) {
+    SetMemoryX(0x00666458, SetTo, image, 0x0000ffff);
+    CreateUnit(1, "Scanner Sweep", location, $P8);
+    RemoveUnit("Scanner Sweep", AllPlayers);    
+    SetMemoryX(0x00666458, SetTo, 546, 0x0000ffff);
+}
+
+function setPlayerColor(pnum ,color) {
+    const pcolor_dst = 0x581D76 + 8 * pnum;
+    const mcolor_dst = 0x581DD6 + pnum;
+    bwrite(pcolor_dst, color);
+    bwrite(mcolor_dst, color);
+}
+
+function removeCUnit(unit:CUnit) {
+    unit.unitType = 200;
+    RemoveUnit(unit.unitType, AllPlayers);
+}
