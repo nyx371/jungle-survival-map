@@ -2221,3 +2221,9 @@ pre code .tok-function { color: #f4d35e; }
   background: rgba(255, 255, 255, 0.34);
   box-shadow: none;
 }
+
+.day-cycle-transition .cycle-phase-list .phase-progress {
+  padding: 0;
+  border: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
