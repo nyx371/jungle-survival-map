@@ -228,6 +228,9 @@ function updatePlayerDebugInfo(player, localPlayer) {
 
     const savedCp = getcurpl();
     setcurpl(localPlayer);
+    if (RespawnTimer[player] > 0) {
+        Screen.printfAt(0, "{}", RespawnTimer[player]);
+    }
     const hero = getPlayerHeroUnit(player);
     Screen.printfAt(1, "{}", hero.orderID);
     setcurpl(savedCp);
