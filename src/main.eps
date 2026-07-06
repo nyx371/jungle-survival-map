@@ -48,9 +48,12 @@ function onPluginStart() {
 }
 
 function beforeTriggerExec() {
-    const cp = getcurpl();
-    var b : CUnit = CUnit(players.PlayerHeroCUnit[cp]);
+    const savedCp = getcurpl();
+    const localPlayer = getuserplayerid();
+    setcurpl(localPlayer);
+    var b : CUnit = CUnit(players.PlayerHeroCUnit[localPlayer]);
     Screen.printfAt(1, "{}", b.orderID);
+    setcurpl(savedCp);
 
     day_night.updateDayNight();
     players.updatePlayers();
