@@ -136,7 +136,8 @@ function shouldSpawnInArea(area) {
 
     // Areas containing players get active pressure; nearby/empty areas can refill more slowly.
     if (AreaPlayerPresence[area] > 0) return 1;
-    return day_night.getNightSpawnMultiplier() > 100;
+    if (day_night.getNightSpawnMultiplier() > 100) return 1;
+    return 0;
 }
 
 function shouldDespawnAreaMobs(area) {
