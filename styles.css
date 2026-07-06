@@ -2233,3 +2233,33 @@ pre code .tok-function { color: #f4d35e; }
   font-weight: 900;
   letter-spacing: 0.08em;
 }
+
+/* Let the home hero art breathe more. */
+#home .game-hero {
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 58%, rgba(0,0,0,.28) 76%, rgba(0,0,0,.58) 100%),
+    url("assets/home-header.png") center top / cover no-repeat,
+    #000;
+}
+
+#home .game-hero-copy {
+  width: min(78%, 780px);
+  padding-block: clamp(1.1rem, 3vw, 2.5rem);
+  background: linear-gradient(to top, rgba(0,0,0,.42), rgba(0,0,0,0));
+}
+
+#home .game-hero-copy h1 {
+  font-size: clamp(2.4rem, 5.8vw, 5.2rem);
+  margin: 0.45rem auto 0.75rem;
+}
+
+#home .game-hero-copy .tagline {
+  max-width: 700px;
+  font-size: clamp(0.92rem, 1.55vw, 1.22rem);
+  line-height: 1.42;
+}
+
+#home .game-hero-copy .hero-kicker {
+  margin-bottom: 0.45rem;
+  font-size: clamp(0.58rem, 0.9vw, 0.72rem);
+}
