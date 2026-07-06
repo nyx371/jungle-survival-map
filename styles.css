@@ -2077,3 +2077,17 @@ pre code .tok-function { color: #f4d35e; }
 .day-cycle-transition .cycle-image {
   transition: none;
 }
+
+.unknown-threat {
+  margin-top: 1.25rem;
+  border-color: rgba(146, 242, 143, 0.28);
+  background:
+    radial-gradient(circle at 78% 26%, rgba(146, 242, 143, 0.14), transparent 24rem),
+    linear-gradient(135deg, rgba(6, 32, 18, 0.36), rgba(0, 0, 0, 0.28));
+}
+
+.unknown-threat .apex-tags span {
+  border-color: rgba(146, 242, 143, 0.32);
+  color: #d9ffd8;
+  background: rgba(146, 242, 143, 0.08);
+}
