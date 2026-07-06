@@ -42,16 +42,57 @@ function initUpgrades() {
 }
 
 function applyHeroUpgradeDat(player) {
-    const hero = dat_registry.PlayerHeroUnits[player];
+    // PlayerHeroUnits is a compile-time list; it can only be indexed by a
+    // compile-time constant, so dispatch on the runtime player id via switch.
+    // Case count must match MAX_PLAYERS in core/constants.eps.
     const hp = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_HP)];
     const armor = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_ARMOR)];
     const shields = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_SHIELDS)];
     const energy = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_ENERGY)];
 
-    hero.maxHp = (80 + hp * 20) * 256;
-    hero.armor = armor;
-    hero.hasShield = 1;
-    hero.maxShield = 20 + shields * 10;
+    switch (player) {
+    case 0: {
+        const hero = dat_registry.PlayerHeroUnits[0];
+        hero.maxHp = (80 + hp * 20) * 256;
+        hero.armor = armor;
+        hero.hasShield = 1;
+        hero.maxShield = 20 + shields * 10;
+        break;
+    }
+    case 1: {
+        const hero = dat_registry.PlayerHeroUnits[1];
+        hero.maxHp = (80 + hp * 20) * 256;
+        hero.armor = armor;
+        hero.hasShield = 1;
+        hero.maxShield = 20 + shields * 10;
+        break;
+    }
+    case 2: {
+        const hero = dat_registry.PlayerHeroUnits[2];
+        hero.maxHp = (80 + hp * 20) * 256;
+        hero.armor = armor;
+        hero.hasShield = 1;
+        hero.maxShield = 20 + shields * 10;
+        break;
+    }
+    case 3: {
+        const hero = dat_registry.PlayerHeroUnits[3];
+        hero.maxHp = (80 + hp * 20) * 256;
+        hero.armor = armor;
+        hero.hasShield = 1;
+        hero.maxShield = 20 + shields * 10;
+        break;
+    }
+    case 4: {
+        const hero = dat_registry.PlayerHeroUnits[4];
+        hero.maxHp = (80 + hp * 20) * 256;
+        hero.armor = armor;
+        hero.hasShield = 1;
+        hero.maxShield = 20 + shields * 10;
+        break;
+    }
+    }
+
     players.PlayerEnergyMax[player] = players.HERO_BASE_ENERGY_MAX + energy * 25 * 256;
     if (players.PlayerEnergy[player] > players.PlayerEnergyMax[player]) players.PlayerEnergy[player] = players.PlayerEnergyMax[player];
 }
@@ -63,15 +104,59 @@ function purchaseHeroUpgrade(player, upgradeId) {
 }
 
 function applyWeaponUpgradeDat(player, weaponType) {
-    const weapon = dat_registry.PlayerPrimaryWeapons[player];
+    // PlayerPrimaryWeapons is a compile-time list; it can only be indexed by a
+    // compile-time constant, so dispatch on the runtime player id via switch.
+    // Case count must match MAX_PLAYERS in core/constants.eps.
     const damage = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, WEAPON_UPGRADE_DAMAGE)];
     const range = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, WEAPON_UPGRADE_RANGE)];
     const cooldown = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, WEAPON_UPGRADE_COOLDOWN)];
 
-    weapon.damage += damage * 3;
-    weapon.maxRange += range * 32;
-    if (cooldown > 0) {
-        weapon.cooldown -= cooldown;
+    switch (player) {
+    case 0: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[0];
+        weapon.damage += damage * 3;
+        weapon.maxRange += range * 32;
+        if (cooldown > 0) {
+            weapon.cooldown -= cooldown;
+        }
+        break;
+    }
+    case 1: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[1];
+        weapon.damage += damage * 3;
+        weapon.maxRange += range * 32;
+        if (cooldown > 0) {
+            weapon.cooldown -= cooldown;
+        }
+        break;
+    }
+    case 2: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[2];
+        weapon.damage += damage * 3;
+        weapon.maxRange += range * 32;
+        if (cooldown > 0) {
+            weapon.cooldown -= cooldown;
+        }
+        break;
+    }
+    case 3: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[3];
+        weapon.damage += damage * 3;
+        weapon.maxRange += range * 32;
+        if (cooldown > 0) {
+            weapon.cooldown -= cooldown;
+        }
+        break;
+    }
+    case 4: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[4];
+        weapon.damage += damage * 3;
+        weapon.maxRange += range * 32;
+        if (cooldown > 0) {
+            weapon.cooldown -= cooldown;
+        }
+        break;
+    }
     }
 }
 

@@ -23,33 +23,158 @@ function isWeaponUnlocked(player, weaponType) {
 }
 
 function applyActiveWeaponDat(player) {
-    const weapon = dat_registry.PlayerPrimaryWeapons[player];
+    // PlayerPrimaryWeapons is a compile-time list; it can only be indexed by a
+    // compile-time constant, so dispatch on the runtime player id via switch
+    // and repeat the per-weapon-type logic in each branch. Case count must
+    // match MAX_PLAYERS in core/constants.eps.
     const active = ActiveWeapon[player];
 
-    if (active == WEAPON_RIFLE) {
-        weapon.damage = 12;
-        weapon.cooldown = 12;
-        weapon.maxRange = 5 * 32;
-    } else if (active == WEAPON_SHOTGUN) {
-        weapon.damage = 22;
-        weapon.cooldown = 20;
-        weapon.maxRange = 3 * 32;
-        weapon.splashInnerRadius = 16;
-    } else if (active == WEAPON_SNIPER) {
-        weapon.damage = 45;
-        weapon.cooldown = 32;
-        weapon.maxRange = 8 * 32;
-    } else if (active == WEAPON_EXPLOSIVE) {
-        weapon.damage = 30;
-        weapon.cooldown = 28;
-        weapon.maxRange = 6 * 32;
-        weapon.splashInnerRadius = 24;
-        weapon.splashMiddleRadius = 48;
-    } else if (active == WEAPON_ACID) {
-        weapon.damage = 8;
-        weapon.cooldown = 6;
-        weapon.maxRange = 4 * 32;
-        // TODO: choose behavior/explosion type for area denial.
+    switch (player) {
+    case 0: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[0];
+        if (active == WEAPON_RIFLE) {
+            weapon.damage = 12;
+            weapon.cooldown = 12;
+            weapon.maxRange = 5 * 32;
+        } else if (active == WEAPON_SHOTGUN) {
+            weapon.damage = 22;
+            weapon.cooldown = 20;
+            weapon.maxRange = 3 * 32;
+            weapon.splashInnerRadius = 16;
+        } else if (active == WEAPON_SNIPER) {
+            weapon.damage = 45;
+            weapon.cooldown = 32;
+            weapon.maxRange = 8 * 32;
+        } else if (active == WEAPON_EXPLOSIVE) {
+            weapon.damage = 30;
+            weapon.cooldown = 28;
+            weapon.maxRange = 6 * 32;
+            weapon.splashInnerRadius = 24;
+            weapon.splashMiddleRadius = 48;
+        } else if (active == WEAPON_ACID) {
+            weapon.damage = 8;
+            weapon.cooldown = 6;
+            weapon.maxRange = 4 * 32;
+            // TODO: choose behavior/explosion type for area denial.
+        }
+        break;
+    }
+    case 1: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[1];
+        if (active == WEAPON_RIFLE) {
+            weapon.damage = 12;
+            weapon.cooldown = 12;
+            weapon.maxRange = 5 * 32;
+        } else if (active == WEAPON_SHOTGUN) {
+            weapon.damage = 22;
+            weapon.cooldown = 20;
+            weapon.maxRange = 3 * 32;
+            weapon.splashInnerRadius = 16;
+        } else if (active == WEAPON_SNIPER) {
+            weapon.damage = 45;
+            weapon.cooldown = 32;
+            weapon.maxRange = 8 * 32;
+        } else if (active == WEAPON_EXPLOSIVE) {
+            weapon.damage = 30;
+            weapon.cooldown = 28;
+            weapon.maxRange = 6 * 32;
+            weapon.splashInnerRadius = 24;
+            weapon.splashMiddleRadius = 48;
+        } else if (active == WEAPON_ACID) {
+            weapon.damage = 8;
+            weapon.cooldown = 6;
+            weapon.maxRange = 4 * 32;
+            // TODO: choose behavior/explosion type for area denial.
+        }
+        break;
+    }
+    case 2: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[2];
+        if (active == WEAPON_RIFLE) {
+            weapon.damage = 12;
+            weapon.cooldown = 12;
+            weapon.maxRange = 5 * 32;
+        } else if (active == WEAPON_SHOTGUN) {
+            weapon.damage = 22;
+            weapon.cooldown = 20;
+            weapon.maxRange = 3 * 32;
+            weapon.splashInnerRadius = 16;
+        } else if (active == WEAPON_SNIPER) {
+            weapon.damage = 45;
+            weapon.cooldown = 32;
+            weapon.maxRange = 8 * 32;
+        } else if (active == WEAPON_EXPLOSIVE) {
+            weapon.damage = 30;
+            weapon.cooldown = 28;
+            weapon.maxRange = 6 * 32;
+            weapon.splashInnerRadius = 24;
+            weapon.splashMiddleRadius = 48;
+        } else if (active == WEAPON_ACID) {
+            weapon.damage = 8;
+            weapon.cooldown = 6;
+            weapon.maxRange = 4 * 32;
+            // TODO: choose behavior/explosion type for area denial.
+        }
+        break;
+    }
+    case 3: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[3];
+        if (active == WEAPON_RIFLE) {
+            weapon.damage = 12;
+            weapon.cooldown = 12;
+            weapon.maxRange = 5 * 32;
+        } else if (active == WEAPON_SHOTGUN) {
+            weapon.damage = 22;
+            weapon.cooldown = 20;
+            weapon.maxRange = 3 * 32;
+            weapon.splashInnerRadius = 16;
+        } else if (active == WEAPON_SNIPER) {
+            weapon.damage = 45;
+            weapon.cooldown = 32;
+            weapon.maxRange = 8 * 32;
+        } else if (active == WEAPON_EXPLOSIVE) {
+            weapon.damage = 30;
+            weapon.cooldown = 28;
+            weapon.maxRange = 6 * 32;
+            weapon.splashInnerRadius = 24;
+            weapon.splashMiddleRadius = 48;
+        } else if (active == WEAPON_ACID) {
+            weapon.damage = 8;
+            weapon.cooldown = 6;
+            weapon.maxRange = 4 * 32;
+            // TODO: choose behavior/explosion type for area denial.
+        }
+        break;
+    }
+    case 4: {
+        const weapon = dat_registry.PlayerPrimaryWeapons[4];
+        if (active == WEAPON_RIFLE) {
+            weapon.damage = 12;
+            weapon.cooldown = 12;
+            weapon.maxRange = 5 * 32;
+        } else if (active == WEAPON_SHOTGUN) {
+            weapon.damage = 22;
+            weapon.cooldown = 20;
+            weapon.maxRange = 3 * 32;
+            weapon.splashInnerRadius = 16;
+        } else if (active == WEAPON_SNIPER) {
+            weapon.damage = 45;
+            weapon.cooldown = 32;
+            weapon.maxRange = 8 * 32;
+        } else if (active == WEAPON_EXPLOSIVE) {
+            weapon.damage = 30;
+            weapon.cooldown = 28;
+            weapon.maxRange = 6 * 32;
+            weapon.splashInnerRadius = 24;
+            weapon.splashMiddleRadius = 48;
+        } else if (active == WEAPON_ACID) {
+            weapon.damage = 8;
+            weapon.cooldown = 6;
+            weapon.maxRange = 4 * 32;
+            // TODO: choose behavior/explosion type for area denial.
+        }
+        break;
+    }
     }
 
     upgrades.applyWeaponUpgradeDat(player, active);
