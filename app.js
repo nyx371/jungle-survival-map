@@ -14,7 +14,7 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
-const systemSectionIds = ['system-loop', 'system-resources', 'system-enemies', 'system-upgrades'];
+const systemSectionIds = ['system-loop', 'system-upgrades', 'system-resources', 'system-enemies'];
 const defaultSystemSectionId = 'system-loop';
 
 function setSystemSection(sectionId = defaultSystemSectionId) {
@@ -26,10 +26,10 @@ function setSystemSection(sectionId = defaultSystemSectionId) {
     section.hidden = !active;
   });
 
-  document.querySelectorAll('.sub-tab').forEach((tab) => {
+  document.querySelectorAll('[data-system-target]').forEach((tab) => {
     const active = tab.dataset.systemTarget === targetId;
     tab.classList.toggle('active', active);
-    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    tab.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
 }
 
@@ -39,24 +39,21 @@ function currentSystemSectionFromHash() {
 }
 
 function activateTab(tabName, options = {}) {
+  const activeSystemSection = tabName === 'system' ? (options.systemSection || currentSystemSectionFromHash()) : null;
+
   document.querySelectorAll('.tab').forEach((tab) => {
-    const active = tab.dataset.tab === tabName;
+    const active = activeSystemSection
+      ? tab.dataset.systemTarget === activeSystemSection
+      : tab.dataset.tab === tabName;
     tab.classList.toggle('active', active);
-    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    tab.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
 
   document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
   document.getElementById(tabName)?.classList.add('active');
 
-  const systemTabs = document.querySelector('.system-tabs');
-  if (systemTabs) {
-    const showSystemTabs = tabName === 'system';
-    systemTabs.hidden = !showSystemTabs;
-    systemTabs.setAttribute('aria-hidden', showSystemTabs ? 'false' : 'true');
-  }
-
   if (tabName === 'system') {
-    setSystemSection(options.systemSection || currentSystemSectionFromHash());
+    setSystemSection(activeSystemSection);
   }
 
   if (options.scroll !== false) {
@@ -188,16 +185,15 @@ function setupDayCycleTransition() {
 function setupTabs() {
   document.querySelectorAll('.tab').forEach((button) => {
     button.addEventListener('click', () => {
+      if (button.dataset.systemTarget) {
+        const target = button.dataset.systemTarget;
+        history.replaceState(null, '', `#${target}`);
+        activateSystemSection(target, { smooth: false });
+        return;
+      }
+
       activateTab(button.dataset.tab);
       history.replaceState(null, '', `#${button.dataset.tab}`);
-    });
-  });
-
-  document.querySelectorAll('[data-system-target]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const target = button.dataset.systemTarget;
-      history.replaceState(null, '', `#${target}`);
-      activateSystemSection(target, { smooth: false });
     });
   });
 

@@ -2272,3 +2272,29 @@ pre code .tok-function { color: #f4d35e; }
 .feature-card > * {
   align-self: start;
 }
+
+/* Flattened top navigation. */
+.top-nav {
+  border-radius: 16px;
+}
+
+.primary-tabs {
+  border-radius: 14px;
+}
+
+.tab,
+.sub-tab {
+  border-radius: 12px;
+  color: #f4d35e;
+  letter-spacing: -0.3px;
+}
+
+.tab:hover,
+.sub-tab:hover,
+.source-file:hover {
+  color: #fff;
+}
+
+.tab.active {
+  color: #061006;
+}
