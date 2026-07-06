@@ -482,8 +482,8 @@ function renderNotes(notes) {
   renderCardGrid('#notes-grid', notes);
 }
 
-function renderUpgrades(upgrades) {
-  const grid = document.querySelector('#upgrade-grid');
+function renderUpgradeCards(selector, upgrades) {
+  const grid = document.querySelector(selector);
   grid.innerHTML = upgrades.map((upgrade) => `
     <article class="card feature-card upgrade-card">
       <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(upgrade), upgrade.title.slice(0, 2))}</div>
@@ -492,6 +492,15 @@ function renderUpgrades(upgrades) {
       ${renderIconStrip(iconStripForItem(upgrade), `${upgrade.title} command icons`)}
     </article>
   `).join('');
+}
+
+function isWeaponUpgrade(upgrade) {
+  return /weapon|rifle|shotgun|sniper|flamer|acid|explosive/i.test(upgrade.title);
+}
+
+function renderUpgrades(upgrades) {
+  renderUpgradeCards('#weapon-upgrade-grid', upgrades.filter(isWeaponUpgrade));
+  renderUpgradeCards('#field-upgrade-grid', upgrades.filter((upgrade) => !isWeaponUpgrade(upgrade)));
 }
 
 

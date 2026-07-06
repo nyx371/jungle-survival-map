@@ -1605,6 +1605,28 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 }
 
 .enemy-icon { float: right; margin-left: .7rem; }
+
+.upgrade-section {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.upgrade-section + .upgrade-section {
+  margin-top: 2rem;
+}
+
+.upgrade-subheading {
+  padding: 1rem 1.1rem;
+  border: 1px solid #20242c;
+  background: #050505;
+}
+
+.upgrade-subheading h3 {
+  margin: 0.2rem 0 0.35rem;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  color: #ffffff;
+}
 .upgrade-card { display: grid; grid-template-columns: 42px 1fr; column-gap: .85rem; align-items: start; }
 .upgrade-card .feature-icon { grid-row: span 2; margin-bottom: 0; }
 .upgrade-card .checklist { grid-column: 2; }
