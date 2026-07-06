@@ -1,51 +1,170 @@
 // Light System
-// Light sources gradually brighten nearby screen and block mob spawning.
+// Light sources brighten each player's local screen and suppress mob spawning.
+// Adopted from the earlier map.eps pattern: count nearby light sources, ease brightness
+// toward a target level, and keep local brightness separate from synchronized gameplay state.
 
 const MAX_LIGHTS = 64;
 const DEFAULT_LIGHT_RADIUS = 9 * 32;
 const DEFAULT_NO_SPAWN_RADIUS = 12 * 32;
+const LIGHT_AREA_TILE_SIZE = 16;
+const LIGHT_TILE_SIZE = 32;
+
+// StarCraft brightness memory accepts a small 0-31-ish range. Keep day maxed and
+// night readable only around lights, with smooth one-step transitions per frame.
+const DAY_BRIGHTNESS = 31;
+const NIGHT_BRIGHTNESS_MIN = 20;
+const NIGHT_BRIGHTNESS_L1 = 23;
+const NIGHT_BRIGHTNESS_L2 = 26;
+const NIGHT_BRIGHTNESS_L3 = 29;
+const NIGHT_BRIGHTNESS_L4 = 31;
 
 const LightActive = EUDArray(MAX_LIGHTS);
 const LightOwner = EUDArray(MAX_LIGHTS);
+const LightStructureIndex = EUDArray(MAX_LIGHTS);
 const LightX = EUDArray(MAX_LIGHTS);
 const LightY = EUDArray(MAX_LIGHTS);
 const LightRadius = EUDArray(MAX_LIGHTS);
 const LightNoSpawnRadius = EUDArray(MAX_LIGHTS);
+const PlayerBrightness = EUDArray(MAX_PLAYERS);
 
 function initLights() {
     foreach (i : py_range(MAX_LIGHTS)) {
         LightActive[i] = 0;
         LightOwner[i] = -1;
+        LightStructureIndex[i] = -1;
         LightX[i] = 0;
         LightY[i] = 0;
         LightRadius[i] = DEFAULT_LIGHT_RADIUS;
         LightNoSpawnRadius[i] = DEFAULT_NO_SPAWN_RADIUS;
     }
+
+    foreach (p : py_range(MAX_PLAYERS)) {
+        PlayerBrightness[p] = DAY_BRIGHTNESS;
+    }
+}
+
+function distanceSquared(ax, ay, bx, by) {
+    const dx = ax > bx ? ax - bx : bx - ax;
+    const dy = ay > by ? ay - by : by - ay;
+    return dx * dx + dy * dy;
+}
+
+function isWithinRadius(ax, ay, bx, by, radius) {
+    return distanceSquared(ax, ay, bx, by) <= radius * radius;
+}
+
+function findFreeLightSlot() {
+    foreach (i : py_range(MAX_LIGHTS)) {
+        if (!LightActive[i]) return i;
+    }
+    return -1;
+}
+
+function registerLightForStructure(structureIndex, owner, x, y, radius, noSpawnRadius) {
+    const slot = findFreeLightSlot();
+    if (slot < 0) return -1;
+
+    LightActive[slot] = 1;
+    LightOwner[slot] = owner;
+    LightStructureIndex[slot] = structureIndex;
+    LightX[slot] = x;
+    LightY[slot] = y;
+    LightRadius[slot] = radius > 0 ? radius : DEFAULT_LIGHT_RADIUS;
+    LightNoSpawnRadius[slot] = noSpawnRadius > 0 ? noSpawnRadius : DEFAULT_NO_SPAWN_RADIUS;
+    return slot;
 }
 
 function registerLight(owner, x, y, radius, noSpawnRadius) {
-    // TODO: find free light slot and store position/radius.
+    return registerLightForStructure(-1, owner, x, y, radius, noSpawnRadius);
+}
+
+function clearLightSlot(slot) {
+    LightActive[slot] = 0;
+    LightOwner[slot] = -1;
+    LightStructureIndex[slot] = -1;
+    LightX[slot] = 0;
+    LightY[slot] = 0;
+    LightRadius[slot] = DEFAULT_LIGHT_RADIUS;
+    LightNoSpawnRadius[slot] = DEFAULT_NO_SPAWN_RADIUS;
 }
 
 function unregisterLightByStructure(structureIndex) {
-    // TODO: map structure -> light slot and clear it.
+    foreach (i : py_range(MAX_LIGHTS)) {
+        if (LightActive[i] && LightStructureIndex[i] == structureIndex) {
+            clearLightSlot(i);
+        }
+    }
+}
+
+function countLightsNear(x, y) {
+    var count = 0;
+    foreach (i : py_range(MAX_LIGHTS)) {
+        if (LightActive[i] && isWithinRadius(x, y, LightX[i], LightY[i], LightRadius[i])) {
+            count += 1;
+        }
+    }
+    return count;
 }
 
 function isSpawnBlockedAt(x, y) {
-    // TODO: distance check against active lights.
-    // Return 1 if x/y is inside any no-spawn radius.
+    foreach (i : py_range(MAX_LIGHTS)) {
+        if (LightActive[i] && isWithinRadius(x, y, LightX[i], LightY[i], LightNoSpawnRadius[i])) {
+            return 1;
+        }
+    }
     return 0;
 }
 
 function getAreaSpawnBlockLightLevel(area) {
-    // TODO: synchronized area coverage query for 16x16 mob areas.
-    // Return 0 for no light, 1-99 for partial suppression, 100 for full no-spawn/despawn pressure.
-    return 0;
+    const areaX = area % MOB_AREA_COLUMNS;
+    const areaY = area / MOB_AREA_COLUMNS;
+    const centerX = (areaX * LIGHT_AREA_TILE_SIZE + LIGHT_AREA_TILE_SIZE / 2) * LIGHT_TILE_SIZE;
+    const centerY = (areaY * LIGHT_AREA_TILE_SIZE + LIGHT_AREA_TILE_SIZE / 2) * LIGHT_TILE_SIZE;
+
+    var strongest = 0;
+    foreach (i : py_range(MAX_LIGHTS)) {
+        if (!LightActive[i]) continue;
+
+        if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightNoSpawnRadius[i])) {
+            return 100;
+        }
+        if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightRadius[i])) {
+            strongest = 60;
+        }
+    }
+
+    return strongest;
+}
+
+function brightnessForLightCount(lightCount) {
+    if (!IsNight) return DAY_BRIGHTNESS;
+    if (lightCount >= 4) return NIGHT_BRIGHTNESS_L4;
+    if (lightCount >= 3) return NIGHT_BRIGHTNESS_L3;
+    if (lightCount >= 2) return NIGHT_BRIGHTNESS_L2;
+    if (lightCount >= 1) return NIGHT_BRIGHTNESS_L1;
+    return NIGHT_BRIGHTNESS_MIN;
+}
+
+function easePlayerBrightness(player, targetBrightness) {
+    if (PlayerBrightness[player] > targetBrightness) PlayerBrightness[player] -= 1;
+    else if (PlayerBrightness[player] < targetBrightness) PlayerBrightness[player] += 1;
+}
+
+function applyLocalBrightness(player) {
+    if (IsUserCP()) {
+        SetMemoryEPD(EPD(0x657A9C), SetTo, PlayerBrightness[player]);
+    }
 }
 
 function updateLocalBrightness(player) {
-    // TODO: local-only brightness/vision effect based on nearby lights.
-    // Must not affect synchronized gameplay state.
+    if (!HeroAlive[player]) return;
+
+    const hero = getPlayerHeroUnit(player);
+    const lightCount = countLightsNear(getUnitX(hero), getUnitY(hero));
+    const targetBrightness = brightnessForLightCount(lightCount);
+
+    easePlayerBrightness(player, targetBrightness);
+    applyLocalBrightness(player);
 }
 
 function updateLights() {
