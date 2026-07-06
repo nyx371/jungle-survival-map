@@ -1877,3 +1877,20 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
     grid-template-columns: 1fr;
   }
 }
+
+@media (min-width: 781px) {
+  #home .game-hero-copy {
+    width: min(86%, 980px);
+    min-height: auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.25rem);
+  }
+
+  #home .game-hero-copy h1 {
+    font-size: clamp(3rem, 7.2vw, 6.6rem);
+  }
+
+  #home .game-hero-copy .tagline {
+    max-width: 820px;
+    font-size: clamp(1rem, 2vw, 1.55rem);
+  }
+}
