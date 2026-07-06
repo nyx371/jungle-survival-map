@@ -46,24 +46,34 @@ function createPlayerHero(player) {
     // Heroes spawn at the map location named "G".
     switch (player) {
     case 0:
-        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[0], $L("G"), player);
+        if (playerexist(player) && GetPlayerInfo(0).type == 0x06) { // only for active human players
+            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+            CreateUnit(1, dat_registry.PlayerHeroUnits[0], $L("G"), player);
+        }
         break;
     case 1:
-        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[1], $L("G"), player);
+        if (playerexist(player) && GetPlayerInfo(1).type == 0x06) { // only for active human players
+            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+            CreateUnit(1, dat_registry.PlayerHeroUnits[1], $L("G"), player);
+        }
         break;
     case 2:
-        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[2], $L("G"), player);
+        if (playerexist(player) && GetPlayerInfo(2).type == 0x06) { // only for active human players
+            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+            CreateUnit(1, dat_registry.PlayerHeroUnits[2], $L("G"), player);
+        }
         break;
     case 3:
-        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[3], $L("G"), player);
+        if (playerexist(player) && GetPlayerInfo(3).type == 0x06) { // only for active human players
+            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+            CreateUnit(1, dat_registry.PlayerHeroUnits[3], $L("G"), player);
+        }
         break;
     case 4:
-        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[4], $L("G"), player);
+        if (playerexist(player) && GetPlayerInfo(4).type == 0x06) { // only for active human players
+            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+            CreateUnit(1, dat_registry.PlayerHeroUnits[4], $L("G"), player);
+        }
         break;
     }
 }
