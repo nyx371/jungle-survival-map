@@ -205,6 +205,26 @@
     "file": "assets/cmdicons/cmdicons_259.png"
   },
   {
+    "index": 263,
+    "title": "Metabolic Boost",
+    "file": "assets/cmdicons/cmdicons_263.png"
+  },
+  {
+    "index": 265,
+    "title": "Plague",
+    "file": "assets/cmdicons/cmdicons_265.png"
+  },
+  {
+    "index": 267,
+    "title": "Ensnare",
+    "file": "assets/cmdicons/cmdicons_267.png"
+  },
+  {
+    "index": 268,
+    "title": "Grooved Spines",
+    "file": "assets/cmdicons/cmdicons_268.png"
+  },
+  {
     "index": 270,
     "title": "Dark Swarm",
     "file": "assets/cmdicons/cmdicons_270.png"
@@ -338,6 +358,11 @@
     "index": 376,
     "title": "Lurker Aspect",
     "file": "assets/cmdicons/cmdicons_376.png"
+  },
+  {
+    "index": 379,
+    "title": "Chitinous Plating",
+    "file": "assets/cmdicons/cmdicons_379.png"
   },
   {
     "index": 381,

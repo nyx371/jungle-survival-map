@@ -208,6 +208,91 @@ function renderIcon(icon, fallbackText = 'JC') {
   return `<img src="${escapeHtml(icon.file)}" alt="" loading="lazy"><span class="sr-only">${escapeHtml(icon.title)}</span>`;
 }
 
+
+function iconStripForItem(item) {
+  const title = String(item.title || item.base || item.role || '');
+  const body = `${item.body || ''} ${item.role || ''}`;
+  const text = `${title} ${body}`.toLowerCase();
+  const exact = {
+    'One Ghost, real decisions': ['Sarah Kerrigan (Ghost)', 'Marine', 'Probe'],
+    'Days are your chance to breathe': ['Scanner Sweep', 'Gather', 'Patrol'],
+    'Nights are when plans get tested': ['Dark Swarm', 'Hold Position', 'Use Spider Mines'],
+    'Hunt neural critters': ['Bengalaas (Jungle Critter)', 'Maelstrom', 'Gather'],
+    'Builds stay personal': ['Gauss Rifle', 'C-10 Canister Rifle', 'Flame Thrower'],
+    'Craft tactical constructs': ['Terran Basic Buildings', 'Use Spider Mines', 'Maelstrom'],
+    'Death hurts without ending the run': ['Nuclear Strike', 'Restoration', 'Heal'],
+    'The jungle does not stay still': ['Zergling', 'Lurker Aspect', 'Dark Swarm'],
+    'Survive five nights in the jungle': ['Hold Position', 'Dark Swarm', 'Scanner Sweep'],
+    'Scavenge by day, endure the night': ['Patrol', 'Gather', 'Dark Swarm'],
+    'Command one Ghost and a small squad': ['Sarah Kerrigan (Ghost)', 'Marine', 'Probe'],
+    'Harvest minerals and vespene over time': ['Fusion Cutter (Harvest)', 'Mineral Cluster (Type 1)', 'Vespene Geyser'],
+    'Stun neural critters before they flee': ['Maelstrom', 'Bengalaas (Jungle Critter)', 'Gather'],
+    'Craft one active weapon at a time': ['Gauss Rifle', 'Fragmentation Grenade', 'Flame Thrower'],
+    'Build safe pockets, then abandon them': ['Terran Basic Buildings', 'Use Spider Mines', 'Repair'],
+    'Death hurts, but progression survives': ['Nuclear Strike', 'Restoration', 'Plasma Shields'],
+    'The swarm evolves with time': ['Zergling', 'Hydralisk', 'Ultralisk'],
+    'Trees': ['Fusion Cutter (Harvest)', 'Mineral Cluster (Type 1)', 'Vespene Geyser'],
+    'Bushes': ['Gather', 'Blank (Zerg Vespene Sac Type 1)', 'Mineral Cluster (Type 1)'],
+    'Rocks': ['Fusion Cutter', 'Mineral Cluster (Type 3)', 'Repair'],
+    'Crystals': ['Khaydarin Crystal', 'Vespene Geyser', 'Gather'],
+    'Organic growth': ['Blank (Zerg Vespene Sac Type 2)', 'Toxic Spores', 'Gather'],
+    'Neural critters': ['Bengalaas (Jungle Critter)', 'Maelstrom', 'Gather'],
+    'Harvesting tradeoff': ['Gather', 'Hold Position', 'Gauss Rifle'],
+    'Zerg Drone': ['Drone', 'Claws', 'Repair'],
+    'Zerg Broodling': ['Broodling', 'Claws', 'Metabolic Boost'],
+    'Zerg Zergling': ['Zergling', 'Claws', 'Metabolic Boost'],
+    'Zerg Hydralisk': ['Hydralisk', 'Needle Spines', 'Grooved Spines'],
+    'Zerg Lurker': ['Lurker', 'Subterranean Spines', 'Burrow'],
+    'Zerg Queen': ['Queen', 'Optical Flare', 'Ensnare'],
+    'Zerg Mutalisk': ['Mutalisk', 'Glave Wurm', 'Flyer Attack'],
+    'Zerg Guardian': ['Guardian', 'Acid Spore', 'Flyer Attack'],
+    'Zerg Defiler': ['Defiler', 'Plague', 'Dark Swarm'],
+    'Zerg Ultralisk': ['Ultralisk', 'Kaiser Blades', 'Chitinous Plating'],
+  }[title];
+
+  const titles = exact ? [...exact] : [];
+  const rules = [
+    [/ghost|commander|squad/, 'Sarah Kerrigan (Ghost)'],
+    [/resource|harvest|scavenge|mineral/, 'Gather'],
+    [/vespene|gas/, 'Vespene Geyser'],
+    [/night|swarm|zerg/, 'Dark Swarm'],
+    [/light|scout|day/, 'Scanner Sweep'],
+    [/build|construct|structure|wall|turret/, 'Terran Basic Buildings'],
+    [/mine|trap|stun|maelstrom/, 'Maelstrom'],
+    [/weapon|rifle|sniper/, 'C-10 Canister Rifle'],
+    [/death|respawn|die/, 'Restoration'],
+  ];
+  for (const [pattern, iconTitle] of rules) {
+    if (pattern.test(text) && !titles.includes(iconTitle)) titles.push(iconTitle);
+  }
+  return titles.slice(0, 4).map((iconTitle) => getIconByTitle(iconTitle)).filter(Boolean);
+}
+
+function renderIconStrip(icons, label = 'Related command icons') {
+  if (!icons.length) return '';
+  return `<div class="icon-strip" aria-label="${escapeHtml(label)}">${icons.map((icon) => `
+    <span class="mini-icon command-chip" title="${escapeHtml(icon.title)}">${renderIcon(icon, icon.title.slice(0, 2))}</span>
+  `).join('')}</div>`;
+}
+
+function evolutionIconTitle(evolution) {
+  const text = `${evolution.name || ''} ${evolution.change || ''}`.toLowerCase();
+  const pairs = [
+    [/structure|building|wall/, 'Claws'],
+    [/surround|melee|bite|claw|ripper|mauler/, 'Kaiser Blades'],
+    [/spine|needle|ranged|spitter|impaler/, 'Needle Spines'],
+    [/burrow|ambusher|subterranean/, 'Subterranean Spines'],
+    [/support|disruption|hex|priority/, 'Optical Flare'],
+    [/air|wing|flying|flanker/, 'Flyer Attack'],
+    [/siege|artillery|shell/, 'Acid Spore'],
+    [/plague|death|burst|bloater/, 'Toxic Spores'],
+    [/armor|hp|tank|crusher/, 'Infantry Armor'],
+    [/speed|movement|chase/, 'Metabolic Boost'],
+    [/splash|area/, 'Glave Wurm'],
+  ];
+  return pairs.find(([pattern]) => pattern.test(text))?.[1] || 'Claws';
+}
+
 function renderCardGrid(selector, items) {
   const grid = document.querySelector(selector);
   grid.innerHTML = items.map((item) => `
@@ -215,6 +300,7 @@ function renderCardGrid(selector, items) {
       <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(item), item.title.slice(0, 2))}</div>
       <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.body)}</p>
+      ${renderIconStrip(iconStripForItem(item))}
     </article>
   `).join('');
 }
@@ -242,16 +328,20 @@ function renderEnemies(enemies) {
       <div class="feature-icon enemy-icon" aria-hidden="true">${renderIcon(enemyIcon(enemy.base), enemy.base.slice(0, 2))}</div>
       <div class="card-kicker">${escapeHtml(enemy.base)}</div>
       <h3>${escapeHtml(enemy.role)}</h3>
+      ${renderIconStrip(iconStripForItem({ title: enemy.base, role: enemy.role }), `${enemy.base} combat icons`)}
       <div class="evolution-list">
-        ${enemy.evolutions.map((evolution) => `
+        ${enemy.evolutions.map((evolution) => {
+          const evoIcon = getIconByTitle(evolutionIconTitle(evolution)) || enemyIcon(enemy.base);
+          return `
           <div class="evolution tier-${escapeHtml(evolution.color.toLowerCase())}">
+            <span class="mini-icon evolution-command" title="${escapeHtml(evoIcon.title)}">${renderIcon(evoIcon, evolution.tier)}</span>
             <span class="color-chip">${escapeHtml(evolution.color)}</span>
             <div>
               <strong>${escapeHtml(evolution.tier)} · ${escapeHtml(evolution.name)}</strong>
               <p>${escapeHtml(evolution.change)}</p>
             </div>
-          </div>
-        `).join('')}
+          </div>`;
+        }).join('')}
       </div>
     </article>
   `).join('');
@@ -263,6 +353,7 @@ function renderUpgrades(upgrades) {
     <article class="card upgrade-card">
       <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(group), group.title.slice(0, 2))}</div>
       <h3>${escapeHtml(group.title)}</h3>
+      ${renderIconStrip(iconStripForItem(group), `${group.title} command icons`)}
       <ul class="checklist compact">
         ${group.items.map((item) => {
           const icon = getIconByTitle(iconTitleForText(item)) || chooseIcon(group);
@@ -291,11 +382,40 @@ async function loadSource(file) {
   }
 }
 
+
+function sourceIcon(file) {
+  const label = String(file.label || file.path || '').toLowerCase();
+  const pairs = [
+    [/main/, 'Marine'],
+    [/constant|dat_registry/, 'Terran Basic Buildings'],
+    [/trigger|prior|docs/, 'Scanner Sweep'],
+    [/audio/, 'Optical Flare'],
+    [/camera/, 'Ocular Implants'],
+    [/critter/, 'Bengalaas (Jungle Critter)'],
+    [/companion/, 'Probe'],
+    [/day_night/, 'Dark Swarm'],
+    [/light/, 'Scanner Sweep'],
+    [/menu/, 'Return Resources'],
+    [/mob_evolution/, 'Lurker Aspect'],
+    [/mobs/, 'Zergling'],
+    [/players/, 'Sarah Kerrigan (Ghost)'],
+    [/resources/, 'Gather'],
+    [/structures/, 'Terran Basic Buildings'],
+    [/transfers/, 'Return Resources'],
+    [/upgrades/, 'Infantry Weapons'],
+    [/victory/, 'Hold Position'],
+    [/weapons/, 'Gauss Rifle'],
+  ];
+  const title = pairs.find(([pattern]) => pattern.test(label))?.[1] || 'Scanner Sweep';
+  return getIconByTitle(title);
+}
+
 function renderSourceList(files) {
   const list = document.querySelector('#source-list');
   list.innerHTML = files.map((file, index) => `
     <button class="source-file ${index === 0 ? 'active' : ''}" data-index="${index}">
-      ${escapeHtml(file.label)}
+      <span class="mini-icon source-mini" aria-hidden="true">${renderIcon(sourceIcon(file), file.label.slice(0, 2))}</span>
+      <span>${escapeHtml(file.label)}</span>
     </button>
   `).join('');
 
