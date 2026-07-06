@@ -36,8 +36,7 @@ const HarvestProgress = EUDArray(constants.MAX_PLAYERS);
 const HarvestTick = EUDArray(constants.MAX_PLAYERS);
 
 function addMinerals(player, amount) {
-    // TODO: replace with exact player resource mutation helper once harness is compile-tested.
-    // Conceptually: SetResources(CurrentPlayer/player, Add, amount, Ore).
+    SetResources(player, Add, amount, Ore);
 }
 
 function addGas(player, amount) {
