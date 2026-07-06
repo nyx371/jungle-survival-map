@@ -2263,3 +2263,12 @@ pre code .tok-function { color: #f4d35e; }
   margin-bottom: 0.45rem;
   font-size: clamp(0.58rem, 0.9vw, 0.72rem);
 }
+
+.feature-card {
+  align-content: start;
+  align-items: start;
+}
+
+.feature-card > * {
+  align-self: start;
+}
