@@ -322,63 +322,63 @@
   "upgrades": [
     {
       "title": "Weapon unlocks",
-      "body": "Level 1 authorizes construction of a weapon package: basic fire plus a dedicated target ability."
+      "body": "Level 1 in a path authorizes construction of that weapon package. A package includes both the Ghost's basic fire profile and a dedicated target ability."
     },
     {
       "title": "Weapon switching",
-      "body": "Only one primary weapon package may be equipped, but crafted packages remain available for later missions."
+      "body": "Only one primary package may be equipped at a time. Previously crafted packages remain available, letting a commando swap from rifle control to splash, slow, stun, or precision work as the mission changes."
     },
     {
       "title": "Rifle path",
-      "body": "Balanced rifle training keeps reliable auto-fire and a practical target shot for priority kills."
+      "body": "The rifle is the balanced field package: dependable auto-fire, solid range, and a practical target shot for priority kills. It should be the baseline other weapons trade against."
     },
     {
       "title": "Shotgun path",
-      "body": "Close-range burst fire with a target ability suited to stun, knockback, or crowd disruption."
+      "body": "The shotgun package favors close contact. Its basic fire can be risky or short-ranged, but its target ability can deliver stun, knockback, or cone disruption when the swarm closes."
     },
     {
       "title": "Sniper path",
-      "body": "Long-range precision fire with a powerful target strike; slower basic fire can justify stronger single-shot effects."
+      "body": "The sniper package trades rate of fire for reach and decisive target pressure. A weaker or slower auto-attack can justify a stronger single-target strike against elites and high-value threats."
     },
     {
       "title": "Flamer or acid path",
-      "body": "Area denial package using a weaker direct attack to carry stronger slow, corrosion, or confusion effects."
+      "body": "The flame/acid package controls ground rather than winning direct duels. Its target ability can slow, corrode, confuse, or leave lingering zones that punish packed enemies."
     },
     {
       "title": "Explosive path",
-      "body": "Anti-pack ordnance with splash target abilities and deliberate timing tradeoffs."
+      "body": "The explosive package is anti-pack ordnance. Basic fire may be awkward or delayed, while the target ability delivers splash, burst timing, or area denial against clustered Zerg."
     },
     {
       "title": "Survival: max health",
-      "body": "Improves commando vitality during surrounds and night assaults."
+      "body": "Raises Ghost vitality so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued."
     },
     {
       "title": "Survival: armor and shields",
-      "body": "Adds armor plating, shield capacity, or regeneration systems."
+      "body": "Adds defensive layers such as armor plating, shield capacity, or regeneration systems. These upgrades reduce sudden deaths without replacing good positioning."
     },
     {
       "title": "Mobility and vision",
-      "body": "Improves patrol speed, scouting, and withdrawal options."
+      "body": "Improves patrol speed, scouting range, kiting, and withdrawal options. Mobility upgrades help the squad choose fights instead of being pinned by them."
     },
     {
       "title": "Harvest efficiency",
-      "body": "Reduces time exposed while gathering field resources."
+      "body": "Improves field gathering so the Ghost spends less time exposed at trees, rocks, crystals, organic growth, and other resource points."
     },
     {
       "title": "Construct utility",
-      "body": "Improves refunds, repairs, warnings, and deployable support."
+      "body": "Improves temporary structures: better repair value, deconstruction refunds, alerts, deployable support, and the ability to hold a pocket slightly longer before abandoning it."
     },
     {
       "title": "Maelstrom Mines",
-      "body": "Burrowed stun devices. Upgrades may alter radius, duration, or arming time."
+      "body": "Burrowed stun devices used to interrupt rushes, cover retreats, or set up neural critter harvests. Upgrades may alter radius, stun duration, arming time, or elite interrupt value."
     },
     {
       "title": "Companion unlocks",
-      "body": "Authorizes robotic support, controlled Zerg specimens, or resurrected organisms."
+      "body": "Authorizes robotic support, controlled Zerg specimens, or resurrected organisms. Companions add tactical options, but they are support assets rather than the main army."
     },
     {
       "title": "Companion upgrades",
-      "body": "Improves companion durability or function. All remain tied to Ghost survival."
+      "body": "Improves companion count, durability, or battlefield role. Companion power still remains tied to Ghost survival, so losing the commando costs the squad."
     }
   ],
   "gameplayLoop": [
