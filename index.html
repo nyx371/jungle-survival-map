@@ -12,7 +12,6 @@
       <nav class="top-nav" aria-label="Jungle Commandos sections">
         <div class="tabs primary-tabs" role="tablist">
           <button class="tab active" data-tab="home" role="tab" aria-pressed="true">Home</button>
-          <button class="tab" type="button" data-system-target="system-loop" role="tab" aria-pressed="false">Game Loop</button>
           <button class="tab" type="button" data-system-target="system-upgrades" role="tab" aria-pressed="false">Upgrades</button>
           <button class="tab" type="button" data-system-target="system-resources" role="tab" aria-pressed="false">Resources</button>
           <button class="tab" type="button" data-system-target="system-enemies" role="tab" aria-pressed="false">Threats</button>
@@ -85,19 +84,7 @@
           </div>
         </section>
 
-        <div id="home-grid" class="grid home-feature-grid"></div>
-      </section>
-
-      <section id="system" class="tab-panel">
-        <div class="panel section-heading vertical">
-          <p class="eyebrow">How the map works</p>
-          <h2>The Field System</h2>
-          <p>
-            A compact briefing for the survival rhythm: choose a task, commit, then withdraw before the position fails.
-          </p>
-        </div>
-
-        <section id="system-loop" class="system-section active">
+        <section class="home-loop-section" aria-label="Field rhythm">
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Core loop</p>
             <h2>Reconnoiter. Commit. Extract.</h2>
@@ -146,9 +133,26 @@ Each phase lasts 22 minutes. The cycle below shows the field rhythm; the cards s
               <button type="button" data-cycle-jump="3" aria-pressed="false"><span class="phase-label">Night</span><span class="phase-progress" aria-hidden="true"></span></button>
             </div>
           </div>
-          <div id="loop-grid" class="grid"></div>
+          <div id="loop-grid" class="grid home-loop-grid"></div>
         </section>
 
+        <div id="home-grid" class="grid home-feature-grid"></div>
+
+        <article class="apex-threat unknown-threat panel home-threat-cta" aria-label="Threats preview">
+          <div class="apex-threat-copy">
+            <p class="eyebrow">Threat report</p>
+            <h3>You are not alone in this jungle.</h3>
+            <p>Known Zerg strains are only part of the contact picture. Review the full threat ladder before deployment.</p>
+            <a class="inline-cta" href="#system-enemies">Open threat files</a>
+          </div>
+          <figure class="apex-threat-image">
+            <img src="assets/enemies/unknown-jungle-threat.png" alt="Unknown presence watching from the jungle" loading="lazy" />
+            <figcaption>Unidentified jungle contact</figcaption>
+          </figure>
+        </article>
+      </section>
+
+      <section id="system" class="tab-panel">
         <section id="system-resources" class="system-section" hidden>
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Scavenging</p>

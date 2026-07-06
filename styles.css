@@ -472,6 +472,33 @@ h3 { margin-top: 0; }
   margin-top: 1rem;
 }
 
+.home-loop-section {
+  margin: 1.5rem 0 1.25rem;
+}
+
+.home-loop-grid {
+  margin-top: 1rem;
+}
+
+.home-threat-cta {
+  margin-top: 1.5rem;
+}
+
+.inline-cta {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.35rem;
+  color: #dddd11;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.inline-cta:hover {
+  color: #ffffff;
+}
+
 .player-promise h3 {
   margin-top: 0;
 }

@@ -14,8 +14,8 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
-const systemSectionIds = ['system-loop', 'system-upgrades', 'system-resources', 'system-enemies'];
-const defaultSystemSectionId = 'system-loop';
+const systemSectionIds = ['system-upgrades', 'system-resources', 'system-enemies'];
+const defaultSystemSectionId = 'system-upgrades';
 
 function setSystemSection(sectionId = defaultSystemSectionId) {
   const targetId = systemSectionIds.includes(sectionId) ? sectionId : defaultSystemSectionId;
@@ -74,11 +74,6 @@ function activateRouteFromHash(options = {}) {
   const hash = window.location.hash.replace(/^#/, '');
   if (systemSectionIds.includes(hash)) {
     activateSystemSection(hash, options);
-    return;
-  }
-
-  if (hash === 'system') {
-    activateSystemSection(defaultSystemSectionId, options);
     return;
   }
 
@@ -228,15 +223,12 @@ const exactIconTitles = new Map(Object.entries({
   'Craft tactical constructs': 'Use Spider Mines',
   'Death hurts without ending the run': 'Restoration',
   'The jungle does not stay still': 'Zergling',
-  'Survive five nights in the jungle': 'Hold Position',
-  'Scavenge by day, endure the night': 'Patrol',
-  'Command one Ghost and a small squad': 'Marine',
-  'Harvest minerals and vespene over time': 'Fusion Cutter (Harvest)',
-  'Stun neural critters before they flee': 'Maelstrom',
-  'Craft one active weapon at a time': 'Gauss Rifle',
-  'Build safe pockets, then abandon them': 'Terran Basic Buildings',
-  'Death hurts, but progression survives': 'Heal',
-  'The swarm evolves with time': 'Lurker Aspect',
+  'Five-night operation': 'Hold Position',
+  'One commander per player': 'Sarah Kerrigan (Ghost)',
+  'Daylight creates choices': 'Scanner Sweep',
+  'Night punishes delay': 'Dark Swarm',
+  'Equipment defines role': 'C-10 Canister Rifle',
+  'Failure costs momentum': 'Restoration',
   'Trees': 'Mineral Cluster (Type 1)',
   'Bushes': 'Vespene Geyser',
   'Rocks': 'Mineral Cluster (Type 3)',

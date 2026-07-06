@@ -5,14 +5,6 @@
       "body": "Each commando is a valuable field asset. Support units can extend an operation, but the loss of the Ghost remains the critical failure point."
     },
     {
-      "title": "Days are your chance to breathe",
-      "body": "Daylight gives the squad time to scout, gather supplies, and choose defensible ground before the next night cycle."
-    },
-    {
-      "title": "Nights are when plans get tested",
-      "body": "After dark, the swarm presses harder. Stay near light sources and withdraw before a position is overrun."
-    },
-    {
       "title": "Hunt neural critters",
       "body": "Some jungle specimens flee when approached. Stun them first, then harvest before they recover and vanish into cover."
     },
@@ -23,14 +15,6 @@
     {
       "title": "Craft tactical constructs",
       "body": "Lights, walls, stations, turrets, companion tools, and Maelstrom Mines provide temporary battlefield control."
-    },
-    {
-      "title": "Death hurts without ending the run",
-      "body": "A fallen commando loses field momentum, but retained training and weapon access keep the operation alive."
-    },
-    {
-      "title": "The jungle does not stay still",
-      "body": "The local broods adapt over time. Any secure position should be considered temporary."
     }
   ],
   "enemies": [
