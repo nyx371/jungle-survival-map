@@ -197,6 +197,32 @@ function updatePlayerDeathState(player) {
     }
 }
 
+const ORDER_PLAYER_GUARD = 3;
+const ORDER_HARVEST_MINERALS = 87;
+const ORDER_HOLD_POSITION = 107;
+const MINING_ORDER_TIMER = 35;
+
+function updatePlayerHeroBehavior(player) {
+    if (!HeroAlive[player]) return;
+    const hero = getPlayerHeroUnit(player);
+
+    if (hero.orderID == ORDER_PLAYER_GUARD) {
+        hero.orderID = ORDER_HOLD_POSITION; // always hold position when idle
+    }
+
+    if (hero.orderID == ORDER_HARVEST_MINERALS && hero.orderState == 5) {
+        // Prevents the mining-order crash: keep the order timer from running
+        // out, granting minerals on each mining tick instead of letting the
+        // order complete/reset normally.
+        if (hero.orderTimer > MINING_ORDER_TIMER) {
+            hero.orderTimer = MINING_ORDER_TIMER;
+        } else if (hero.orderTimer < 2) {
+            hero.orderTimer = MINING_ORDER_TIMER;
+            resources.addMinerals(player, 8);
+        }
+    }
+}
+
 function updatePlayerDebugInfo(player, localPlayer) {
     if (player != localPlayer) return;
 
@@ -212,6 +238,7 @@ function updatePlayers() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         updatePlayerDeathState(p);
         updatePlayerVitals(p);
+        updatePlayerHeroBehavior(p);
         updatePlayerDebugInfo(p, localPlayer);
     }
 }
