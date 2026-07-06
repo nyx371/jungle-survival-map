@@ -2073,3 +2073,7 @@ pre code .tok-function { color: #f4d35e; }
     padding: 0;
   }
 }
+
+.day-cycle-transition .cycle-image {
+  transition: none;
+}

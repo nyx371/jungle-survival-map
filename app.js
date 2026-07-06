@@ -104,7 +104,8 @@ function setupDayCycleTransition() {
   const label = container.querySelector('[data-cycle-label]');
   const progressBar = container.querySelector('[data-cycle-progress]');
   const loopNodes = [...container.querySelectorAll('[data-cycle-node]')];
-  const phaseDurationMs = 5200;
+  const phaseDurationMs = 7200;
+  const crossfadeMs = 2600;
   let activeIndex = 0;
   let phaseStartedAt = performance.now();
   let animationFrame = 0;
@@ -114,7 +115,9 @@ function setupDayCycleTransition() {
     if (options.restart !== false) phaseStartedAt = performance.now();
 
     images.forEach((image, imageIndex) => {
-      image.classList.toggle('active', imageIndex === activeIndex);
+      const active = imageIndex === activeIndex;
+      image.classList.toggle('active', active);
+      image.style.opacity = active ? '1' : '0';
     });
 
     labels.forEach((item, itemIndex) => {
@@ -134,10 +137,19 @@ function setupDayCycleTransition() {
   function render(now) {
     const elapsed = now - phaseStartedAt;
     const progress = Math.min(1, elapsed / phaseDurationMs);
+    const nextIndex = (activeIndex + 1) % images.length;
+    const fadeProgress = Math.max(0, Math.min(1, (elapsed - (phaseDurationMs - crossfadeMs)) / crossfadeMs));
+
+    images.forEach((image, imageIndex) => {
+      if (imageIndex === activeIndex) image.style.opacity = (1 - fadeProgress).toFixed(3);
+      else if (imageIndex === nextIndex) image.style.opacity = fadeProgress.toFixed(3);
+      else image.style.opacity = '0';
+    });
+
     if (progressBar) progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
 
     if (elapsed >= phaseDurationMs) {
-      setPhase(activeIndex + 1);
+      setPhase(nextIndex);
     }
 
     animationFrame = requestAnimationFrame(render);
