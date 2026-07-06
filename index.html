@@ -112,59 +112,44 @@
           </div>
           <div class="day-cycle-transition" data-day-cycle aria-label="Jungle time of day transition: sunrise, day, sunset, night">
             <div class="cycle-frame">
-              <img class="cycle-image active" src="assets/day-cycle/sunrise.jpg" alt="Jungle at sunrise" loading="lazy" data-phase="Sunrise" />
+              <img class="cycle-image active" src="assets/day-cycle/sunrise.jpg" alt="Jungle at sunrise" loading="lazy" data-phase="Morning" />
               <img class="cycle-image" src="assets/day-cycle/day.jpg" alt="Jungle during daytime" loading="lazy" data-phase="Day" />
               <img class="cycle-image" src="assets/day-cycle/sunset.jpg" alt="Jungle at sunset" loading="lazy" data-phase="Sunset" />
               <img class="cycle-image" src="assets/day-cycle/night.jpg" alt="Jungle at night" loading="lazy" data-phase="Night" />
               <div class="cycle-caption" aria-live="polite">
                 <span data-cycle-count>01</span>
-                <strong data-cycle-label>Sunrise</strong>
+                <strong data-cycle-label>Morning</strong>
+              </div>
+              <div class="cycle-loop-nodes" aria-live="polite">
+                <article class="loop-node day active" data-cycle-node="0">
+                  <span class="loop-step">01</span>
+                  <h3>Morning: Scout & Harvest</h3>
+                  <p>Explore freely, find resource pockets, and trickle minerals plus vespene from trees, rocks, crystals, bushes, and organic growth.</p>
+                </article>
+                <article class="loop-node craft" data-cycle-node="1">
+                  <span class="loop-step">02</span>
+                  <h3>Day: Craft & Build</h3>
+                  <p>Craft one active weapon, upgrade your Ghost, share minerals, then place lights, walls, turrets, and regeneration stations.</p>
+                </article>
+                <article class="loop-node move" data-cycle-node="2">
+                  <span class="loop-step">03</span>
+                  <h3>Sunset: Move or Commit</h3>
+                  <p>Decide whether to hold, deconstruct, relocate, or make one last resource push before the jungle turns dangerous.</p>
+                </article>
+                <article class="loop-node night" data-cycle-node="3">
+                  <span class="loop-step">04</span>
+                  <h3>Night: Survive & Adapt</h3>
+                  <p>Zerg pressure spikes while mobs evolve Black → Brown → Orange → Red. Control, weapon choice, teamwork, and light placement matter most.</p>
+                </article>
               </div>
               <div class="cycle-progress" aria-hidden="true"><span data-cycle-progress></span></div>
             </div>
             <div class="cycle-phase-list" aria-hidden="true">
-              <span class="active">Sunrise</span>
+              <span class="active">Morning</span>
               <span>Day</span>
               <span>Sunset</span>
               <span>Night</span>
             </div>
-          </div>
-          <div class="loop-visual" aria-label="Jungle Commandos gameplay loop diagram">
-            <article class="loop-node day">
-              <span class="loop-step">01</span>
-              <h3>Day: Scout & Harvest</h3>
-              <p>Explore freely, find resource pockets, and trickle minerals plus vespene from trees, rocks, crystals, bushes, and organic growth.</p>
-            </article>
-            <div class="loop-arrow">→</div>
-            <article class="loop-node craft">
-              <span class="loop-step">02</span>
-              <h3>Craft & Upgrade</h3>
-              <p>Craft one active weapon, upgrade your Ghost, share minerals, and prepare the squad for the next push.</p>
-            </article>
-            <div class="loop-arrow">→</div>
-            <article class="loop-node build">
-              <span class="loop-step">03</span>
-              <h3>Build a Safe Pocket</h3>
-              <p>Place lights, walls, turrets, and regeneration stations. Lights brighten the area and block nearby spawns.</p>
-            </article>
-            <div class="loop-arrow down">↓</div>
-            <article class="loop-node night">
-              <span class="loop-step">04</span>
-              <h3>Night: Survive Waves</h3>
-              <p>Zerg pressure spikes. Ghost control, teamwork, weapon choice, and light placement matter most.</p>
-            </article>
-            <div class="loop-arrow reverse night-to-evolve">←</div>
-            <article class="loop-node evolve">
-              <span class="loop-step">05</span>
-              <h3>The Jungle Evolves</h3>
-              <p>Mobs advance Black → Brown → Orange → Red. Time drives evolution; kills and exploration can accelerate it.</p>
-            </article>
-            <div class="loop-arrow reverse evolve-to-move">←</div>
-            <article class="loop-node move">
-              <span class="loop-step">06</span>
-              <h3>Deconstruct & Move</h3>
-              <p>Break down structures, relocate, recover from losses, and repeat until the squad survives five nights.</p>
-            </article>
           </div>
           <div class="loop-outcome panel">
             <strong>Death penalty:</strong> respawn at a random position, lose most minerals and your built structures, but keep upgrades and crafted progression.

@@ -103,6 +103,7 @@ function setupDayCycleTransition() {
   const count = container.querySelector('[data-cycle-count]');
   const label = container.querySelector('[data-cycle-label]');
   const progressBar = container.querySelector('[data-cycle-progress]');
+  const loopNodes = [...container.querySelectorAll('[data-cycle-node]')];
   let ticking = false;
   let activeIndex = 0;
 
@@ -126,6 +127,7 @@ function setupDayCycleTransition() {
     });
 
     labels.forEach((item, index) => item.classList.toggle('active', index === nearest));
+    loopNodes.forEach((node, index) => node.classList.toggle('active', index === nearest));
     if (progressBar) progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
 
     if (nearest !== activeIndex) {
