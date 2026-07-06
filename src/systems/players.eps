@@ -191,9 +191,10 @@ function updatePlayerDeathState(player) {
         } else {
             respawnPlayer(player);
         }
+    } else if (getPlayerHeroUnit(player).orderID == 0) {
+        // orderID 0 is the Die order; the tracked hero CUnit has died.
+        markPlayerDead(player);
     }
-
-    // TODO: detect actual hero CUnit death and call markPlayerDead(player).
 }
 
 function updatePlayerDebugInfo(player, localPlayer) {

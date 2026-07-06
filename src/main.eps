@@ -46,6 +46,8 @@ function onPluginStart() {
 }
 
 function beforeTriggerExec() {
+    SetMemory(0x6509A0, SetTo, 0); // EUDTurbo: run triggers as fast as possible
+
     day_night.updateDayNight();
     players.updatePlayers();
     resources.updateResources();
