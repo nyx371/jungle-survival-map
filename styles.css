@@ -1894,3 +1894,11 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
     font-size: clamp(1rem, 2vw, 1.55rem);
   }
 }
+
+.enemy-card .enemy-icon {
+  float: none;
+  width: 64px;
+  height: 64px;
+  margin: 0 0 1rem;
+  justify-self: start;
+}
