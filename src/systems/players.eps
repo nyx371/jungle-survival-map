@@ -18,6 +18,7 @@ const RespawnTimer = EUDArray(constants.MAX_PLAYERS);
 const DeathsThisRun = EUDArray(constants.MAX_PLAYERS);
 const LastKnownX = EUDArray(constants.MAX_PLAYERS);
 const LastKnownY = EUDArray(constants.MAX_PLAYERS);
+const PlayerHeroCUnit = EUDArray(constants.MAX_PLAYERS);
 
 const PLAYER_STATUS_RESTED = 0;
 const PLAYER_STATUS_OK = 1;
@@ -36,6 +37,41 @@ const PlayerEnergy = EUDArray(constants.MAX_PLAYERS);
 const PlayerEnergyMax = EUDArray(constants.MAX_PLAYERS);
 const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
 
+function createPlayerHero(player) {
+    // PlayerHeroUnits is a compile-time list; it can only be indexed by a
+    // compile-time constant, so dispatch on the runtime player id via switch.
+    // Case count must match MAX_PLAYERS in core/constants.eps.
+    // Capturing the newly created unit's EPD via EPD(0x628438) must be read
+    // right before the CreateUnit call that produces it.
+    // TODO: replace location 0 with a real spawn point once map locations exist.
+    switch (player) {
+    case 0:
+        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+        CreateUnit(1, dat_registry.PlayerHeroUnits[0], 0, player);
+        break;
+    case 1:
+        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+        CreateUnit(1, dat_registry.PlayerHeroUnits[1], 0, player);
+        break;
+    case 2:
+        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+        CreateUnit(1, dat_registry.PlayerHeroUnits[2], 0, player);
+        break;
+    case 3:
+        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+        CreateUnit(1, dat_registry.PlayerHeroUnits[3], 0, player);
+        break;
+    case 4:
+        PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
+        CreateUnit(1, dat_registry.PlayerHeroUnits[4], 0, player);
+        break;
+    }
+}
+
+function getPlayerHeroUnit(player) : CUnit {
+    return CUnit(PlayerHeroCUnit[player]);
+}
+
 function initPlayers() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         HeroAlive[p] = 1;
@@ -46,11 +82,8 @@ function initPlayers() {
         PlayerEnergyMax[p] = HERO_BASE_ENERGY_MAX;
         PlayerEnergy[p] = PlayerEnergyMax[p];
         PlayerStatus[p] = PLAYER_STATUS_OK;
+        createPlayerHero(p);
     }
-}
-
-function getPlayerHeroUnit(player) {
-    return dat_registry.PlayerHeroUnits[player];
 }
 
 function spendPlayerEnergy(player, amount) {
@@ -73,7 +106,14 @@ function updatePlayerStatus(player) {
 
 function healPlayerHero(player, amount) {
     const hero = getPlayerHeroUnit(player);
-    const maxHp = dat_registry.PlayerHeroUnits[player].maxHp;
+    var maxHp = 0;
+    switch (player) {
+    case 0: maxHp = dat_registry.PlayerHeroUnits[0].maxHp; break;
+    case 1: maxHp = dat_registry.PlayerHeroUnits[1].maxHp; break;
+    case 2: maxHp = dat_registry.PlayerHeroUnits[2].maxHp; break;
+    case 3: maxHp = dat_registry.PlayerHeroUnits[3].maxHp; break;
+    case 4: maxHp = dat_registry.PlayerHeroUnits[4].maxHp; break;
+    }
     if (hero.hp + amount > maxHp) hero.hp = maxHp;
     else hero.hp += amount;
 }
@@ -123,7 +163,8 @@ function markPlayerDead(player) {
 
 function respawnPlayer(player) {
     // TODO: pick a random valid respawn position away from mob clusters.
-    // TODO: create/move the player's unique Ghost hero to that position.
+    // TODO: remove/clean up any surviving previous hero unit before creating a new one.
+    createPlayerHero(player);
     HeroAlive[player] = 1;
     upgrades.applyHeroUpgradeDat(player);
     weapons.applyActiveWeaponDat(player);

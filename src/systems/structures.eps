@@ -133,12 +133,12 @@ function updateStructureRepairs() {
 
 function updateMaelstromMines() {
     foreach (i : py_range(MAX_STRUCTURES)) {
-        if (!StructureAlive[i] || StructureType[i] != STRUCTURE_MAELSTROM_MINE) continue;
-
-        // TODO: once armed, detect nearby enemy CUnits. When triggered, apply a stun window
-        // to enemies in StructureEffectRadius[i], then consume/remove the mine or start cooldown.
-        // Prototype options: native Maelstrom-like effect, lockdown/stasis-style timers,
-        // or custom order-freeze behavior on affected CUnits.
+        if (StructureAlive[i] && StructureType[i] == STRUCTURE_MAELSTROM_MINE) {
+            // TODO: once armed, detect nearby enemy CUnits. When triggered, apply a stun window
+            // to enemies in StructureEffectRadius[i], then consume/remove the mine or start cooldown.
+            // Prototype options: native Maelstrom-like effect, lockdown/stasis-style timers,
+            // or custom order-freeze behavior on affected CUnits.
+        }
     }
 }
 

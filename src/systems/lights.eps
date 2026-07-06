@@ -128,13 +128,13 @@ function getAreaSpawnBlockLightLevel(area) {
 
     var strongest = 0;
     foreach (i : py_range(MAX_LIGHTS)) {
-        if (!LightActive[i]) continue;
-
-        if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightNoSpawnRadius[i])) {
-            return 100;
-        }
-        if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightRadius[i])) {
-            strongest = 60;
+        if (LightActive[i]) {
+            if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightNoSpawnRadius[i])) {
+                return 100;
+            }
+            if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightRadius[i])) {
+                strongest = 60;
+            }
         }
     }
 
