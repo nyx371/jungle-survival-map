@@ -43,27 +43,27 @@ function createPlayerHero(player) {
     // Case count must match MAX_PLAYERS in core/constants.eps.
     // Capturing the newly created unit's EPD via EPD(0x628438) must be read
     // right before the CreateUnit call that produces it.
-    // TODO: replace location 0 with a real spawn point once map locations exist.
+    // Heroes spawn at the map location named "G".
     switch (player) {
     case 0:
         PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[0], 0, player);
+        CreateUnit(1, dat_registry.PlayerHeroUnits[0], $L("G"), player);
         break;
     case 1:
         PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[1], 0, player);
+        CreateUnit(1, dat_registry.PlayerHeroUnits[1], $L("G"), player);
         break;
     case 2:
         PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[2], 0, player);
+        CreateUnit(1, dat_registry.PlayerHeroUnits[2], $L("G"), player);
         break;
     case 3:
         PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[3], 0, player);
+        CreateUnit(1, dat_registry.PlayerHeroUnits[3], $L("G"), player);
         break;
     case 4:
         PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-        CreateUnit(1, dat_registry.PlayerHeroUnits[4], 0, player);
+        CreateUnit(1, dat_registry.PlayerHeroUnits[4], $L("G"), player);
         break;
     }
 }
