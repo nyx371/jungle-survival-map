@@ -92,7 +92,6 @@ function setupDayCycleTransition() {
 
   const images = [...container.querySelectorAll('.cycle-image')];
   const labels = [...container.querySelectorAll('.cycle-phase-list button')];
-  const count = container.querySelector('[data-cycle-count]');
   const label = container.querySelector('[data-cycle-label]');
   const progressBar = container.querySelector('[data-cycle-progress]');
   const phaseProgressBars = labels.map((button) => button.querySelector('.phase-progress'));
@@ -130,7 +129,6 @@ function setupDayCycleTransition() {
       }
     });
 
-    if (count) count.textContent = String(activeIndex + 1).padStart(2, '0');
     if (label) label.textContent = images[activeIndex].dataset.phase || labels[activeIndex]?.textContent || '';
   }
 
@@ -234,8 +232,10 @@ const exactIconTitles = new Map(Object.entries({
   'Rocks': 'Mineral Cluster (Type 3)',
   'Crystals': 'Khaydarin Crystal',
   'Organic growth': 'Toxic Spores',
+  'Sap vines': 'Gather',
+  'Basalt veins': 'Mineral Cluster (Type 2)',
+  'Spore pods': 'Spines',
   'Neural critters': 'Bengalaas (Jungle Critter)',
-  'Harvesting tradeoff': 'Gather',
   'Crafted weapons': 'Gauss Rifle',
   'Weapon upgrades': 'Infantry Weapons',
   'Survival upgrades': 'Plasma Shields',
@@ -349,8 +349,11 @@ function iconStripForItem(item) {
     'Rocks': ['Fusion Cutter', 'Mineral Cluster (Type 3)', 'Repair'],
     'Crystals': ['Khaydarin Crystal', 'Vespene Geyser', 'Gather'],
     'Organic growth': ['Toxic Spores', 'Spines', 'Gather'],
+    'Sap vines': ['Gather', 'Vespene Geyser', 'Hold Position'],
+    'Basalt veins': ['Mineral Cluster (Type 2)', 'Fusion Cutter', 'Gather'],
+    'Spore pods': ['Spines', 'Toxic Spores', 'Gather'],
     'Neural critters': ['Bengalaas (Jungle Critter)', 'Maelstrom', 'Gather'],
-    'Harvesting tradeoff': ['Gather', 'Hold Position', 'Gauss Rifle'],
+    'Zerg Larva': ['Drone', 'Broodling', 'Restoration'],
     'Zerg Drone': ['Drone', 'Claws', 'Repair'],
     'Zerg Broodling': ['Broodling', 'Claws', 'Metabolic Boost'],
     'Zerg Zergling': ['Zergling', 'Claws', 'Metabolic Boost'],
@@ -412,6 +415,7 @@ function evolutionIconTitle(evolution) {
     [/armor|hp|tank|crusher/, 'Infantry Armor'],
     [/speed|movement|chase/, 'Metabolic Boost'],
     [/splash|area/, 'Glave Wurm'],
+    [/spawn|hive|larva|nest|clutch|molt/, 'Broodling'],
   ];
   return pairs.find(([pattern]) => pattern.test(text))?.[1] || 'Claws';
 }
@@ -448,9 +452,12 @@ function renderEnemies(enemies) {
   const grid = document.querySelector('#enemy-grid');
   grid.innerHTML = enemies.map((enemy) => `
     <article class="card enemy-card">
-      <div class="feature-icon enemy-icon" aria-hidden="true">${renderIcon(enemyIcon(enemy.base), enemy.base.slice(0, 2))}</div>
+      <div class="feature-icon enemy-icon" aria-hidden="true">
+        <img src="${escapeHtml(enemy.portrait)}" alt="" loading="lazy" />
+      </div>
       <div class="card-kicker">${escapeHtml(enemy.base)}</div>
       <h3>${escapeHtml(enemy.role)}</h3>
+      ${enemy.lore ? `<p class="enemy-lore">${escapeHtml(enemy.lore)}</p>` : ''}
       ${renderIconStrip(iconStripForItem({ title: enemy.base, role: enemy.role }), `${enemy.base} combat icons`)}
       <div class="evolution-list">
         ${enemy.evolutions.map((evolution) => {
@@ -458,7 +465,7 @@ function renderEnemies(enemies) {
           return `
           <div class="evolution tier-${escapeHtml(evolution.color.toLowerCase())}">
             <span class="mini-icon evolution-command" title="${escapeHtml(evoIcon.title)}">${renderIcon(evoIcon, evolution.tier)}</span>
-            <span class="color-chip">${escapeHtml(evolution.color)}</span>
+            <span class="color-chip" role="img" aria-label="${escapeHtml(evolution.color)} tier"></span>
             <div>
               <strong>${escapeHtml(evolution.tier)} · ${escapeHtml(evolution.name)}</strong>
               <p>${escapeHtml(evolution.change)}</p>
@@ -486,13 +493,31 @@ function renderUpgradeCards(selector, upgrades) {
   `).join('');
 }
 
-function isWeaponUpgrade(upgrade) {
-  return /weapon|rifle|shotgun|sniper|flamer|acid|explosive/i.test(upgrade.title);
+function renderUpgrades(upgrades) {
+  renderUpgradeCards('#field-upgrade-grid', upgrades);
 }
 
-function renderUpgrades(upgrades) {
-  renderUpgradeCards('#weapon-upgrade-grid', upgrades.filter(isWeaponUpgrade));
-  renderUpgradeCards('#field-upgrade-grid', upgrades.filter((upgrade) => !isWeaponUpgrade(upgrade)));
+function renderWeapons(weapons) {
+  const grid = document.querySelector('#weapon-upgrade-grid');
+  grid.innerHTML = weapons.map((weapon) => `
+    <article class="card feature-card upgrade-card">
+      <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(weapon.icon), weapon.title.slice(0, 2))}</div>
+      <h3>${escapeHtml(weapon.title)}</h3>
+      <p>${escapeHtml(weapon.body)}</p>
+      <p class="weapon-special"><strong>Special ability:</strong> ${escapeHtml(weapon.special)}</p>
+    </article>
+  `).join('');
+}
+
+function renderStructures(structures) {
+  const grid = document.querySelector('#structure-upgrade-grid');
+  grid.innerHTML = structures.map((structure) => `
+    <article class="card feature-card upgrade-card">
+      <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(structure.icon), structure.title.slice(0, 2))}</div>
+      <h3>${escapeHtml(structure.title)}</h3>
+      <p>${escapeHtml(structure.body)}</p>
+    </article>
+  `).join('');
 }
 
 
@@ -615,6 +640,8 @@ async function init() {
     renderNotes(state.content.notes || []);
     renderEnemies(state.content.enemies);
     renderUpgrades(state.content.upgrades);
+    renderWeapons(state.content.weapons);
+    renderStructures(state.content.structures);
   } catch (error) {
     document.querySelector('#home-grid').innerHTML = `<p class="muted">Unable to load site content: ${escapeHtml(error.message)}</p>`;
   }

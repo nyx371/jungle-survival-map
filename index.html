@@ -68,27 +68,22 @@ Each phase lasts 22 minutes. The cycle below shows the field rhythm; the cards s
               <img class="cycle-image" src="assets/day-cycle/sunset.jpg" alt="Jungle at sunset" loading="lazy" data-phase="Sunset" />
               <img class="cycle-image" src="assets/day-cycle/night.jpg" alt="Jungle at night" loading="lazy" data-phase="Night" />
               <div class="cycle-caption" aria-live="polite">
-                <span data-cycle-count>01</span>
                 <strong data-cycle-label>Morning</strong>
               </div>
               <div class="cycle-loop-nodes" aria-live="polite">
                 <article class="loop-node day active" data-cycle-node="0">
-                  <span class="loop-step">01</span>
                   <h3>Morning: Scout & Harvest</h3>
                   <p>Survey the sector and identify the next objective.</p>
                 </article>
                 <article class="loop-node craft" data-cycle-node="1">
-                  <span class="loop-step">02</span>
                   <h3>Day: Craft & Build</h3>
                   <p>Convert daylight into equipment, supplies, or position.</p>
                 </article>
                 <article class="loop-node move" data-cycle-node="2">
-                  <span class="loop-step">03</span>
                   <h3>Sunset: Move or Commit</h3>
                   <p>Commit only if the ground is still worth defending.</p>
                 </article>
                 <article class="loop-node night" data-cycle-node="3">
-                  <span class="loop-step">04</span>
                   <h3>Night: Survive & Adapt</h3>
                   <p>Survive contact and preserve enough strength for the next day.</p>
                 </article>
@@ -115,8 +110,8 @@ Each phase lasts 22 minutes. The cycle below shows the field rhythm; the cards s
             <a class="inline-cta" href="#system-enemies">Open threat files</a>
           </div>
           <figure class="apex-threat-image">
-            <img src="assets/enemies/unknown-jungle-threat.png" alt="Unknown presence watching from the jungle" loading="lazy" />
-            <figcaption>Unidentified jungle contact</figcaption>
+            <img src="assets/enemies/apex-zerg.jpg" alt="Powerful Zerg creature concept" loading="lazy" />
+            <figcaption>Powerful Zerg creature concept</figcaption>
           </figure>
         </article>
       </section>
@@ -127,7 +122,7 @@ Each phase lasts 22 minutes. The cycle below shows the field rhythm; the cards s
             <p class="eyebrow">Scavenging</p>
             <h2>Resources</h2>
             <p>
-Field resources produce different mineral and vespene yields.
+Field resources produce different mineral and vespene yields. A harvesting Ghost cannot provide supporting fire until the task is broken off.
             </p>
           </div>
           <div id="resource-grid" class="grid"></div>
@@ -193,7 +188,7 @@ Weapon packages define combat style. Field systems improve survival, mobility, h
             <div class="section-heading vertical compact-heading upgrade-subheading">
               <p class="eyebrow">Weapon packages</p>
               <h3>Primary weapons and target abilities</h3>
-              <p>Each package changes auto-fire and replaces the Ghost's main target ability with effects like stun, splash, slow, confusion, or precision burst.</p>
+              <p>Crafting a package is a one-time unlock, not a stat upgrade; only one package may be equipped at a time, but previously crafted packages remain available so a commando can swap styles as the mission changes.</p>
             </div>
             <div id="weapon-upgrade-grid" class="grid"></div>
           </div>
@@ -205,6 +200,15 @@ Weapon packages define combat style. Field systems improve survival, mobility, h
               <p>Permanent training that keeps the commando alive, improves field work, and strengthens temporary support assets.</p>
             </div>
             <div id="field-upgrade-grid" class="grid"></div>
+          </div>
+
+          <div class="upgrade-section">
+            <div class="section-heading vertical compact-heading upgrade-subheading">
+              <p class="eyebrow">Craftable constructs</p>
+              <h3>Structures built in the field</h3>
+              <p>Temporary battlefield tools. Everything here can be deconstructed and rebuilt elsewhere as the squad relocates.</p>
+            </div>
+            <div id="structure-upgrade-grid" class="grid"></div>
           </div>
         </section>
       </section>

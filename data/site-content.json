@@ -19,30 +19,64 @@
   ],
   "enemies": [
     {
-      "base": "Zerg Drone",
-      "role": "Worker swarm / resource harasser",
+      "base": "Zerg Larva",
+      "role": "Hive Spawn",
+      "lore": "The genetically versatile hive spawn every Zerg strain metamorphoses from. Psychically sensitive and still carrying the code for any breed, a single surviving larva can rebuild a whole colony.",
+      "portrait": "assets/enemies/portraits/Larva.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Forager",
+          "name": "Spawnling",
+          "color": "Black",
+          "change": "Passive hive marker drifting near a nest. Harmless alone, but it flags an active breeding site worth clearing or avoiding."
+        },
+        {
+          "tier": "II",
+          "name": "Clutchling",
+          "color": "Brown",
+          "change": "Nests produce larvae faster and in tighter clusters, feeding local mob density if the site is left standing."
+        },
+        {
+          "tier": "III",
+          "name": "Molter",
+          "color": "Orange",
+          "change": "Larvae harden mid-metamorphosis, capable of a weak defensive lash if provoked before finishing their morph."
+        },
+        {
+          "tier": "IV",
+          "name": "Broodwell",
+          "color": "Red",
+          "change": "Dense larval clusters erupt into a wave of fresh spawn when disturbed, punishing anyone who clears a nest carelessly."
+        }
+      ]
+    },
+    {
+      "base": "Zerg Drone",
+      "role": "Hive Worker",
+      "lore": "Contains the genetic code to morph directly into any Zerg structure, and gathers the minerals and vespene gas that fuel the swarm's metabolism.",
+      "portrait": "assets/enemies/portraits/Drone.gif",
+      "evolutions": [
+        {
+          "tier": "I",
+          "name": "Forager",
           "color": "Black",
           "change": "Low HP scout-worker. Mostly tests player aim and reveals where the swarm is spreading."
         },
         {
           "tier": "II",
-          "name": "Brown Gnawer",
+          "name": "Gnawer",
           "color": "Brown",
           "change": "Gains more HP and a faster bite, making ignored worker packs dangerous."
         },
         {
           "tier": "III",
-          "name": "Orange Stripper",
+          "name": "Stripper",
           "color": "Orange",
           "change": "Gains bonus damage against structures and deconstruct targets, punishing static defenses."
         },
         {
           "tier": "IV",
-          "name": "Red Ravager",
+          "name": "Ravager",
           "color": "Red",
           "change": "Fast raider with high structure damage and enough HP to slip through weak perimeter fire."
         }
@@ -51,28 +85,30 @@
     {
       "base": "Zerg Broodling",
       "role": "Disposable ambush pack",
+      "lore": "Bred almost instantly from a slain host by a Queen's spawn broodling attack. Short-lived, but proof a real enemy just died to produce it.",
+      "portrait": "assets/enemies/portraits/Broodling.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Brood",
+          "name": "Hatchling",
           "color": "Black",
           "change": "Very fragile melee flood unit that appears in numbers."
         },
         {
           "tier": "II",
-          "name": "Brown Brood",
+          "name": "Skulker",
           "color": "Brown",
           "change": "More movement speed and HP, better at surrounding isolated Ghosts."
         },
         {
           "tier": "III",
-          "name": "Orange Brood",
+          "name": "Frenzy",
           "color": "Orange",
           "change": "Much faster attack cooldown; dangerous if allowed to stack on a player."
         },
         {
           "tier": "IV",
-          "name": "Red Brood",
+          "name": "Berserker",
           "color": "Red",
           "change": "Tiny berserker variant with high speed and burst damage, forcing quick repositioning."
         }
@@ -80,29 +116,31 @@
     },
     {
       "base": "Zerg Zergling",
-      "role": "Fast melee pressure",
+      "role": "Light Assault Warrior",
+      "lore": "Mutated from absorbed dune-runner DNA into a fast, razor-clawed killer, spawned in pairs from a single larva and cheap enough to throw at anything.",
+      "portrait": "assets/enemies/portraits/Zergling.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Skitter",
+          "name": "Skitter",
           "color": "Black",
           "change": "Basic fast melee enemy: low HP, low damage, short vision."
         },
         {
           "tier": "II",
-          "name": "Brown Skitter",
+          "name": "Chaser",
           "color": "Brown",
           "change": "Gains +HP and movement speed, becoming reliable chase pressure."
         },
         {
           "tier": "III",
-          "name": "Orange Ripper",
+          "name": "Ripper",
           "color": "Orange",
           "change": "Switches to a sharper claw profile: higher damage and shorter cooldown."
         },
         {
           "tier": "IV",
-          "name": "Red Ripper",
+          "name": "Slasher",
           "color": "Red",
           "change": "Elite hunter with max speed, high damage, and enough durability to punish wounded players."
         }
@@ -110,29 +148,31 @@
     },
     {
       "base": "Zerg Hydralisk",
-      "role": "Ranged line attacker",
+      "role": "Medium Assault Warrior",
+      "lore": "Its upper carapace opens to expose hundreds of spines, projected with enough force to punch through armor plating, though it moves slowly across open ground.",
+      "portrait": "assets/enemies/portraits/Hydralisk.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Spitter",
+          "name": "Spitter",
           "color": "Black",
           "change": "Short-range spine attack with modest damage."
         },
         {
           "tier": "II",
-          "name": "Brown Spitter",
+          "name": "Piercer",
           "color": "Brown",
           "change": "Gains HP and +1 weapon range, letting it fire from behind melee mobs."
         },
         {
           "tier": "III",
-          "name": "Orange Needler",
+          "name": "Needler",
           "color": "Orange",
           "change": "Swaps to a faster needle weapon with better cooldown and higher damage."
         },
         {
           "tier": "IV",
-          "name": "Red Needler",
+          "name": "Lancer",
           "color": "Red",
           "change": "Long-range elite shooter with high damage, forcing players to break line of sight or snipe it first."
         }
@@ -140,29 +180,31 @@
     },
     {
       "base": "Zerg Lurker",
-      "role": "Area denial / burrow threat",
+      "role": "Heavy Defense Warrior",
+      "lore": "Bred from the Hydralisk strain, this defensive warrior must burrow to fire subterranean spine waves that pierce every unit in a line, friend or foe.",
+      "portrait": "assets/enemies/portraits/Lurker.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Burrower",
+          "name": "Burrower",
           "color": "Black",
           "change": "Slow setup ambusher with low damage spikes."
         },
         {
           "tier": "II",
-          "name": "Brown Burrower",
+          "name": "Trapper",
           "color": "Brown",
           "change": "More HP and stronger spine damage, holding narrow paths better."
         },
         {
           "tier": "III",
-          "name": "Orange Impaler",
+          "name": "Impaler",
           "color": "Orange",
           "change": "Longer spine range and higher splash pressure, threatening grouped players."
         },
         {
           "tier": "IV",
-          "name": "Red Impaler",
+          "name": "Skewer",
           "color": "Red",
           "change": "Elite area-control unit with very long reach and lethal line damage if not cleared quickly."
         }
@@ -170,29 +212,31 @@
     },
     {
       "base": "Zerg Queen",
-      "role": "Disruptor / support caster",
+      "role": "Hive Warden",
+      "lore": "An airborne hive warden with no attack of its own, instead fouling enemies with ensnaring spores and spawning broodlings from slain hosts.",
+      "portrait": "assets/enemies/portraits/Queen.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Matron",
+          "name": "Matron",
           "color": "Black",
           "change": "Light support threat with low HP and short-range harassment."
         },
         {
           "tier": "II",
-          "name": "Brown Matron",
+          "name": "Warden",
           "color": "Brown",
           "change": "Gains HP and faster movement so it can stay behind the front line."
         },
         {
           "tier": "III",
-          "name": "Orange Hexer",
+          "name": "Hexer",
           "color": "Orange",
           "change": "Switches to a longer-range disruption weapon/effect to pressure priority targets."
         },
         {
           "tier": "IV",
-          "name": "Red Hexer",
+          "name": "Oracle",
           "color": "Red",
           "change": "High-priority support unit with long range and punishing debuff-style pressure."
         }
@@ -200,29 +244,31 @@
     },
     {
       "base": "Zerg Mutalisk",
-      "role": "Flying flanker",
+      "role": "Medium Attack Flyer",
+      "lore": "The swarm's basic air-to-ground striker. Its glaive wurm bounces between targets, hitting hardest on the first strike and fading with each bounce.",
+      "portrait": "assets/enemies/portraits/Mutalisk.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Wing",
+          "name": "Wing",
           "color": "Black",
           "change": "Light air threat with low HP and short-range poke."
         },
         {
           "tier": "II",
-          "name": "Brown Wing",
+          "name": "Skirmisher",
           "color": "Brown",
           "change": "Gains movement speed and HP, making it harder to kite."
         },
         {
           "tier": "III",
-          "name": "Orange Razorwing",
+          "name": "Razorwing",
           "color": "Orange",
           "change": "Upgraded bouncing glaive damage for harassment against grouped players."
         },
         {
           "tier": "IV",
-          "name": "Red Razorwing",
+          "name": "Stormwing",
           "color": "Red",
           "change": "Fast elite flyer with higher damage and longer range, demanding anti-air weapon swaps."
         }
@@ -230,29 +276,31 @@
     },
     {
       "base": "Zerg Guardian",
-      "role": "Siege flyer",
+      "role": "Heavy Attack Flyer",
+      "lore": "Believed to be the nesting form of the Mutalisk, trading speed and altitude for a thicker carapace and a longer-ranged plasma barrage.",
+      "portrait": "assets/enemies/portraits/Guardian.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Siegewing",
+          "name": "Siegewing",
           "color": "Black",
           "change": "Slow air artillery with low damage but long enough range to teach target priority."
         },
         {
           "tier": "II",
-          "name": "Brown Siegewing",
+          "name": "Bulwark",
           "color": "Brown",
           "change": "Gains HP and stronger siege damage against structures."
         },
         {
           "tier": "III",
-          "name": "Orange Shellwing",
+          "name": "Shellwing",
           "color": "Orange",
           "change": "Longer range and higher impact damage, forcing the squad to move or counter-snipe."
         },
         {
           "tier": "IV",
-          "name": "Red Shellwing",
+          "name": "Dreadwing",
           "color": "Red",
           "change": "Elite siege threat with very long range and heavy structure/player pressure."
         }
@@ -260,29 +308,31 @@
     },
     {
       "base": "Zerg Defiler",
-      "role": "Plague / death-effect special",
+      "role": "Viral Shock Trooper",
+      "lore": "A biochemical cancer factory that feeds on other Zerg to fuel plague and dark swarm, and is nearly helpless without an escort.",
+      "portrait": "assets/enemies/portraits/Defiler.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Bloater",
+          "name": "Bloater",
           "color": "Black",
           "change": "Slow fragile special unit with a small death warning."
         },
         {
           "tier": "II",
-          "name": "Brown Bloater",
+          "name": "Gorger",
           "color": "Brown",
           "change": "Gains HP and a larger death burst radius."
         },
         {
           "tier": "III",
-          "name": "Orange Plaguebearer",
+          "name": "Plaguebearer",
           "color": "Orange",
           "change": "Death effect becomes plague-style damage over an area, punishing close-range kills."
         },
         {
           "tier": "IV",
-          "name": "Red Plaguebearer",
+          "name": "Pestilence",
           "color": "Red",
           "change": "Large plague/explosion death effect that can break grouped players if killed carelessly."
         }
@@ -290,64 +340,125 @@
     },
     {
       "base": "Zerg Ultralisk",
-      "role": "Heavy bruiser / frontline boss",
+      "role": "Heavy Assault Warrior",
+      "lore": "A living tank with monomolecular mandibles that shear through armor plating and infantry alike, the intimidating crown of Zerg evolution.",
+      "portrait": "assets/enemies/portraits/Ultralisk.gif",
       "evolutions": [
         {
           "tier": "I",
-          "name": "Black Crusher",
+          "name": "Crusher",
           "color": "Black",
           "change": "Slow tank with high HP but low early damage."
         },
         {
           "tier": "II",
-          "name": "Brown Crusher",
+          "name": "Juggernaut",
           "color": "Brown",
           "change": "Gains armor and a larger HP pool, requiring sustained fire."
         },
         {
           "tier": "III",
-          "name": "Orange Mauler",
+          "name": "Mauler",
           "color": "Orange",
           "change": "Gains speed and a stronger melee weapon, becoming a real chase threat."
         },
         {
           "tier": "IV",
-          "name": "Red Mauler",
+          "name": "Behemoth",
           "color": "Red",
           "change": "Boss-like elite with heavy armor, huge HP, and punishing melee damage."
         }
       ]
     }
   ],
+  "weapons": [
+    {
+      "title": "Railgun Carbine",
+      "body": "Long-range single-target rifle. Steady auto-fire keeps pressure on one enemy at a time from a safe distance.",
+      "special": "An extended-range charged shot that deals bonus damage to a single elite target.",
+      "icon": "C-10 Canister Rifle"
+    },
+    {
+      "title": "Riot Incinerator",
+      "body": "Close-range cone weapon. Short auto-fire reach demands the Ghost hold ground, but it clears everything in front.",
+      "special": "Ignites a cone in front of the Ghost, burning every enemy caught inside over a few seconds.",
+      "icon": "Flame Thrower"
+    },
+    {
+      "title": "Arc Autocannon",
+      "body": "Bouncing-shot cannon. Auto-fire arcs between nearby enemies instead of committing to one target.",
+      "special": "Fires a chaining bolt that jumps to additional nearby targets before dissipating.",
+      "icon": "EMP Shockwave"
+    },
+    {
+      "title": "Corrosive Sprayer",
+      "body": "Damage-over-time sprayer. Auto-fire applies a light corrosive coat rather than big upfront damage.",
+      "special": "Coats a target in corrosive residue that continues dealing damage over several seconds.",
+      "icon": "Acid Spore"
+    },
+    {
+      "title": "Storm Rifle",
+      "body": "Burst-fire rifle. Auto-fire unloads in rapid clusters instead of a steady stream, favoring short trades.",
+      "special": "Unloads a rapid three-round burst for a short window of high damage per second.",
+      "icon": "Gauss Rifle"
+    },
+    {
+      "title": "Demolition Launcher",
+      "body": "Explosive splash weapon. Auto-fire is slower and awkward at close range but punishes grouped enemies.",
+      "special": "Lobs a delayed-fuse warhead that detonates in a blast radius around the impact point.",
+      "icon": "Hellfire Missile Pack"
+    },
+    {
+      "title": "Twin-Spike Driver",
+      "body": "Piercing-line weapon. Auto-fire rounds punch through the first target to strike whatever stands behind it.",
+      "special": "Fires a paired piercing round that passes through the lead target to hit a second enemy in line.",
+      "icon": "Gemini Missiles"
+    },
+    {
+      "title": "Lockdown Snare Gun",
+      "body": "Slow and control weapon. Auto-fire is weak, trading damage for reliable crowd disruption.",
+      "special": "Freezes a target in a stasis field, halting its movement and attacks for a few seconds.",
+      "icon": "Lockdown"
+    }
+  ],
+  "structures": [
+    {
+      "title": "Maelstrom Mine",
+      "body": "Burrowed stun device armed at a fixed point. Detonates under the first enemy that crosses its trigger radius, interrupting rushes or setting up a critter harvest.",
+      "icon": "Maelstrom"
+    },
+    {
+      "title": "Bunker",
+      "body": "Garrisons a wounded commando behind cover for safe supporting fire, trading mobility for a hardened firing position during a stand.",
+      "icon": "Terran Basic Buildings"
+    },
+    {
+      "title": "Light Post (Psi Emitter)",
+      "body": "Gradually brightens the surrounding ground and keeps new mobs from spawning nearby. The anchor of any safe pocket.",
+      "icon": "Khaydarin Crystal"
+    },
+    {
+      "title": "Palisade Wall",
+      "body": "Cheap barrier that delays and redirects incoming mobs, buying time to reposition or finish a harvest.",
+      "icon": "Infantry Armor"
+    },
+    {
+      "title": "Regeneration Station",
+      "body": "Stationary recovery point that speeds HP return for any commando standing nearby.",
+      "icon": "Restoration"
+    },
+    {
+      "title": "Turret",
+      "body": "Automated defensive fire for a temporary hold. Strong alone, stronger as part of a covered perimeter.",
+      "icon": "Twin Autocannons"
+    },
+    {
+      "title": "Signal Flare Beacon",
+      "body": "Deployable flare that marks a rally point and briefly scares off newly spawned mobs, buying a window to regroup.",
+      "icon": "Optical Flare"
+    }
+  ],
   "upgrades": [
-    {
-      "title": "Weapon unlocks",
-      "body": "Level 1 in a path authorizes construction of that weapon package. A package includes both the Ghost's basic fire profile and a dedicated target ability."
-    },
-    {
-      "title": "Weapon switching",
-      "body": "Only one primary package may be equipped at a time. Previously crafted packages remain available, letting a commando swap from rifle control to splash, slow, stun, or precision work as the mission changes."
-    },
-    {
-      "title": "Rifle path",
-      "body": "The rifle is the balanced field package: dependable auto-fire, solid range, and a practical target shot for priority kills. It should be the baseline other weapons trade against."
-    },
-    {
-      "title": "Shotgun path",
-      "body": "The shotgun package favors close contact. Its basic fire can be risky or short-ranged, but its target ability can deliver stun, knockback, or cone disruption when the swarm closes."
-    },
-    {
-      "title": "Sniper path",
-      "body": "The sniper package trades rate of fire for reach and decisive target pressure. A weaker or slower auto-attack can justify a stronger single-target strike against elites and high-value threats."
-    },
-    {
-      "title": "Flamer or acid path",
-      "body": "The flame/acid package controls ground rather than winning direct duels. Its target ability can slow, corrode, confuse, or leave lingering zones that punish packed enemies."
-    },
-    {
-      "title": "Explosive path",
-      "body": "The explosive package is anti-pack ordnance. Basic fire may be awkward or delayed, while the target ability delivers splash, burst timing, or area denial against clustered Zerg."
-    },
     {
       "title": "Survival: max health",
       "body": "Raises Ghost vitality so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued."
@@ -421,12 +532,20 @@
       "body": "Balanced biological matter, often near contested ground."
     },
     {
-      "title": "Neural critters",
-      "body": "Mobile wildlife specimens. Stun or trap them before harvest."
+      "title": "Sap vines",
+      "body": "Slow-drip vespene ooze tapped from thick canopy vines, safe to work under cover."
     },
     {
-      "title": "Harvesting tradeoff",
-      "body": "A harvesting Ghost cannot provide supporting fire until the task is broken off."
+      "title": "Basalt veins",
+      "body": "Exposed volcanic mineral seams. Heavier yield, but a longer exposed harvest window."
+    },
+    {
+      "title": "Spore pods",
+      "body": "Pressurized vespene pods that burst on contact. Fast yield, but risky near active mobs."
+    },
+    {
+      "title": "Neural critters",
+      "body": "Mobile wildlife specimens. Stun or trap them before harvest."
     }
   ],
   "notes": [

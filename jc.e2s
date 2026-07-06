@@ -1,0 +1,412 @@
+S_ProjectSET
+Version : 0.18.1.7
+InputMap : C:\Users\kalle\Documents\StarCraft\Maps\junglecraft\jungle-survival-map\jc_source.scx
+OutputMap : C:\Users\kalle\Documents\StarCraft\Maps\junglecraft\jc.scx
+euddraftuse : True
+loadfromCHK : True
+UsedSetting0 : True
+UsedSetting1 : True
+UsedSetting2 : False
+UsedSetting3 : False
+UsedSetting4 : True
+UsedSetting5 : False
+UsedSetting6 : True
+UsedSetting7 : True
+UsedSetting8 : True
+EUDEditorDebug : False
+epTraceDebug : False
+triggerSetTouse : True
+triggerPlayer : 7
+E_ProjectSET
+S_DatEditSET
+0,8,1,116480
+0,8,41,28160
+0,8,46,17920
+0,8,209,25600
+0,12,35,-154
+0,13,35,89
+0,14,35,-75
+0,15,35,-167
+0,16,35,-186
+0,17,1,-2
+0,17,41,7
+0,17,46,-82
+0,19,1,128
+0,21,35,-3
+0,21,41,-3
+0,22,1,136
+0,22,41,-8
+0,22,46,-2097152
+0,22,117,-536862722
+0,22,209,1
+0,22,211,1
+0,27,41,5
+0,27,46,1
+0,28,1,4
+0,28,2,3
+0,28,35,2
+0,28,41,-3
+0,28,46,-1
+0,36,209,-32
+0,37,117,-32
+0,37,209,-32
+0,38,11,-128
+0,39,11,-32
+0,40,117,-15
+0,40,209,-17
+0,41,117,-9
+0,41,209,-17
+0,42,117,4
+0,42,209,-16
+0,43,117,-7
+0,43,209,-16
+0,45,109,-100
+0,45,125,-100
+0,45,209,-1
+0,45,211,-1
+0,46,209,-1
+0,46,211,-1
+0,47,209,63
+0,47,211,14
+0,49,209,-110
+0,49,211,-110
+0,58,35,255
+1,2,6,28
+1,5,0,172
+1,5,38,-53
+1,5,46,-191
+1,7,6,-1
+1,10,6,20
+1,16,0,-14
+1,20,50,7
+2,0,98,-228
+2,1,5,-640
+2,1,203,-4060
+2,2,203,-4725
+4,2,632,1
+4,2,634,1
+4,2,636,1
+4,2,638,1
+4,7,589,-86
+E_DatEditSET
+S_FireGraftSET
+E_FireGraftSET
+S_BtnSET
+BtnUse1 : True
+BtnData1 : 1,228,4358864,4342848,0,0,664,0,2,255,4358864,4338672,0,0,665,0,3,230,4362032,4342656,0,0,666,0,5,231,4359584,4340592,0,0,675,0,4,254,4358864,4342080,0,0,667,0,7,234,4360720,4561648,0,239,678,0,
+BtnUse7 : True
+BtnData7 : 1,228,4359792,4342848,0,0,664,0,2,229,4359744,4338672,0,0,665,0,3,230,4359696,4342656,0,0,666,0,4,232,4359648,4340688,0,0,677,0,5,231,4359584,4340592,0,0,675,0,6,233,4359520,4339552,0,0,676,0,7,234,4360720,4561648,0,239,678,0,8,235,4360592,4561648,0,242,679,0,9,236,4358928,4338672,0,0,700,0,
+BtnUse50 : True
+BtnData50 : 1,228,4359104,4342848,0,0,664,0,2,229,4359104,4338672,0,0,665,0,3,230,4362144,4342560,0,0,666,0,4,254,4359104,4342080,0,0,667,0,5,255,4359104,4338544,0,0,668,0,9,259,4362480,4338352,11,11,372,382,9,260,4362352,4338320,11,0,373,0,
+BtnUse239 : True
+BtnData239 : 1,125,4358864,4341424,125,125,653,718,2,326,4358864,4341424,209,209,653,718,3,335,4358864,4341424,209,211,653,718,9,236,4358864,4561648,0,228,688,0,
+E_BtnSET
+S_ReqSET
+ReqUse0,109 : 3
+ReqPos0,109 : 271
+ReqCount0,109 : 1
+ReqData0,109,0 : 65291
+ReqUse0,125 : 3
+ReqPos0,125 : 351
+ReqCount0,125 : 1
+ReqData0,125,0 : 65291
+ReqUse0,209 : 2
+ReqPos0,209 : 540
+ReqCount0,209 : 0
+ReqUse0,211 : 2
+ReqPos0,211 : 542
+ReqCount0,211 : 0
+ReqUse4,30 : 2
+ReqPos4,30 : 153
+ReqCount4,30 : 0
+ReqUse4,33 : 2
+ReqPos4,33 : 163
+ReqCount4,33 : 0
+ReqUse4,34 : 2
+ReqPos4,34 : 165
+ReqCount4,34 : 0
+E_ReqSET
+S_BinEditSET
+projectsceneDataCount : 1
+projectsceneData 0binDataCount : 26
+E_BinEditSET
+S_SoundPlayerSET
+Soundinterval : 3
+E_SoundPlayerSET
+S_GRPEditorSET
+GRPEditorDATCount : 0
+GRPEditorUsingDATCount : 0
+GRPEditorUsingindexDATCount : 0
+E_GRPEditorSET
+S_TileSET
+ProjectTileUseFile : False
+ProjectTileSetFileName : 
+ProjectTIleMSetCount : 25249
+ProjectTIleMSetArray : 
+ProjectTileSetDataCount : 0
+ProjectMTXMDATACount : 65536
+ProjectMTXMDATAArray : 
+E_TileSET
+S_SCDBSet
+SCDBDeath : 
+SCDBLoc : 
+SCDBVariable : 
+SCDBLocLoad : 
+SCDBUse : False
+SCDBSerial : 0
+SCDBMaker : Noname
+SCDBMapName : Noname
+SCDBDataSize : 4
+E_SCDBSet
+S_FileManagerSET
+statlang : 0
+stattextdicCount : 0
+wireuse : True
+E_FileManagerSET
+S_TriggerEditorSET
+&AddText&
+Type:23,False,False,False
+const Screen = StringBuffer(256);
+
+const ORDER_TIMER = 35;
+var last_hp = 255 * 500;
+
+function f() {
+
+
+
+setcurpl(0);
+var b : CUnit = CUnit(g);
+
+Screen.printfAt(1, "{} {} {} {} - {},{}  {},{} - {}", b.orderID, b.orderState, b.orderSignal, b.orderTimer, b.orderTargetX, b.orderTargetY, b.secondaryOrderX, b.secondaryOrderY,b.orderTargetUnit);
+Screen.printfAt(2, "{} {}", b.orderID, b.gCooldown);
+Screen.printfAt(3, "{} {} {} {} {}", b.buildQueue1,b.buildQueue2,b.buildQueue3,b.buildQueue4,b.buildQueue5);
+
+if (b.orderTargetUnit != 0) { Screen.printfAt(4, "{}", b.orderTargetUnit.unitType);}
+else { Screen.printfAt(4, "-");}
+
+
+/*
+if (b.orderID ==49) {
+var otu : CUnit = b.moveTargetUnit;
+if (otu.unitType == 176) {
+b.orderID = 85;
+}
+}
+*/
+
+if (b.orderID ==3) {
+b.orderID = 107;
+}
+
+
+
+/*
+if (b.orderID == 49) {
+var otu = 0;
+//   var otu : CUnit = b.orderTargetUnit;
+if (otu.unitType = 176) {
+b.orderId = 85;
+}
+}
+*/
+
+
+if (b.orderID == 10) {
+if ( b.gCooldown > 0)  b.gCooldown = 0;
+}
+
+
+
+
+if (b.hp < last_hp) {
+PlayWAV("sound\\terran\\marine\\tmadth00.wav");
+last_hp = b.hp;
+}
+
+
+if (b.orderID == 87 && b.orderState == 5) {
+if (b.orderTimer > ORDER_TIMER) b.orderTimer = ORDER_TIMER;
+else if (b.orderTimer < 2) {
+b.orderTimer = ORDER_TIMER;
+SetResources(P1, Add, 8, Ore);
+}
+}
+}
+
+function setup() {
+
+foreach(unit : EUDLoopPlayerCUnit(2)) {
+if (unit.unitType == 117) {
+unit.unitType = 176;
+}
+}
+
+}
+ElementsCount:0
+END
+
+&functions&
+Type:15,False,False,False
+ElementsCount:0
+END
+
+&GlobalVar&
+Type:0,False,False,False
+ElementsCount:2
+Type:8,False,False,False
+act:CreateVariable
+wஐ0
+ElementsCount:0
+END
+Type:8,False,False,False
+act:CreateVariable
+gஐ0
+ElementsCount:0
+END
+END
+
+&RawTriggers&
+Type:25,False,False,False
+ElementsCount:0
+END
+
+&onPluginStart&
+Type:0,False,False,False
+ElementsCount:4
+Type:8,False,False,False
+act:CreateUnit
+1ஐ117ஐ2ஐ2
+ElementsCount:0
+END
+Type:8,False,False,False
+act:CreateUnit
+3ஐ35ஐ2ஐ0
+ElementsCount:0
+END
+Type:8,False,False,False
+act:RawCode
+setup();
+ElementsCount:0
+END
+Type:8,False,False,False
+act:SetVariableToNewUnitEPD
+gஐ1ஐ1ஐ0
+ElementsCount:0
+END
+END
+
+&beforeTriggerExec&
+Type:0,False,False,False
+ElementsCount:1
+Type:8,False,False,False
+act:EUDTurbo
+None
+ElementsCount:0
+END
+END
+
+&afterTriggerExec&
+Type:0,False,False,False
+ElementsCount:6
+Type:8,False,False,False
+act:RawCode
+f();
+ElementsCount:0
+END
+Type:8,False,False,False
+act:ModifyUnitHangarCount
+1ஐ1ஐ83ஐ1ஐ64
+ElementsCount:0
+END
+Type:8,False,False,False
+act:SetScore
+0ஐ0ஐwஐ7
+ElementsCount:0
+END
+Type:1,True,False,False
+ElementsCount:2
+Type:3,False,False,False
+And
+ElementsCount:1
+Type:7,False,False,False
+con:Deaths
+0ஐ0ஐ1ஐ0
+ElementsCount:0
+END
+END
+Type:5,False,False,False
+ElementsCount:1
+Type:8,False,False,False
+act:SetVariable
+wஐ1ஐ1
+ElementsCount:0
+END
+END
+END
+Type:1,True,False,False
+ElementsCount:2
+Type:3,False,False,False
+And
+ElementsCount:1
+Type:7,False,False,False
+con:Deaths
+0ஐ0ஐ1ஐ1
+ElementsCount:0
+END
+END
+Type:5,False,False,False
+ElementsCount:1
+Type:8,False,False,False
+act:SetVariable
+wஐ1ஐ2
+ElementsCount:0
+END
+END
+END
+Type:8,True,False,False
+act:SetDatfile
+0ஐ1ஐ17ஐw
+ElementsCount:0
+END
+END
+
+
+E_TriggerEditorSET
+S_PluginSET
+soundstopper : False
+scmloader : False
+noAirColsion : False
+unlimiter : False
+keepSTR : False
+eudTurbo : False
+iscriptPatcher : 
+iscriptPatcheruse : False
+unpatcher : 
+unpatcheruse : False
+nqcuse : True
+nqcunit : 58
+nqclocs : 
+nqccommands : \Q#0#1\E#1#1
+grpinjectoruse : False
+grpinjector_arrow : 
+grpinjector_drag : 
+grpinjector_illegal : 
+dataDumperuse : False
+dataDumper_user : 
+dataDumper_grpwire : 
+dataDumper_tranwire : 
+dataDumper_wirefram : 
+dataDumper_cmdicons : 
+dataDumper_stat_txt : 
+dataDumper_AIscript : 
+dataDumper_iscript : 
+dataDumper_grpwire_f : 0
+dataDumper_tranwire_f : 0
+dataDumper_wirefram_f : 0
+dataDumper_cmdicons_f : 0
+dataDumper_stat_txt_f : 0
+dataDumper_AIscript_f : 0
+dataDumper_iscript_f : 0
+extraedssetting : [C:\Users\kalle\Documents\StarCraft\Maps\junglecraft\jungle-survival-map\src\main.eps]
+E_PluginSET

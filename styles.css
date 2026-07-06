@@ -567,19 +567,15 @@ h3 { margin-top: 0; }
 .evolution p { margin: 0.25rem 0 0; }
 
 .color-chip {
-  display: inline-grid;
-  place-items: center;
-  min-width: 4.5rem;
-  padding: 0.3rem 0.55rem;
+  width: 12px;
+  height: 12px;
+  margin-top: 0.4rem;
   border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-transform: uppercase;
 }
-.tier-black .color-chip { background: #050505; color: #f0f0f0; border: 1px solid #555; }
-.tier-brown .color-chip { background: #6b3f22; color: #fff4e8; }
-.tier-orange .color-chip { background: #ff8a1f; color: #180800; }
-.tier-red .color-chip { background: #ff3535; color: #fff; }
+.tier-black .color-chip { background: #050505; border: 1px solid #888; box-shadow: 0 0 6px rgba(255, 255, 255, 0.35); }
+.tier-brown .color-chip { background: #6b3f22; box-shadow: 0 0 6px rgba(107, 63, 34, 0.7); }
+.tier-orange .color-chip { background: #ff8a1f; box-shadow: 0 0 6px rgba(255, 138, 31, 0.7); }
+.tier-red .color-chip { background: #ff3535; box-shadow: 0 0 6px rgba(255, 53, 53, 0.7); }
 
 .checklist { padding-left: 1.2rem; color: var(--muted); line-height: 1.8; }
 .checklist.compact { margin-bottom: 0; }
@@ -990,20 +986,6 @@ a { color: var(--accent); }
   margin: 0;
 }
 
-.loop-step {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  display: inline-grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 999px;
-  color: #061006;
-  background: var(--accent);
-  font-weight: 900;
-}
-
 .loop-arrow {
   display: grid;
   place-items: center;
@@ -1193,7 +1175,7 @@ a { color: var(--accent); }
 
   .loop-node {
     min-height: 0;
-    padding: 0.85rem 0.85rem 0.85rem 3rem;
+    padding: 0.85rem;
     border-radius: 16px;
   }
 
@@ -1211,15 +1193,6 @@ a { color: var(--accent); }
     inset: auto -30% -70% 10%;
     height: 90%;
     opacity: 0.32;
-  }
-
-  .loop-step {
-    top: 0.82rem;
-    left: 0.5rem;
-    width: 1.65rem;
-    height: 1.65rem;
-    font-size: 0.72rem;
-    z-index: 1;
   }
 
   .loop-arrow,
@@ -1551,6 +1524,13 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 .upgrade-card .feature-icon { grid-row: span 2; margin-bottom: 0; }
 .upgrade-card .checklist { grid-column: 2; }
 
+.weapon-special {
+  margin-top: .5rem;
+  padding-top: .5rem;
+  border-top: 1px dashed #20242c;
+}
+.weapon-special strong { color: #4cc428; }
+
 .evolution,
 .source-map-node,
 .source-map-flow span {
@@ -1559,9 +1539,7 @@ a:hover, #source-link:hover { color: #a4b4f8; }
   background: #050505;
 }
 
-.loop-step,
-.source-map-node span,
-.color-chip {
+.source-map-node span {
   border-radius: 7px !important;
   color: #000;
   background: #4cc428;
@@ -1833,6 +1811,14 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
   justify-self: start;
 }
 
+.enemy-lore {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
 #system-enemies .feature-icon,
 #system-enemies .mini-icon {
   border-color: rgba(255, 82, 82, 0.46);
@@ -1880,7 +1866,7 @@ pre code .tok-function { color: #f4d35e; }
   inset: auto auto 0 0;
   width: min(100%, 620px);
   min-height: 0;
-  padding: 1rem 1.1rem 1rem 4rem;
+  padding: 1rem 1.1rem;
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 180ms linear, transform 180ms ease;
@@ -1906,11 +1892,6 @@ pre code .tok-function { color: #f4d35e; }
   font-size: clamp(0.9rem, 1.25vw, 1rem);
 }
 
-.cycle-loop-nodes .loop-step {
-  top: 1rem;
-  left: 1rem;
-}
-
 @media (max-width: 980px) {
   .cycle-loop-nodes {
     bottom: 4.5rem;
@@ -1932,7 +1913,7 @@ pre code .tok-function { color: #f4d35e; }
   }
 
   .cycle-loop-nodes .loop-node {
-    padding: 0.85rem 0.85rem 0.85rem 3rem;
+    padding: 0.85rem;
   }
 }
 
