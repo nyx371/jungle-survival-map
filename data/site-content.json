@@ -399,40 +399,28 @@
   ],
   "gameplayLoop": [
     {
-      "title": "Survive five nights in the jungle",
-      "body": "The primary objective is a five-night survival operation, with possible extraction resistance still unconfirmed."
+      "title": "Five-night operation",
+      "body": "Hold the sector through five night cycles. Extraction conditions and final resistance remain unconfirmed."
     },
     {
-      "title": "Scavenge by day, endure the night",
-      "body": "Daylight favors reconnaissance and supply runs. Nightfall increases enemy movement throughout the sector."
+      "title": "One commander per player",
+      "body": "Each player fields one Ghost. Support units extend options, but the commando remains the operation's center."
     },
     {
-      "title": "Command one Ghost and a small squad",
-      "body": "Each player commands one Ghost. Auxiliary units are useful, but remain expendable support."
+      "title": "Daylight creates choices",
+      "body": "Use safe hours to decide what matters most: supplies, weapon training, fortification, or relocation."
     },
     {
-      "title": "Harvest minerals and vespene over time",
-      "body": "Resource nodes yield minerals and vespene while a Ghost remains assigned to the task."
+      "title": "Night punishes delay",
+      "body": "Once enemy movement increases, positions must either hold quickly or be abandoned before losses compound."
     },
     {
-      "title": "Stun neural critters before they flee",
-      "body": "Skittish wildlife must be stunned or blocked before it can be harvested."
+      "title": "Equipment defines role",
+      "body": "A crafted weapon package changes both routine fire and the Ghost's main target ability."
     },
     {
-      "title": "Craft one active weapon at a time",
-      "body": "Weapon training begins at level 1. Each crafted package changes the Ghost's primary attack profile and target ability."
-    },
-    {
-      "title": "Build safe pockets, then abandon them",
-      "body": "Lights suppress enemy movement; walls, stations, turrets, and mines delay the swarm. No outpost is permanent."
-    },
-    {
-      "title": "Death hurts, but progression survives",
-      "body": "Death costs field resources and equipment, but long-term upgrades remain intact."
-    },
-    {
-      "title": "The swarm evolves with time",
-      "body": "Enemy coloration reports threat level as the jungle adapts."
+      "title": "Failure costs momentum",
+      "body": "Death removes field assets and carried resources, but retained training lets the run continue."
     }
   ],
   "resources": [
