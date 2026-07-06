@@ -99,54 +99,59 @@ function setupDayCycleTransition() {
   if (!container) return;
 
   const images = [...container.querySelectorAll('.cycle-image')];
-  const labels = [...container.querySelectorAll('.cycle-phase-list span')];
+  const labels = [...container.querySelectorAll('.cycle-phase-list button')];
   const count = container.querySelector('[data-cycle-count]');
   const label = container.querySelector('[data-cycle-label]');
   const progressBar = container.querySelector('[data-cycle-progress]');
   const loopNodes = [...container.querySelectorAll('[data-cycle-node]')];
-  let ticking = false;
+  const phaseDurationMs = 5200;
   let activeIndex = 0;
+  let phaseStartedAt = performance.now();
+  let animationFrame = 0;
 
-  function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
-  }
+  function setPhase(index, options = {}) {
+    activeIndex = (index + images.length) % images.length;
+    if (options.restart !== false) phaseStartedAt = performance.now();
 
-  function render() {
-    ticking = false;
-    const rect = container.getBoundingClientRect();
-    const viewport = window.innerHeight || document.documentElement.clientHeight;
-    const scrollable = Math.max(1, rect.height - viewport * 0.55);
-    const progress = clamp((viewport * 0.28 - rect.top) / scrollable, 0, 1);
-    const phase = progress * (images.length - 1);
-    const nearest = clamp(Math.round(phase), 0, images.length - 1);
-
-    images.forEach((image, index) => {
-      const opacity = clamp(1 - Math.abs(index - phase), 0, 1);
-      image.style.opacity = opacity.toFixed(3);
-      image.classList.toggle('active', index === nearest);
+    images.forEach((image, imageIndex) => {
+      image.classList.toggle('active', imageIndex === activeIndex);
     });
 
-    labels.forEach((item, index) => item.classList.toggle('active', index === nearest));
-    loopNodes.forEach((node, index) => node.classList.toggle('active', index === nearest));
+    labels.forEach((item, itemIndex) => {
+      const active = itemIndex === activeIndex;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    loopNodes.forEach((node, nodeIndex) => {
+      node.classList.toggle('active', nodeIndex === activeIndex);
+    });
+
+    if (count) count.textContent = String(activeIndex + 1).padStart(2, '0');
+    if (label) label.textContent = images[activeIndex].dataset.phase || labels[activeIndex]?.textContent || '';
+  }
+
+  function render(now) {
+    const elapsed = now - phaseStartedAt;
+    const progress = Math.min(1, elapsed / phaseDurationMs);
     if (progressBar) progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
 
-    if (nearest !== activeIndex) {
-      activeIndex = nearest;
-      if (count) count.textContent = String(nearest + 1).padStart(2, '0');
-      if (label) label.textContent = images[nearest].dataset.phase || labels[nearest]?.textContent || '';
+    if (elapsed >= phaseDurationMs) {
+      setPhase(activeIndex + 1);
     }
+
+    animationFrame = requestAnimationFrame(render);
   }
 
-  function requestRender() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(render);
-  }
+  labels.forEach((button) => {
+    button.addEventListener('click', () => {
+      setPhase(Number(button.dataset.cycleJump || 0));
+    });
+  });
 
-  render();
-  window.addEventListener('scroll', requestRender, { passive: true });
-  window.addEventListener('resize', requestRender);
-  window.addEventListener('hashchange', requestRender);
+  setPhase(0);
+  animationFrame = requestAnimationFrame(render);
+  window.addEventListener('pagehide', () => cancelAnimationFrame(animationFrame), { once: true });
 }
 
 function setupTabs() {

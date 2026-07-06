@@ -11,16 +11,16 @@
     <main>
       <nav class="top-nav" aria-label="Jungle Commandos sections">
         <div class="tabs primary-tabs" role="tablist">
-          <button class="tab active" data-tab="home" role="tab" aria-selected="true">Home</button>
-          <button class="tab" data-tab="system" role="tab" aria-selected="false">System</button>
-          <button class="tab" data-tab="notes" role="tab" aria-selected="false">Notes</button>
-          <button class="tab" data-tab="source" role="tab" aria-selected="false">Source</button>
+          <button class="tab active" data-tab="home" role="tab" aria-pressed="true">Home</button>
+          <button class="tab" data-tab="system" role="tab" aria-pressed="false">System</button>
+          <button class="tab" data-tab="notes" role="tab" aria-pressed="false">Notes</button>
+          <button class="tab" data-tab="source" role="tab" aria-pressed="false">Source</button>
         </div>
         <div class="system-tabs" aria-label="System sections" aria-hidden="true" hidden>
-          <button class="sub-tab active" type="button" data-system-target="system-loop" aria-selected="true">Loop</button>
-          <button class="sub-tab" type="button" data-system-target="system-resources" aria-selected="false">Resources</button>
-          <button class="sub-tab" type="button" data-system-target="system-enemies" aria-selected="false">Enemies</button>
-          <button class="sub-tab" type="button" data-system-target="system-upgrades" aria-selected="false">Upgrades</button>
+          <button class="sub-tab active" type="button" data-system-target="system-loop" aria-pressed="true">Loop</button>
+          <button class="sub-tab" type="button" data-system-target="system-resources" aria-pressed="false">Resources</button>
+          <button class="sub-tab" type="button" data-system-target="system-enemies" aria-pressed="false">Enemies</button>
+          <button class="sub-tab" type="button" data-system-target="system-upgrades" aria-pressed="false">Upgrades</button>
         </div>
       </nav>
 
@@ -144,11 +144,11 @@
               </div>
               <div class="cycle-progress" aria-hidden="true"><span data-cycle-progress></span></div>
             </div>
-            <div class="cycle-phase-list" aria-hidden="true">
-              <span class="active">Morning</span>
-              <span>Day</span>
-              <span>Sunset</span>
-              <span>Night</span>
+            <div class="cycle-phase-list" aria-label="Jump to day cycle phase">
+              <button class="active" type="button" data-cycle-jump="0" aria-pressed="true">Morning</button>
+              <button type="button" data-cycle-jump="1" aria-pressed="false">Day</button>
+              <button type="button" data-cycle-jump="2" aria-pressed="false">Sunset</button>
+              <button type="button" data-cycle-jump="3" aria-pressed="false">Night</button>
             </div>
           </div>
           <div class="loop-outcome panel">
