@@ -132,7 +132,10 @@ function setupDayCycleTransition() {
     });
 
     phaseProgressBars.forEach((bar) => {
-      if (bar) bar.style.width = '0%';
+      if (bar) {
+        bar.style.width = '0%';
+        bar.hidden = true;
+      }
     });
 
     if (count) count.textContent = String(activeIndex + 1).padStart(2, '0');
@@ -159,7 +162,9 @@ function setupDayCycleTransition() {
 
     phaseProgressBars.forEach((bar, barIndex) => {
       if (!bar) return;
-      bar.style.width = barIndex === activeIndex ? `${(progress * 100).toFixed(1)}%` : '0%';
+      const visible = barIndex === activeIndex && progress > 0.01;
+      bar.style.width = visible ? `${(progress * 100).toFixed(1)}%` : '0%';
+      bar.hidden = !visible;
     });
 
     if (elapsed >= phaseDurationMs) {

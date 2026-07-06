@@ -2167,3 +2167,50 @@ pre code .tok-function { color: #f4d35e; }
 .day-cycle-transition .cycle-phase-list button.active .phase-progress {
   transition: width 80ms linear;
 }
+
+/* Minimal day-cycle selector cleanup. */
+.day-cycle-transition .cycle-phase-list {
+  min-height: 2.5rem;
+  border: 0;
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.day-cycle-transition .cycle-phase-list .cycle-progress {
+  display: none;
+}
+
+.day-cycle-transition .cycle-phase-list button {
+  border: 0;
+  padding: 0.68rem 0.6rem 0.76rem;
+  color: rgba(237, 248, 238, 0.62);
+  background: transparent;
+  text-shadow: none;
+}
+
+.day-cycle-transition .cycle-phase-list button:hover,
+.day-cycle-transition .cycle-phase-list button:focus-visible {
+  color: rgba(237, 248, 238, 0.92);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.day-cycle-transition .cycle-phase-list button.active {
+  color: #fff;
+  background: transparent;
+}
+
+.day-cycle-transition .cycle-phase-list .phase-label {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.day-cycle-transition .cycle-phase-list .phase-progress[hidden] {
+  display: none;
+}
+
+.day-cycle-transition .cycle-phase-list .phase-progress {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: none;
+}
