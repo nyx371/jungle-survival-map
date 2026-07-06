@@ -384,27 +384,19 @@
   "gameplayLoop": [
     {
       "title": "Five-night operation",
-      "body": "Hold the sector through five night cycles. Extraction conditions and final resistance remain unconfirmed."
-    },
-    {
-      "title": "One commander per player",
-      "body": "Each player fields one Ghost. Support units extend options, but the commando remains the operation's center."
+      "body": "Hold the sector through five night cycles. Extraction conditions remain unconfirmed."
     },
     {
       "title": "Daylight creates choices",
-      "body": "Use safe hours to decide what matters most: supplies, weapon training, fortification, or relocation."
+      "body": "Use safe hours to pick one priority: gather supplies, train weapons, fortify, or relocate."
     },
     {
       "title": "Night punishes delay",
-      "body": "Once enemy movement increases, positions must either hold quickly or be abandoned before losses compound."
-    },
-    {
-      "title": "Equipment defines role",
-      "body": "A crafted weapon package changes both routine fire and the Ghost's main target ability."
+      "body": "When enemy movement increases, hesitation costs more than withdrawal."
     },
     {
       "title": "Failure costs momentum",
-      "body": "Death removes field assets and carried resources, but retained training lets the run continue."
+      "body": "Death removes field assets and carried resources, but retained training lets the operation continue."
     }
   ],
   "resources": [
