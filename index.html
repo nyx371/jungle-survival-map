@@ -13,6 +13,7 @@
         <div class="tabs primary-tabs" role="tablist">
           <button class="tab active" data-tab="home" role="tab" aria-selected="true">Home</button>
           <button class="tab" data-tab="system" role="tab" aria-selected="false">System</button>
+          <button class="tab" data-tab="notes" role="tab" aria-selected="false">Notes</button>
           <button class="tab" data-tab="source" role="tab" aria-selected="false">Source</button>
         </div>
         <div class="system-tabs" aria-label="System sections" aria-hidden="true" hidden>
@@ -223,6 +224,40 @@
             </p>
           </div>
           <div id="upgrade-grid" class="grid"></div>
+        </section>
+      </section>
+
+      <section id="notes" class="tab-panel">
+        <div class="panel section-heading vertical">
+          <p class="eyebrow">Design notes</p>
+          <h2>Spell, command card, and utility experiments</h2>
+          <p>
+            Scratchpad for active abilities and player-facing controls: keep the hotbar small, move most power into readable attack passives, and test whether unused StarCraft abilities can become clean Jungle Commandos spells.
+          </p>
+        </div>
+
+        <div id="notes-grid" class="grid notes-grid"></div>
+
+        <section class="panel notes-upgrade-panel" aria-label="Active ability upgrade direction">
+          <div>
+            <p class="eyebrow">Hotbar focus</p>
+            <h3>Three actives, many passive synergies</h3>
+            <p>Heal, Speed, and Stun should be the few deliberate button presses. Weapon paths, attack passives, and upgrades can do the rest of the build expression.</p>
+          </div>
+          <div class="ability-lanes">
+            <article>
+              <strong>Heal</strong>
+              <span>Self-save → ally burst → station/area pulse</span>
+            </article>
+            <article>
+              <strong>Speed</strong>
+              <span>Escape sprint → squad reposition → reload/attack tempo window</span>
+            </article>
+            <article>
+              <strong>Stun</strong>
+              <span>Critter catch → Maelstrom trap → elite interrupt/control field</span>
+            </article>
+          </div>
         </section>
       </section>
 

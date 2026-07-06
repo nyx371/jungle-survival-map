@@ -85,7 +85,7 @@ function activateRouteFromHash(options = {}) {
     return;
   }
 
-  if (hash === 'home' || hash === 'source') {
+  if (hash === 'home' || hash === 'notes' || hash === 'source') {
     activateTab(hash, options);
     return;
   }
@@ -215,6 +215,10 @@ const exactIconTitles = new Map(Object.entries({
   'Survival upgrades': 'Plasma Shields',
   'Craftable constructs and utility': 'Terran Basic Buildings',
   'Companion squad upgrades': 'Probe',
+  'Reuse unused abilities as spells': 'Cloak',
+  'Command card stays readable': 'Patrol',
+  'Few active hotbar abilities': 'Heal',
+  'Psi Emitter feasibility': 'Khaydarin Crystal',
 }));
 
 function iconTitleForText(value) {
@@ -259,6 +263,12 @@ function chooseIcon(item, fallbackTitle = 'Scanner Sweep') {
   const title = String(item.title || '').toLowerCase();
   const pairs = [
     [/maelstrom|mine|trap/, 'Maelstrom'],
+    [/psi emitter|beacon|lure/, 'Khaydarin Crystal'],
+    [/heal/, 'Heal'],
+    [/speed|sprint|tempo/, 'Use Stimpack'],
+    [/stun|control|maelstrom/, 'Maelstrom'],
+    [/command card|hotbar|button|readable/, 'Patrol'],
+    [/spell|ability|passive/, 'Cloak'],
     [/ghost|commander|commando/, 'Ghost'],
     [/night|swarm|zerg/, 'Dark Swarm'],
     [/day|scout|vision/, 'Scanner Sweep'],
@@ -325,10 +335,20 @@ function iconStripForItem(item) {
     'Zerg Guardian': ['Guardian', 'Acid Spore', 'Flyer Attack'],
     'Zerg Defiler': ['Defiler', 'Plague', 'Dark Swarm'],
     'Zerg Ultralisk': ['Ultralisk', 'Kaiser Blades', 'Chitinous Plating'],
+    'Reuse unused abilities as spells': ['Cloak', 'EMP Shockwave', 'Maelstrom'],
+    'Command card stays readable': ['Patrol', 'Gauss Rifle', 'Hold Position'],
+    'Few active hotbar abilities': ['Heal', 'Use Stimpack', 'Maelstrom'],
+    'Psi Emitter feasibility': ['Khaydarin Crystal', 'Dark Swarm', 'Scanner Sweep'],
   }[title];
 
   const titles = exact ? [...exact] : [];
   const rules = [
+    [/psi emitter|beacon|lure/, 'Khaydarin Crystal'],
+    [/heal/, 'Heal'],
+    [/speed|sprint|tempo/, 'Use Stimpack'],
+    [/stun|control|maelstrom/, 'Maelstrom'],
+    [/command card|hotbar/, 'Patrol'],
+    [/spell|ability|passive/, 'Cloak'],
     [/ghost|commander|squad/, 'Sarah Kerrigan (Ghost)'],
     [/resource|harvest|scavenge|mineral/, 'Gather'],
     [/vespene|gas/, 'Vespene Geyser'],
@@ -422,6 +442,10 @@ function renderEnemies(enemies) {
       </div>
     </article>
   `).join('');
+}
+
+function renderNotes(notes) {
+  renderCardGrid('#notes-grid', notes);
 }
 
 function renderUpgrades(upgrades) {
@@ -518,6 +542,7 @@ async function init() {
     renderGameplayLoop(state.content.gameplayLoop);
     renderFeatures(state.content.features);
     renderResources(state.content.resources);
+    renderNotes(state.content.notes || []);
     renderEnemies(state.content.enemies);
     renderUpgrades(state.content.upgrades);
   } catch (error) {

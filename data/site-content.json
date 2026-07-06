@@ -459,5 +459,23 @@
       "title": "Harvesting tradeoff",
       "body": "Right-click to begin continuous harvesting. Every few seconds minerals and vespene trickle in until the node depletes, the Ghost is interrupted, or the player moves. While harvesting, your Ghost cannot fire."
     }
+  ],
+  "notes": [
+    {
+      "title": "Reuse unused abilities as spells",
+      "body": "Audit dormant StarCraft abilities and rebuild them into simple commando spells where possible. Prefer effects players can read instantly: burst damage, area control, debuffs, rescue tools, and squad utility."
+    },
+    {
+      "title": "Command card stays readable",
+      "body": "Most player power should come from passive attack-linked abilities instead of a crowded hotbar. The command card should be obvious to casual players: attack, move, build/interact, and only a few active choices."
+    },
+    {
+      "title": "Few active hotbar abilities",
+      "body": "Keep active abilities focused around Heal, Speed, and Stun. These can upgrade over the run, and higher tiers may change behavior instead of only adding numbers."
+    },
+    {
+      "title": "Psi Emitter feasibility",
+      "body": "Investigate whether a Psi Emitter-style construct can be built from scratch. Best candidate: a deployable lure/beacon that redirects Zerg pressure, creates a risky hold point, or powers nearby spell/passive effects."
+    }
   ]
 }
