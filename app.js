@@ -465,6 +465,45 @@ function renderUpgrades(upgrades) {
   `).join('');
 }
 
+
+function highlightEps(source) {
+  const keywords = new Set([
+    'as', 'break', 'case', 'const', 'continue', 'default', 'do', 'else', 'export', 'for', 'from',
+    'function', 'if', 'import', 'in', 'object', 'return', 'static', 'switch', 'var', 'while',
+  ]);
+  const literals = new Set(['true', 'false', 'null', 'undefined']);
+  const builtins = new Set([
+    'EUDArray', 'EUDByteReader', 'EUDByteWriter', 'EUDCreateVariables', 'EUDLightVariable',
+    'EUDLoopNewUnit', 'EUDLoopPlayerUnit', 'EUDPlayerLoop', 'EUDVariable', 'PVariable',
+    'Deaths', 'Command', 'Bring', 'ElapsedTime', 'Switch', 'Memory', 'SetDeaths', 'SetMemory',
+    'CreateUnit', 'KillUnit', 'MoveUnit', 'Order', 'SetResources', 'DisplayText', 'PlayWAV',
+    'Exactly', 'AtLeast', 'AtMost', 'SetTo', 'Add', 'Subtract', 'Enable', 'Disable', 'CurrentPlayer',
+  ]);
+  const tokenPattern = /\/\/[^\n]*|\/\*[\s\S]*?\*\/|(["'`])(?:\\[\s\S]|(?!\1)[^\\])*\1|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$]*\b/g;
+  let html = '';
+  let cursor = 0;
+
+  source.replace(tokenPattern, (token, _quote, offset) => {
+    html += escapeHtml(source.slice(cursor, offset));
+    let className = '';
+    if (token.startsWith('//') || token.startsWith('/*')) className = 'tok-comment';
+    else if (/^["'`]/.test(token)) className = 'tok-string';
+    else if (/^\d/.test(token)) className = 'tok-number';
+    else if (keywords.has(token)) className = 'tok-keyword';
+    else if (literals.has(token)) className = 'tok-literal';
+    else if (builtins.has(token)) className = 'tok-builtin';
+    else if (/^[A-Z][A-Za-z0-9_$]*$/.test(token)) className = 'tok-type';
+    else if (/^\s*\(/.test(source.slice(offset + token.length, offset + token.length + 8))) className = 'tok-function';
+
+    html += className ? `<span class="${className}">${escapeHtml(token)}</span>` : escapeHtml(token);
+    cursor = offset + token.length;
+    return token;
+  });
+
+  html += escapeHtml(source.slice(cursor));
+  return html;
+}
+
 async function loadSource(file) {
   const code = document.querySelector('#source-code');
   const title = document.querySelector('#source-title');
@@ -477,7 +516,7 @@ async function loadSource(file) {
   try {
     const response = await fetch(file.path, { cache: 'no-store' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    code.textContent = await response.text();
+    code.innerHTML = highlightEps(await response.text());
   } catch (error) {
     code.textContent = `Unable to load ${file.path}: ${error.message}`;
   }

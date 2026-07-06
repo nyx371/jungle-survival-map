@@ -1902,3 +1902,13 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
   margin: 0 0 1rem;
   justify-self: start;
 }
+
+/* Lightweight epScript syntax highlighting (TypeScript-like). */
+pre code .tok-comment { color: #6f7d78; font-style: italic; }
+pre code .tok-string { color: #f6c177; }
+pre code .tok-number { color: #9ccfd8; }
+pre code .tok-keyword { color: #c4a7e7; font-weight: 800; }
+pre code .tok-literal { color: #eb6f92; }
+pre code .tok-builtin { color: #92f28f; }
+pre code .tok-type { color: #7bcfff; }
+pre code .tok-function { color: #f4d35e; }
