@@ -338,31 +338,31 @@
   "upgrades": [
     {
       "title": "Weapon unlocks",
-      "body": "Level 1 authorizes construction of the weapon package."
+      "body": "Level 1 authorizes construction of a weapon package: basic fire plus a dedicated target ability."
     },
     {
       "title": "Weapon switching",
-      "body": "Only one primary weapon may be equipped, but crafted packages remain available."
+      "body": "Only one primary weapon package may be equipped, but crafted packages remain available for later missions."
     },
     {
       "title": "Rifle path",
-      "body": "Reliable single-target fire with conventional damage, range, and cooldown improvements."
+      "body": "Balanced rifle training keeps reliable auto-fire and a practical target shot for priority kills."
     },
     {
       "title": "Shotgun path",
-      "body": "Close-range burst fire that can develop into stronger crowd control."
+      "body": "Close-range burst fire with a target ability suited to stun, knockback, or crowd disruption."
     },
     {
       "title": "Sniper path",
-      "body": "Long-range precision fire for eliminating high-value targets."
+      "body": "Long-range precision fire with a powerful target strike; slower basic fire can justify stronger single-shot effects."
     },
     {
       "title": "Flamer or acid path",
-      "body": "Area denial package using lingering damage or corrosive effects."
+      "body": "Area denial package using a weaker direct attack to carry stronger slow, corrosion, or confusion effects."
     },
     {
       "title": "Explosive path",
-      "body": "Anti-pack ordnance with blast radius and timing tradeoffs."
+      "body": "Anti-pack ordnance with splash target abilities and deliberate timing tradeoffs."
     },
     {
       "title": "Survival: max health",
@@ -420,7 +420,7 @@
     },
     {
       "title": "Craft one active weapon at a time",
-      "body": "Weapon training begins at level 1. Once a weapon has been crafted, it may be re-equipped later."
+      "body": "Weapon training begins at level 1. Each crafted package changes the Ghost's primary attack profile and target ability."
     },
     {
       "title": "Build safe pockets, then abandon them",
@@ -472,11 +472,11 @@
     },
     {
       "title": "Command card stays readable",
-      "body": "Keep the command card operationally clear. Attack passives should carry most build complexity."
+      "body": "Keep the command card operationally clear. Weapon packages should swap the main target ability instead of adding extra buttons."
     },
     {
       "title": "Few active hotbar abilities",
-      "body": "Limit active field commands to Heal, Speed, and Stun; upgrades may alter their tactical use."
+      "body": "Limit universal field commands to Heal, Speed, and Stun; weapon-specific target abilities carry tactical variety."
     },
     {
       "title": "Psi Emitter feasibility",
