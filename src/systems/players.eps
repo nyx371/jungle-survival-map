@@ -19,6 +19,7 @@ const DeathsThisRun = EUDArray(constants.MAX_PLAYERS);
 const LastKnownX = EUDArray(constants.MAX_PLAYERS);
 const LastKnownY = EUDArray(constants.MAX_PLAYERS);
 const PlayerHeroCUnit = EUDArray(constants.MAX_PLAYERS);
+const Screen = StringBuffer(256);
 
 const PLAYER_STATUS_RESTED = 0;
 const PLAYER_STATUS_OK = 1;
@@ -195,9 +196,21 @@ function updatePlayerDeathState(player) {
     // TODO: detect actual hero CUnit death and call markPlayerDead(player).
 }
 
+function updatePlayerDebugInfo(player, localPlayer) {
+    if (player != localPlayer) return;
+
+    const savedCp = getcurpl();
+    setcurpl(localPlayer);
+    const hero = getPlayerHeroUnit(player);
+    Screen.printfAt(1, "{}", hero.orderID);
+    setcurpl(savedCp);
+}
+
 function updatePlayers() {
+    const localPlayer = getuserplayerid();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         updatePlayerDeathState(p);
         updatePlayerVitals(p);
+        updatePlayerDebugInfo(p, localPlayer);
     }
 }

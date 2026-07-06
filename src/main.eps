@@ -21,8 +21,6 @@ import systems.audio;
 import systems.camera;
 import systems.victory;
 
-const Screen = StringBuffer(256);
-
 function onPluginStart() {
     constants.initConstants();
     dat_registry.initDatRegistry();
@@ -48,13 +46,6 @@ function onPluginStart() {
 }
 
 function beforeTriggerExec() {
-    const savedCp = getcurpl();
-    const localPlayer = getuserplayerid();
-    setcurpl(localPlayer);
-    var b : CUnit = CUnit(players.PlayerHeroCUnit[localPlayer]);
-    Screen.printfAt(1, "{}", b.orderID);
-    setcurpl(savedCp);
-
     day_night.updateDayNight();
     players.updatePlayers();
     resources.updateResources();
