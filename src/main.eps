@@ -10,6 +10,7 @@ import critters;
 import companions;
 import weapons;
 import upgrades;
+import abilities;
 import structures;
 import lights;
 import mobs;
@@ -30,6 +31,7 @@ function onPluginStart() {
     initCompanions();
     initUpgrades();
     initWeapons();
+    initAbilities();
     initStructures();
     initLights();
     initMobs();
@@ -51,6 +53,7 @@ function beforeTriggerExec() {
     updateCompanions();
     updateWeapons();
     updateUpgrades();
+    updateAbilities();
     updateStructures();
     updateLights();
     updateMobEvolution();

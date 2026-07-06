@@ -20,6 +20,10 @@
     "path": "docs/prior-map-eps-lessons.md"
   },
   {
+    "label": "systems/abilities.eps",
+    "path": "src/systems/abilities.eps"
+  },
+  {
     "label": "systems/audio.eps",
     "path": "src/systems/audio.eps"
   },

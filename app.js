@@ -558,6 +558,7 @@ function sourceIcon(file) {
     [/main/, 'Marine'],
     [/constant|dat_registry/, 'Terran Basic Buildings'],
     [/trigger|prior|docs/, 'Scanner Sweep'],
+    [/abilities/, 'Heal'],
     [/audio/, 'Optical Flare'],
     [/camera/, 'Ocular Implants'],
     [/critter/, 'Bengalaas (Jungle Critter)'],

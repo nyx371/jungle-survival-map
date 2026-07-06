@@ -1,0 +1,135 @@
+// Active Ability System
+// Ported from the prior map.eps pattern: players keep a small set of active abilities,
+// each with energy cost, cooldown, and an effect timer. Jungle Commandos keeps this
+// intentionally narrow: Heal, Speed, and Stun.
+
+const ABILITY_HEAL = 0;
+const ABILITY_SPEED = 1;
+const ABILITY_STUN = 2;
+const ABILITY_COUNT = 3;
+
+const ABILITY_HEAL_ENERGY_COST = 35 * 256;
+const ABILITY_SPEED_ENERGY_COST = 25 * 256;
+const ABILITY_STUN_ENERGY_COST = 45 * 256;
+
+const ABILITY_HEAL_COOLDOWN = 28 * FRAMES_PER_GAME_SECOND;
+const ABILITY_SPEED_COOLDOWN = 24 * FRAMES_PER_GAME_SECOND;
+const ABILITY_STUN_COOLDOWN = 34 * FRAMES_PER_GAME_SECOND;
+
+const ABILITY_HEAL_AMOUNT = 35 * 256;
+const ABILITY_SPEED_DURATION = 6 * FRAMES_PER_GAME_SECOND;
+const ABILITY_STUN_DURATION = 4 * FRAMES_PER_GAME_SECOND;
+const ABILITY_STUN_RADIUS = 4 * 32;
+
+const AbilityUnlocked = EUDArray(MAX_PLAYERS * ABILITY_COUNT);
+const AbilityCooldown = EUDArray(MAX_PLAYERS * ABILITY_COUNT);
+const AbilityTimer = EUDArray(MAX_PLAYERS * ABILITY_COUNT);
+const SelectedAbility = EUDArray(MAX_PLAYERS);
+
+function abilityIndex(player, abilityId) {
+    return player * ABILITY_COUNT + abilityId;
+}
+
+function getAbilityEnergyCost(abilityId) {
+    if (abilityId == ABILITY_HEAL) return ABILITY_HEAL_ENERGY_COST;
+    if (abilityId == ABILITY_SPEED) return ABILITY_SPEED_ENERGY_COST;
+    if (abilityId == ABILITY_STUN) return ABILITY_STUN_ENERGY_COST;
+    return 0;
+}
+
+function getAbilityCooldownFrames(abilityId) {
+    if (abilityId == ABILITY_HEAL) return ABILITY_HEAL_COOLDOWN;
+    if (abilityId == ABILITY_SPEED) return ABILITY_SPEED_COOLDOWN;
+    if (abilityId == ABILITY_STUN) return ABILITY_STUN_COOLDOWN;
+    return 0;
+}
+
+function initAbilities() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        SelectedAbility[p] = ABILITY_HEAL;
+        foreach (a : py_range(ABILITY_COUNT)) {
+            AbilityUnlocked[abilityIndex(p, a)] = 0;
+            AbilityCooldown[abilityIndex(p, a)] = 0;
+            AbilityTimer[abilityIndex(p, a)] = 0;
+        }
+
+        // Heal is the default safety valve. Speed/Stun can be upgrade/menu unlocks.
+        AbilityUnlocked[abilityIndex(p, ABILITY_HEAL)] = 1;
+    }
+}
+
+function unlockAbility(player, abilityId) {
+    AbilityUnlocked[abilityIndex(player, abilityId)] = 1;
+}
+
+function selectAbility(player, abilityId) {
+    if (AbilityUnlocked[abilityIndex(player, abilityId)]) {
+        SelectedAbility[player] = abilityId;
+    }
+}
+
+function canCastAbility(player, abilityId) {
+    if (!HeroAlive[player]) return 0;
+    if (!AbilityUnlocked[abilityIndex(player, abilityId)]) return 0;
+    if (AbilityCooldown[abilityIndex(player, abilityId)] > 0) return 0;
+    if (!spendPlayerEnergy(player, getAbilityEnergyCost(abilityId))) return 0;
+    return 1;
+}
+
+function castHeal(player) {
+    healPlayerHero(player, ABILITY_HEAL_AMOUNT);
+}
+
+function castSpeed(player) {
+    AbilityTimer[abilityIndex(player, ABILITY_SPEED)] = ABILITY_SPEED_DURATION;
+    applySpeedAbility(player, 1);
+}
+
+function castStun(player) {
+    AbilityTimer[abilityIndex(player, ABILITY_STUN)] = ABILITY_STUN_DURATION;
+    applyStunPulse(player, ABILITY_STUN_RADIUS, ABILITY_STUN_DURATION);
+}
+
+function castAbility(player, abilityId) {
+    if (!canCastAbility(player, abilityId)) return 0;
+
+    if (abilityId == ABILITY_HEAL) castHeal(player);
+    else if (abilityId == ABILITY_SPEED) castSpeed(player);
+    else if (abilityId == ABILITY_STUN) castStun(player);
+
+    AbilityCooldown[abilityIndex(player, abilityId)] = getAbilityCooldownFrames(abilityId);
+    return 1;
+}
+
+function castSelectedAbility(player) {
+    return castAbility(player, SelectedAbility[player]);
+}
+
+function applySpeedAbility(player, enabled) {
+    // Old map used topSpeed swaps. Keep as a hook until final unit DAT/speed IDs are settled.
+    // Implementation target: raise hero topSpeed while AbilityTimer[SPEED] > 0, restore on expiry.
+}
+
+function applyStunPulse(player, radius, duration) {
+    // Hook for Maelstrom-style control. Final implementation can use native spell effect,
+    // order-freeze timers, or custom mob stun state once mobs have concrete CUnit tracking.
+}
+
+function updateAbilityTimers(player) {
+    foreach (a : py_range(ABILITY_COUNT)) {
+        const index = abilityIndex(player, a);
+        if (AbilityCooldown[index] > 0) AbilityCooldown[index] -= 1;
+        if (AbilityTimer[index] > 0) {
+            AbilityTimer[index] -= 1;
+            if (a == ABILITY_SPEED && AbilityTimer[index] == 0) {
+                applySpeedAbility(player, 0);
+            }
+        }
+    }
+}
+
+function updateAbilities() {
+    foreach (p : py_range(MAX_PLAYERS)) {
+        updateAbilityTimers(p);
+    }
+}

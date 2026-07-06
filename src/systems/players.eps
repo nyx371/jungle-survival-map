@@ -9,6 +9,23 @@ const DeathsThisRun = EUDArray(MAX_PLAYERS);
 const LastKnownX = EUDArray(MAX_PLAYERS);
 const LastKnownY = EUDArray(MAX_PLAYERS);
 
+const PLAYER_STATUS_RESTED = 0;
+const PLAYER_STATUS_OK = 1;
+const PLAYER_STATUS_HUNGRY = 2;
+const PLAYER_STATUS_STARVING = 3;
+
+const HERO_BASE_ENERGY_MAX = 250 * 256;
+const HERO_RESTED_ENERGY_LEVEL = 200 * 256;
+const HERO_HUNGRY_ENERGY_LEVEL = 80 * 256;
+const HERO_ENERGY_DRAIN_NIGHT = 1 * 256 / 4;
+const HERO_ENERGY_REGEN_DAY = 1 * 256 / 8;
+const HERO_HP_REGEN_RESTED = 1 * 256 / 2;
+const HERO_HP_DRAIN_STARVING = 1 * 256 / 5;
+
+const PlayerEnergy = EUDArray(MAX_PLAYERS);
+const PlayerEnergyMax = EUDArray(MAX_PLAYERS);
+const PlayerStatus = EUDArray(MAX_PLAYERS);
+
 function initPlayers() {
     foreach (p : py_range(MAX_PLAYERS)) {
         HeroAlive[p] = 1;
@@ -16,11 +33,67 @@ function initPlayers() {
         DeathsThisRun[p] = 0;
         LastKnownX[p] = 0;
         LastKnownY[p] = 0;
+        PlayerEnergyMax[p] = HERO_BASE_ENERGY_MAX;
+        PlayerEnergy[p] = PlayerEnergyMax[p];
+        PlayerStatus[p] = PLAYER_STATUS_OK;
     }
 }
 
 function getPlayerHeroUnit(player) {
     return PlayerHeroUnits[player];
+}
+
+function spendPlayerEnergy(player, amount) {
+    if (PlayerEnergy[player] < amount) return 0;
+    PlayerEnergy[player] -= amount;
+    return 1;
+}
+
+function restorePlayerEnergy(player, amount) {
+    if (PlayerEnergy[player] + amount > PlayerEnergyMax[player]) PlayerEnergy[player] = PlayerEnergyMax[player];
+    else PlayerEnergy[player] += amount;
+}
+
+function updatePlayerStatus(player) {
+    if (PlayerEnergy[player] >= HERO_RESTED_ENERGY_LEVEL) PlayerStatus[player] = PLAYER_STATUS_RESTED;
+    else if (PlayerEnergy[player] == 0) PlayerStatus[player] = PLAYER_STATUS_STARVING;
+    else if (PlayerEnergy[player] < HERO_HUNGRY_ENERGY_LEVEL) PlayerStatus[player] = PLAYER_STATUS_HUNGRY;
+    else PlayerStatus[player] = PLAYER_STATUS_OK;
+}
+
+function healPlayerHero(player, amount) {
+    const hero = getPlayerHeroUnit(player);
+    const maxHp = PlayerHeroUnits[player].maxHp;
+    if (hero.hp + amount > maxHp) hero.hp = maxHp;
+    else hero.hp += amount;
+}
+
+function damagePlayerHero(player, amount) {
+    const hero = getPlayerHeroUnit(player);
+    if (hero.hp <= amount) hero.hp = 0;
+    else hero.hp -= amount;
+}
+
+function updatePlayerVitals(player) {
+    if (!HeroAlive[player]) return;
+
+    if (IsNight) {
+        if (PlayerEnergy[player] > HERO_ENERGY_DRAIN_NIGHT) PlayerEnergy[player] -= HERO_ENERGY_DRAIN_NIGHT;
+        else PlayerEnergy[player] = 0;
+    } else {
+        restorePlayerEnergy(player, HERO_ENERGY_REGEN_DAY);
+    }
+
+    updatePlayerStatus(player);
+
+    if (PlayerStatus[player] == PLAYER_STATUS_RESTED) {
+        healPlayerHero(player, HERO_HP_REGEN_RESTED);
+    } else if (PlayerStatus[player] == PLAYER_STATUS_STARVING) {
+        damagePlayerHero(player, HERO_HP_DRAIN_STARVING);
+    }
+
+    const hero = getPlayerHeroUnit(player);
+    hero.energy = PlayerEnergy[player];
 }
 
 function markPlayerDead(player) {
@@ -34,6 +107,8 @@ function markPlayerDead(player) {
     destroyPlayerStructures(player);
     clearHarvestState(player);
     clearAudioDangerState(player);
+    PlayerEnergy[player] = PlayerEnergyMax[player] / 2;
+    updatePlayerStatus(player);
 }
 
 function respawnPlayer(player) {
@@ -42,6 +117,8 @@ function respawnPlayer(player) {
     HeroAlive[player] = 1;
     applyHeroUpgradeDat(player);
     applyActiveWeaponDat(player);
+    PlayerEnergy[player] = PlayerEnergyMax[player];
+    updatePlayerStatus(player);
     DisplayTextAll("A commando has re-entered the jungle.");
 }
 
@@ -60,5 +137,6 @@ function updatePlayerDeathState(player) {
 function updatePlayers() {
     foreach (p : py_range(MAX_PLAYERS)) {
         updatePlayerDeathState(p);
+        updatePlayerVitals(p);
     }
 }

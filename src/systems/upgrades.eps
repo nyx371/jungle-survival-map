@@ -54,11 +54,14 @@ function applyHeroUpgradeDat(player) {
     const hp = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_HP)];
     const armor = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_ARMOR)];
     const shields = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_SHIELDS)];
+    const energy = HeroUpgradeLevel[heroUpgradeIndex(player, HERO_UPGRADE_ENERGY)];
 
     hero.maxHp = (80 + hp * 20) * 256;
     hero.armor = armor;
     hero.hasShield = 1;
     hero.maxShield = 20 + shields * 10;
+    PlayerEnergyMax[player] = HERO_BASE_ENERGY_MAX + energy * 25 * 256;
+    if (PlayerEnergy[player] > PlayerEnergyMax[player]) PlayerEnergy[player] = PlayerEnergyMax[player];
 }
 
 function applyWeaponUpgradeDat(player, weaponType) {

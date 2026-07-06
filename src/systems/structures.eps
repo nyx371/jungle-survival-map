@@ -17,6 +17,17 @@ const StructureCooldown = EUDArray(MAX_STRUCTURES);
 const StructureTriggerRadius = EUDArray(MAX_STRUCTURES);
 const StructureEffectRadius = EUDArray(MAX_STRUCTURES);
 const StructureEffectTimer = EUDArray(MAX_STRUCTURES);
+const StructureHp = EUDArray(MAX_STRUCTURES);
+const StructureMaxHp = EUDArray(MAX_STRUCTURES);
+const StructureRepairTimer = EUDArray(MAX_STRUCTURES);
+
+const STRUCTURE_REPAIR_TICK_FRAMES = 2 * FRAMES_PER_GAME_SECOND;
+const STRUCTURE_REPAIR_AMOUNT = 8 * 256;
+const WALL_BASE_HP = 120 * 256;
+const LIGHT_BASE_HP = 70 * 256;
+const REGEN_BASE_HP = 100 * 256;
+const TURRET_BASE_HP = 90 * 256;
+const MINE_BASE_HP = 35 * 256;
 
 function initStructures() {
     foreach (i : py_range(MAX_STRUCTURES)) {
@@ -29,20 +40,57 @@ function initStructures() {
         StructureTriggerRadius[i] = 0;
         StructureEffectRadius[i] = 0;
         StructureEffectTimer[i] = 0;
+        StructureHp[i] = 0;
+        StructureMaxHp[i] = 0;
+        StructureRepairTimer[i] = 0;
     }
 }
 
+function getStructureBaseHp(structureType) {
+    if (structureType == STRUCTURE_LIGHT) return LIGHT_BASE_HP;
+    if (structureType == STRUCTURE_WALL) return WALL_BASE_HP;
+    if (structureType == STRUCTURE_REGEN) return REGEN_BASE_HP;
+    if (structureType == STRUCTURE_TURRET) return TURRET_BASE_HP;
+    if (structureType == STRUCTURE_MAELSTROM_MINE) return MINE_BASE_HP;
+    return 50 * 256;
+}
+
+function findFreeStructureSlot() {
+    foreach (i : py_range(MAX_STRUCTURES)) {
+        if (!StructureAlive[i]) return i;
+    }
+    return -1;
+}
+
 function buildStructure(player, structureType) {
-    // TODO: find free structure slot, validate cost, create structure near player/target.
-    // If structureType == STRUCTURE_LIGHT, register with lights system.
-    // If structureType == STRUCTURE_MAELSTROM_MINE, create a burrowed/hidden trap and start its arming timer.
+    const slot = findFreeStructureSlot();
+    if (slot < 0) return -1;
+
+    StructureOwner[slot] = player;
+    StructureType[slot] = structureType;
+    StructureAlive[slot] = 1;
+    StructureRefund[slot] = 0;
+    StructureArmed[slot] = structureType == STRUCTURE_MAELSTROM_MINE ? 0 : 1;
+    StructureCooldown[slot] = 0;
+    StructureTriggerRadius[slot] = structureType == STRUCTURE_MAELSTROM_MINE ? 3 * 32 : 0;
+    StructureEffectRadius[slot] = structureType == STRUCTURE_MAELSTROM_MINE ? 4 * 32 : 0;
+    StructureEffectTimer[slot] = 0;
+    StructureMaxHp[slot] = getStructureBaseHp(structureType);
+    StructureHp[slot] = StructureMaxHp[slot];
+    StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
+
+    // TODO: create structure CUnit near player/target. If this is a light, call
+    // registerLightForStructure(slot, player, x, y, DEFAULT_LIGHT_RADIUS, DEFAULT_NO_SPAWN_RADIUS).
+    return slot;
 }
 
 function deconstructStructure(player, structureIndex) {
     if (StructureOwner[structureIndex] == player && StructureAlive[structureIndex]) {
         addMinerals(player, StructureRefund[structureIndex]);
         StructureAlive[structureIndex] = 0;
-        // TODO: remove CUnit and unregister light if needed.
+        StructureHp[structureIndex] = 0;
+        unregisterLightByStructure(structureIndex);
+        // TODO: remove CUnit.
     }
 }
 
@@ -50,8 +98,32 @@ function destroyPlayerStructures(player) {
     foreach (i : py_range(MAX_STRUCTURES)) {
         if (StructureOwner[i] == player && StructureAlive[i]) {
             StructureAlive[i] = 0;
+            StructureHp[i] = 0;
+            unregisterLightByStructure(i);
             // TODO: remove structure CUnit without refund.
         }
+    }
+}
+
+function repairStructureTick(structureIndex) {
+    if (StructureHp[structureIndex] >= StructureMaxHp[structureIndex]) return;
+
+    if (StructureRepairTimer[structureIndex] > 0) {
+        StructureRepairTimer[structureIndex] -= 1;
+        return;
+    }
+
+    StructureRepairTimer[structureIndex] = STRUCTURE_REPAIR_TICK_FRAMES;
+    if (StructureHp[structureIndex] + STRUCTURE_REPAIR_AMOUNT > StructureMaxHp[structureIndex]) {
+        StructureHp[structureIndex] = StructureMaxHp[structureIndex];
+    } else {
+        StructureHp[structureIndex] += STRUCTURE_REPAIR_AMOUNT;
+    }
+}
+
+function updateStructureRepairs() {
+    foreach (i : py_range(MAX_STRUCTURES)) {
+        if (StructureAlive[i]) repairStructureTick(i);
     }
 }
 
@@ -68,5 +140,6 @@ function updateMaelstromMines() {
 
 function updateStructures() {
     // Build/deconstruct is mostly menu/event driven.
+    updateStructureRepairs();
     updateMaelstromMines();
 }
