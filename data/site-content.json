@@ -337,59 +337,64 @@
   ],
   "upgrades": [
     {
-      "title": "Crafted weapons",
-      "items": [
-        "Swap away from the default Ghost attack into crafted weapons.",
-        "Rifle: reliable single-target damage.",
-        "Shotgun: short range burst / possible splash.",
-        "Sniper: long range, slower cooldown, high damage.",
-        "Flamer or acid weapon: area control concept.",
-        "Explosive weapon: anti-pack option with splash tradeoffs."
-      ]
+      "title": "Weapon unlocks",
+      "body": "Level 1 in a weapon path unlocks the craft. Once unlocked, that weapon becomes part of your permanent arsenal and can be equipped again later."
     },
     {
-      "title": "Weapon upgrades",
-      "items": [
-        "Damage",
-        "Cooldown / fire rate",
-        "Range",
-        "Splash radius or damage factor",
-        "Target flags / air-ground capability",
-        "Weapon behavior swaps by crafted weapon type"
-      ]
+      "title": "Weapon switching",
+      "body": "You can only run one main crafted weapon at a time, but you can switch back to any weapon you have previously crafted instead of losing access."
     },
     {
-      "title": "Survival upgrades",
-      "items": [
-        "Max health",
-        "Armor",
-        "Shields",
-        "Shield regeneration concept",
-        "Energy max / energy regeneration",
-        "Movement speed and vision range"
-      ]
+      "title": "Rifle path",
+      "body": "Reliable single-target damage. Further upgrades can improve damage, cooldown, range, and passive attack effects."
     },
     {
-      "title": "Craftable constructs and utility",
-      "items": [
-        "Resource transfer menu",
-        "Harvest efficiency",
-        "Temporary structures and deployable traps",
-        "Deconstruction refund improvements",
-        "Maelstrom Mines: burrowed traps that stun nearby enemies when triggered",
-        "SFX/status alerts",
-        "Future active abilities"
-      ]
+      "title": "Shotgun path",
+      "body": "Short-range burst weapon. Upgrades can add stronger close damage, wider hit patterns, or attack-linked knockback/control effects."
     },
     {
-      "title": "Companion squad upgrades",
-      "items": [
-        "Craft robotic fighters",
-        "Tame stunned or weakened Zerg",
-        "Resurrect Zerg from corpses or biomass",
-        "Companion count and durability upgrades",
-        "All companions die when your Ghost dies"
-      ]
+      "title": "Sniper path",
+      "body": "Long-range, slower cooldown, high damage. Later upgrades can emphasize elite picking, bonus range, or high-value target passives."
+    },
+    {
+      "title": "Flamer or acid path",
+      "body": "Area-control weapon concept. Upgrades can create lingering zones, damage-over-time pressure, or debuffs tied to basic attacks."
+    },
+    {
+      "title": "Explosive path",
+      "body": "Anti-pack splash option. Upgrades can tune radius, splash falloff, friendly-risk tradeoffs, and burst timing."
+    },
+    {
+      "title": "Survival: max health",
+      "body": "Raises Ghost durability so death is less sudden, especially during night collapses or failed relocations."
+    },
+    {
+      "title": "Survival: armor and shields",
+      "body": "Adds defensive layers such as armor, shield capacity, and possible shield regeneration."
+    },
+    {
+      "title": "Mobility and vision",
+      "body": "Improves movement speed and sight range so players can scout, kite, regroup, and escape bad holds more cleanly."
+    },
+    {
+      "title": "Harvest efficiency",
+      "body": "Improves resource trickle and reduces downtime when gathering from trees, rocks, crystals, bushes, and organic growth."
+    },
+    {
+      "title": "Construct utility",
+      "body": "Improves temporary structures, deconstruction refunds, repair value, alerts, and deployable trap support."
+    },
+    {
+      "title": "Maelstrom Mines",
+      "body": "Burrowed traps that stun nearby enemies when triggered. Upgrades can change arm time, radius, duration, or elite interrupt value."
+    },
+    {
+      "title": "Companion unlocks",
+      "body": "Craft robotic fighters, tame stunned or weakened Zerg, or resurrect Zerg from corpses/biomass into a small support squad."
+    },
+    {
+      "title": "Companion upgrades",
+      "body": "Improve companion count, durability, or roles. They add tactical power, but still die when the Ghost dies."
     }
   ],
   "gameplayLoop": [
@@ -415,7 +420,7 @@
     },
     {
       "title": "Craft one active weapon at a time",
-      "body": "Players craft weapons that replace the default Ghost attack and can also unlock companion options. You can equip one main weapon at a time, while robotic/tamed/resurrected companions act as a small support squad."
+      "body": "Weapon paths are unlocked by buying level 1, which grants access to craft that weapon. After that you can keep upgrading the path, and you can switch back to any previously crafted weapon while still equipping only one main weapon at a time."
     },
     {
       "title": "Build safe pockets, then abandon them",

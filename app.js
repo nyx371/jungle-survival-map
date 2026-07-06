@@ -488,17 +488,12 @@ function renderNotes(notes) {
 
 function renderUpgrades(upgrades) {
   const grid = document.querySelector('#upgrade-grid');
-  grid.innerHTML = upgrades.map((group) => `
-    <article class="card upgrade-card">
-      <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(group), group.title.slice(0, 2))}</div>
-      <h3>${escapeHtml(group.title)}</h3>
-      ${renderIconStrip(iconStripForItem(group), `${group.title} command icons`)}
-      <ul class="checklist compact">
-        ${group.items.map((item) => {
-          const icon = getIconByTitle(iconTitleForText(item)) || chooseIcon(group);
-          return `<li><span class="mini-icon" aria-hidden="true">${renderIcon(icon, item.slice(0, 2))}</span><span>${escapeHtml(item)}</span></li>`;
-        }).join('')}
-      </ul>
+  grid.innerHTML = upgrades.map((upgrade) => `
+    <article class="card feature-card upgrade-card">
+      <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(upgrade), upgrade.title.slice(0, 2))}</div>
+      <h3>${escapeHtml(upgrade.title)}</h3>
+      <p>${escapeHtml(upgrade.body)}</p>
+      ${renderIconStrip(iconStripForItem(upgrade), `${upgrade.title} command icons`)}
     </article>
   `).join('');
 }
