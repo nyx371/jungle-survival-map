@@ -26,7 +26,7 @@
           <div class="game-hero-copy">
             <p class="hero-kicker">StarCraft co-op survival map</p>
             <h1>Jungle Commandos</h1>
-            <p class="tagline">Survive five nights as Ghost commandos: scout by day, hold by night, and move before the jungle overruns you.</p>
+            <p class="tagline">Command a Ghost detachment through five nights of jungle contact. Scout by day, hold by night, and relocate before the swarm closes in.</p>
           </div>
           <div class="hero-visual-stack">
             <div class="tactical-map" aria-label="Jungle survival tactical map illustration">
@@ -64,10 +64,10 @@
         <section class="home-showcase">
           <div class="showcase-copy panel">
             <p class="eyebrow">What you play</p>
-            <h2>A survival map about small decisions under pressure.</h2>
+            <h2>A field operation where every position is temporary.</h2>
             <p>
-              You are not building a giant base. You are keeping one Ghost alive long enough to decide:
-              push into the dark, hold a little longer, or tear down and move.
+              This is not a standard base operation. Each commando must decide when to advance,
+              when to hold, and when to abandon a failing position.
             </p>
           </div>
           <div class="night-card panel" aria-label="Night threat meter">
@@ -81,7 +81,7 @@
               <span style="--bar: 74%"></span>
               <span style="--bar: 96%"></span>
             </div>
-            <p>Enemy color tells the squad how far the jungle has evolved.</p>
+            <p>Color reports the current threat grade.</p>
           </div>
         </section>
 
@@ -91,18 +91,18 @@
       <section id="system" class="tab-panel">
         <div class="panel section-heading vertical">
           <p class="eyebrow">How the map works</p>
-          <h2>The survival system</h2>
+          <h2>The Field System</h2>
           <p>
-            Prepare while you can, survive when the jungle pushes back, then move before your safe pocket becomes a trap.
+            Prepare while conditions allow. When the jungle pushes back, hold only as long as the position remains useful.
           </p>
         </div>
 
         <section id="system-loop" class="system-section active">
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Core loop</p>
-            <h2>Scavenge, build, survive, move.</h2>
+            <h2>Reconnoiter, fortify, withdraw.</h2>
             <p>
-Each day and night lasts 22 minutes: scout and prepare, then hold your nerve.
+Each phase lasts 22 minutes. Day favors reconnaissance; night favors the swarm.
             </p>
           </div>
           <div class="day-cycle-transition" data-day-cycle aria-label="Jungle time of day transition: sunrise, day, sunset, night">
@@ -119,22 +119,22 @@ Each day and night lasts 22 minutes: scout and prepare, then hold your nerve.
                 <article class="loop-node day active" data-cycle-node="0">
                   <span class="loop-step">01</span>
                   <h3>Morning: Scout & Harvest</h3>
-                  <p>Explore, harvest, and choose where the squad can safely commit.</p>
+                  <p>Survey the sector, gather supplies, and select defensible ground.</p>
                 </article>
                 <article class="loop-node craft" data-cycle-node="1">
                   <span class="loop-step">02</span>
                   <h3>Day: Craft & Build</h3>
-                  <p>Craft, upgrade, share resources, and build a temporary foothold.</p>
+                  <p>Prepare weapons, transfer supplies, and establish a temporary outpost.</p>
                 </article>
                 <article class="loop-node move" data-cycle-node="2">
                   <span class="loop-step">03</span>
                   <h3>Sunset: Move or Commit</h3>
-                  <p>Commit to the hold or relocate before the jungle turns dangerous.</p>
+                  <p>Hold the ground or withdraw before darkness gives the enemy the advantage.</p>
                 </article>
                 <article class="loop-node night" data-cycle-node="3">
                   <span class="loop-step">04</span>
                   <h3>Night: Survive & Adapt</h3>
-                  <p>Pressure spikes. Control, weapon choice, teamwork, and light placement matter most.</p>
+                  <p>Enemy movement intensifies. Light placement and disciplined fire become critical.</p>
                 </article>
               </div>
             </div>
@@ -154,7 +154,7 @@ Each day and night lasts 22 minutes: scout and prepare, then hold your nerve.
             <p class="eyebrow">Scavenging</p>
             <h2>Resources</h2>
             <p>
-Harvesting pays out over time. Each resource type has a different mineral/gas bias.
+Field resources produce different mineral and vespene yields.
             </p>
           </div>
           <div id="resource-grid" class="grid"></div>
@@ -165,15 +165,15 @@ Harvesting pays out over time. Each resource type has a different mineral/gas bi
             <p class="eyebrow">Zerg threat ladder</p>
             <h2>Enemies</h2>
             <p>
-Enemy families evolve as the run progresses. Color tells players the threat level: Black → Brown → Orange → Red.
+Enemy strains advance as the operation continues. Color indicates threat grade: Black → Brown → Orange → Red.
             </p>
           </div>
           <article class="apex-threat panel" aria-label="Apex Zerg threat concept">
             <div class="apex-threat-copy">
               <p class="eyebrow">Apex threat</p>
-              <h3>Something stronger waits after the jungle adapts.</h3>
+              <h3>Something stronger may be moving behind the swarm.</h3>
               <p>
-A late-run presence should feel different from the normal mob ladder: boss pressure, elite night event, or final extraction blocker.
+Not every contact belongs to the common brood ladder. Commanders should expect heavier resistance near the end of the operation.
               </p>
               <div class="apex-tags" aria-label="Apex threat traits">
                 <span>Boss pressure</span>
@@ -189,11 +189,11 @@ A late-run presence should feel different from the normal mob ladder: boss press
           <div id="enemy-grid" class="grid wide"></div>
           <article class="apex-threat unknown-threat panel" aria-label="Unknown jungle threat concept">
             <div class="apex-threat-copy">
-              <p class="eyebrow">Unknown contact</p>
-              <h3>You are not alone in the jungle.</h3>
+              <p class="eyebrow">Unidentified Contact</p>
+              <h3>You are not alone in this jungle.</h3>
               <p>
-                Not every presence fits the swarm ladder. Some shapes move between the trees without announcing what they are,
-                whether they are hunting the squad, watching the Zerg, or waiting for the jungle to grow quiet enough to act.
+                Some contacts do not match known Zerg behavior. They move through the canopy without revealing whether they are hunting the squad,
+                observing the swarm, or waiting for the battlefield to weaken.
               </p>
               <div class="apex-tags" aria-label="Unknown threat traits">
                 <span>Unconfirmed</span>
@@ -203,7 +203,7 @@ A late-run presence should feel different from the normal mob ladder: boss press
             </div>
             <figure class="apex-threat-image">
               <img src="assets/enemies/unknown-jungle-threat.png" alt="Unknown presence watching from the jungle" loading="lazy" />
-              <figcaption>Unknown jungle presence</figcaption>
+              <figcaption>Unidentified jungle contact</figcaption>
             </figure>
           </article>
         </section>
@@ -213,7 +213,7 @@ A late-run presence should feel different from the normal mob ladder: boss press
             <p class="eyebrow">Commando progression</p>
             <h2>Upgrades and craftable weapons</h2>
             <p>
-Each player grows independently. Unlocks persist, but bad fights still cost momentum.
+Each commando advances independently. Training persists; failed engagements still cost equipment.
             </p>
           </div>
           <div id="upgrade-grid" class="grid"></div>
@@ -225,7 +225,7 @@ Each player grows independently. Unlocks persist, but bad fights still cost mome
           <p class="eyebrow">Design notes</p>
           <h2>Spell, command card, and utility experiments</h2>
           <p>
-Scratchpad for ability/control experiments: keep the hotbar small and make power readable.
+Development notes for field commands, weapon passives, and experimental systems.
           </p>
         </div>
 
@@ -234,8 +234,8 @@ Scratchpad for ability/control experiments: keep the hotbar small and make power
         <section class="panel notes-upgrade-panel" aria-label="Active ability upgrade direction">
           <div>
             <p class="eyebrow">Hotbar focus</p>
-            <h3>Three actives, many passive synergies</h3>
-            <p>Heal, Speed, and Stun stay as the deliberate buttons; builds mostly express through weapons and passives.</p>
+            <h3>Three active commands, many passive systems</h3>
+            <p>Heal, Speed, and Stun remain deliberate commands. Weapon training carries most specialization.</p>
           </div>
           <div class="ability-lanes">
             <article>

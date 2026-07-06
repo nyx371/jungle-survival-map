@@ -2,35 +2,35 @@
   "features": [
     {
       "title": "One Ghost, real decisions",
-      "body": "Your Ghost is the commander and failure point. Extra units help, but the run still revolves around keeping each commando alive."
+      "body": "Each commando is a valuable field asset. Support units can extend an operation, but the loss of the Ghost remains the critical failure point."
     },
     {
       "title": "Days are your chance to breathe",
-      "body": "Scout, harvest, craft, and choose where the squad will try to hold before night returns."
+      "body": "Daylight gives the squad time to scout, gather supplies, and choose defensible ground before the next night cycle."
     },
     {
       "title": "Nights are when plans get tested",
-      "body": "The swarm pushes harder after dark. Stay near light, cover each other, and know when to abandon a position."
+      "body": "After dark, the swarm presses harder. Stay near light sources and withdraw before a position is overrun."
     },
     {
       "title": "Hunt neural critters",
-      "body": "Rare critters flee from Ghosts. Stun them first, then harvest before they recover."
+      "body": "Some jungle specimens flee when approached. Stun them first, then harvest before they recover and vanish into cover."
     },
     {
       "title": "Builds stay personal",
-      "body": "Upgrade toward a role: sniper, brawler, explosives, support survivor, or hybrid."
+      "body": "Commandos may specialize as marksmen, assault troops, demolitions experts, or field support."
     },
     {
       "title": "Craft tactical constructs",
-      "body": "Build lights, walls, stations, turrets, companion tools, and Maelstrom Mine traps from one utility category."
+      "body": "Lights, walls, stations, turrets, companion tools, and Maelstrom Mines provide temporary battlefield control."
     },
     {
       "title": "Death hurts without ending the run",
-      "body": "Death costs momentum: resources, structures, and companions are lost, but crafted progression survives."
+      "body": "A fallen commando loses field momentum, but retained training and weapon access keep the operation alive."
     },
     {
       "title": "The jungle does not stay still",
-      "body": "Enemy pressure evolves over time, so safe pockets are temporary."
+      "body": "The local broods adapt over time. Any secure position should be considered temporary."
     }
   ],
   "enemies": [
@@ -338,149 +338,149 @@
   "upgrades": [
     {
       "title": "Weapon unlocks",
-      "body": "Level 1 unlocks a weapon craft permanently."
+      "body": "Level 1 authorizes construction of the weapon package."
     },
     {
       "title": "Weapon switching",
-      "body": "Only one main weapon is equipped at a time, but crafted weapons stay available."
+      "body": "Only one primary weapon may be equipped, but crafted packages remain available."
     },
     {
       "title": "Rifle path",
-      "body": "Reliable single-target damage with straightforward damage, range, and cooldown upgrades."
+      "body": "Reliable single-target fire with conventional damage, range, and cooldown improvements."
     },
     {
       "title": "Shotgun path",
-      "body": "Short-range burst that can grow into wider close-control attacks."
+      "body": "Close-range burst fire that can develop into stronger crowd control."
     },
     {
       "title": "Sniper path",
-      "body": "Long-range, slow, high-damage picking for elite targets."
+      "body": "Long-range precision fire for eliminating high-value targets."
     },
     {
       "title": "Flamer or acid path",
-      "body": "Area-control concept built around lingering damage or debuffs."
+      "body": "Area denial package using lingering damage or corrosive effects."
     },
     {
       "title": "Explosive path",
-      "body": "Anti-pack splash with radius and burst tradeoffs."
+      "body": "Anti-pack ordnance with blast radius and timing tradeoffs."
     },
     {
       "title": "Survival: max health",
-      "body": "More Ghost durability for bad surrounds and night collapses."
+      "body": "Improves commando vitality during surrounds and night assaults."
     },
     {
       "title": "Survival: armor and shields",
-      "body": "Defensive layers such as armor, shield capacity, or regeneration."
+      "body": "Adds armor plating, shield capacity, or regeneration systems."
     },
     {
       "title": "Mobility and vision",
-      "body": "Move, scout, kite, and regroup more safely."
+      "body": "Improves patrol speed, scouting, and withdrawal options."
     },
     {
       "title": "Harvest efficiency",
-      "body": "Faster income and less downtime at resource nodes."
+      "body": "Reduces time exposed while gathering field resources."
     },
     {
       "title": "Construct utility",
-      "body": "Better refunds, repairs, alerts, and deployable support."
+      "body": "Improves refunds, repairs, warnings, and deployable support."
     },
     {
       "title": "Maelstrom Mines",
-      "body": "Burrowed stun traps with upgrade hooks for radius, duration, and arm time."
+      "body": "Burrowed stun devices. Upgrades may alter radius, duration, or arming time."
     },
     {
       "title": "Companion unlocks",
-      "body": "Robotic fighters, tamed Zerg, or resurrected Zerg support."
+      "body": "Authorizes robotic support, controlled Zerg specimens, or resurrected organisms."
     },
     {
       "title": "Companion upgrades",
-      "body": "More durable or specialized companions; still tied to Ghost survival."
+      "body": "Improves companion durability or function. All remain tied to Ghost survival."
     }
   ],
   "gameplayLoop": [
     {
       "title": "Survive five nights in the jungle",
-      "body": "Victory targets a five-night run, with room for a final extraction threat later."
+      "body": "The primary objective is a five-night survival operation, with possible extraction resistance still unconfirmed."
     },
     {
       "title": "Scavenge by day, endure the night",
-      "body": "Days favor preparation. Nights raise spawn pressure and test whether the squad chose a good hold."
+      "body": "Daylight favors reconnaissance and supply runs. Nightfall increases enemy movement throughout the sector."
     },
     {
       "title": "Command one Ghost and a small squad",
-      "body": "Each player controls one Ghost. Companions add options, but they are secondary to the commando."
+      "body": "Each player commands one Ghost. Auxiliary units are useful, but remain expendable support."
     },
     {
       "title": "Harvest minerals and vespene over time",
-      "body": "Resource nodes trickle minerals and gas while the Ghost keeps harvesting."
+      "body": "Resource nodes yield minerals and vespene while a Ghost remains assigned to the task."
     },
     {
       "title": "Stun neural critters before they flee",
-      "body": "Skittish critters need a stun window or coordinated body-block before harvest."
+      "body": "Skittish wildlife must be stunned or blocked before it can be harvested."
     },
     {
       "title": "Craft one active weapon at a time",
-      "body": "Level 1 unlocks a weapon path. You can keep upgrading it and switch back to any weapon you already crafted."
+      "body": "Weapon training begins at level 1. Once a weapon has been crafted, it may be re-equipped later."
     },
     {
       "title": "Build safe pockets, then abandon them",
-      "body": "Lights suppress spawns; walls, stations, turrets, and mines buy time. None are meant to last forever."
+      "body": "Lights suppress enemy movement; walls, stations, turrets, and mines delay the swarm. No outpost is permanent."
     },
     {
       "title": "Death hurts, but progression survives",
-      "body": "Death removes most carried momentum but keeps long-term unlocks and upgrades."
+      "body": "Death costs field resources and equipment, but long-term upgrades remain intact."
     },
     {
       "title": "The swarm evolves with time",
-      "body": "Enemy color signals threat level as the jungle adapts."
+      "body": "Enemy coloration reports threat level as the jungle adapts."
     }
   ],
   "resources": [
     {
       "title": "Trees",
-      "body": "Common mineral-heavy nodes with a little gas. Good early income while scouting."
+      "body": "Common mineral-heavy supply nodes with minor gas yield."
     },
     {
       "title": "Bushes",
-      "body": "Fast organic nodes with balanced value, useful while moving through side paths."
+      "body": "Fast organic harvest points suited to moving patrols."
     },
     {
       "title": "Rocks",
-      "body": "Slow mineral-rich nodes. Best harvested after the area is somewhat safe."
+      "body": "Mineral-rich deposits requiring a safer work window."
     },
     {
       "title": "Crystals",
-      "body": "Gas-rich finds that justify pushing deeper into riskier terrain."
+      "body": "Vespene-rich formations usually found deeper in hostile territory."
     },
     {
       "title": "Organic growth",
-      "body": "Balanced mineral/gas nodes, often closer to danger."
+      "body": "Balanced biological matter, often near contested ground."
     },
     {
       "title": "Neural critters",
-      "body": "Fast wildlife that must be stunned or trapped before harvest."
+      "body": "Mobile wildlife specimens. Stun or trap them before harvest."
     },
     {
       "title": "Harvesting tradeoff",
-      "body": "Harvesting pays out over time, but your Ghost cannot fight while channeling it."
+      "body": "A harvesting Ghost cannot provide supporting fire until the task is broken off."
     }
   ],
   "notes": [
     {
       "title": "Reuse unused abilities as spells",
-      "body": "Audit dormant StarCraft abilities and rebuild only the ones that read clearly in combat."
+      "body": "Review dormant StarCraft abilities and retain only effects that read clearly in combat."
     },
     {
       "title": "Command card stays readable",
-      "body": "Keep the command card obvious. Most power should come from attack passives, not extra buttons."
+      "body": "Keep the command card operationally clear. Attack passives should carry most build complexity."
     },
     {
       "title": "Few active hotbar abilities",
-      "body": "Focus active buttons around Heal, Speed, and Stun; upgrades can change their behavior."
+      "body": "Limit active field commands to Heal, Speed, and Stun; upgrades may alter their tactical use."
     },
     {
       "title": "Psi Emitter feasibility",
-      "body": "Test a deployable lure/beacon that redirects pressure or powers nearby effects."
+      "body": "Test a deployable emitter that lures hostile movement or amplifies nearby field effects."
     }
   ]
 }
