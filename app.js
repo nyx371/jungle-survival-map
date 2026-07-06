@@ -70,6 +70,60 @@ function activateRouteFromHash(options = {}) {
   activateTab('home', { scroll: false });
 }
 
+
+function setupDayCycleTransition() {
+  const container = document.querySelector('[data-day-cycle]');
+  if (!container) return;
+
+  const images = [...container.querySelectorAll('.cycle-image')];
+  const labels = [...container.querySelectorAll('.cycle-phase-list span')];
+  const count = container.querySelector('[data-cycle-count]');
+  const label = container.querySelector('[data-cycle-label]');
+  const progressBar = container.querySelector('[data-cycle-progress]');
+  let ticking = false;
+  let activeIndex = 0;
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function render() {
+    ticking = false;
+    const rect = container.getBoundingClientRect();
+    const viewport = window.innerHeight || document.documentElement.clientHeight;
+    const scrollable = Math.max(1, rect.height - viewport * 0.55);
+    const progress = clamp((viewport * 0.28 - rect.top) / scrollable, 0, 1);
+    const phase = progress * (images.length - 1);
+    const nearest = clamp(Math.round(phase), 0, images.length - 1);
+
+    images.forEach((image, index) => {
+      const opacity = clamp(1 - Math.abs(index - phase), 0, 1);
+      image.style.opacity = opacity.toFixed(3);
+      image.classList.toggle('active', index === nearest);
+    });
+
+    labels.forEach((item, index) => item.classList.toggle('active', index === nearest));
+    if (progressBar) progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
+
+    if (nearest !== activeIndex) {
+      activeIndex = nearest;
+      if (count) count.textContent = String(nearest + 1).padStart(2, '0');
+      if (label) label.textContent = images[nearest].dataset.phase || labels[nearest]?.textContent || '';
+    }
+  }
+
+  function requestRender() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(render);
+  }
+
+  render();
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', requestRender);
+  window.addEventListener('hashchange', requestRender);
+}
+
 function setupTabs() {
   document.querySelectorAll('.tab').forEach((button) => {
     button.addEventListener('click', () => {
@@ -432,6 +486,7 @@ function renderSourceList(files) {
 
 async function init() {
   setupTabs();
+  setupDayCycleTransition();
   activateRouteFromHash({ smooth: false });
   try {
     state.content = await loadJson('data/site-content.json');
