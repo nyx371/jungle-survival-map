@@ -10,12 +10,16 @@ function createUnitAndGetEpd(count, unitType, location, player) {
     return epd;
 }
 
-
 function createImageSpriteAtLocation(image, location) {
     SetMemoryX(0x00666458, SetTo, image, 0x0000ffff);
     CreateUnit(1, "Scanner Sweep", location, $P8);
     RemoveUnit("Scanner Sweep", AllPlayers);    
     SetMemoryX(0x00666458, SetTo, 546, 0x0000ffff);
+}
+
+function createImageSpriteOnUnit(image, unit:CUnit) {
+    unit.setloc($L("_Place"));
+    createImageSpriteAtLocation(image, $L("_Place"));
 }
 
 function setPlayerColor(pnum ,color) {
