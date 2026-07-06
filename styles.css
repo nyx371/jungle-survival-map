@@ -1903,6 +1903,28 @@ footer { color: #6f7480; border-top: 1px solid #20242c; }
   justify-self: start;
 }
 
+#system-enemies .feature-icon,
+#system-enemies .mini-icon {
+  border-color: rgba(255, 82, 82, 0.46);
+  box-shadow: 0 0 22px rgba(255, 58, 58, 0.18);
+}
+
+#system-enemies .feature-icon img,
+#system-enemies .mini-icon img {
+  filter: sepia(0.38) saturate(1.45) hue-rotate(318deg) brightness(1.03);
+}
+
+#system-upgrades .feature-icon,
+#system-upgrades .mini-icon {
+  border-color: rgba(255, 226, 118, 0.5);
+  box-shadow: 0 0 22px rgba(255, 224, 92, 0.16);
+}
+
+#system-upgrades .feature-icon img,
+#system-upgrades .mini-icon img {
+  filter: sepia(0.42) saturate(1.22) hue-rotate(8deg) brightness(1.12);
+}
+
 /* Lightweight epScript syntax highlighting (TypeScript-like). */
 pre code .tok-comment { color: #6f7d78; font-style: italic; }
 pre code .tok-string { color: #f6c177; }
