@@ -16,10 +16,10 @@
           <button class="tab" data-tab="source" role="tab" aria-selected="false">Source</button>
         </div>
         <div class="system-tabs" aria-label="System sections" aria-hidden="true" hidden>
-          <button class="sub-tab" type="button" data-system-target="system-loop">Loop</button>
-          <button class="sub-tab" type="button" data-system-target="system-resources">Resources</button>
-          <button class="sub-tab" type="button" data-system-target="system-enemies">Enemies</button>
-          <button class="sub-tab" type="button" data-system-target="system-upgrades">Upgrades</button>
+          <button class="sub-tab active" type="button" data-system-target="system-loop" aria-selected="true">Loop</button>
+          <button class="sub-tab" type="button" data-system-target="system-resources" aria-selected="false">Resources</button>
+          <button class="sub-tab" type="button" data-system-target="system-enemies" aria-selected="false">Enemies</button>
+          <button class="sub-tab" type="button" data-system-target="system-upgrades" aria-selected="false">Upgrades</button>
         </div>
       </nav>
 
@@ -101,7 +101,7 @@
           </p>
         </div>
 
-        <section id="system-loop" class="system-section">
+        <section id="system-loop" class="system-section active">
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Core loop</p>
             <h2>Scavenge, build, survive, move.</h2>
@@ -171,7 +171,7 @@
           <div id="loop-grid" class="grid"></div>
         </section>
 
-        <section id="system-resources" class="system-section">
+        <section id="system-resources" class="system-section" hidden>
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Scavenging</p>
             <h2>Resources</h2>
@@ -182,7 +182,7 @@
           <div id="resource-grid" class="grid"></div>
         </section>
 
-        <section id="system-enemies" class="system-section">
+        <section id="system-enemies" class="system-section" hidden>
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Zerg threat ladder</p>
             <h2>Enemies</h2>
@@ -214,7 +214,7 @@
           <div id="enemy-grid" class="grid wide"></div>
         </section>
 
-        <section id="system-upgrades" class="system-section">
+        <section id="system-upgrades" class="system-section" hidden>
           <div class="section-heading vertical compact-heading">
             <p class="eyebrow">Commando progression</p>
             <h2>Upgrades and craftable weapons</h2>

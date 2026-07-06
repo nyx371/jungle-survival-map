@@ -490,8 +490,17 @@ h3 { margin-top: 0; }
 }
 
 .system-section {
+  display: none;
   scroll-margin-top: 6rem;
   margin: 2rem 0 2.75rem;
+}
+
+.system-section.active {
+  display: block;
+}
+
+.system-section[hidden] {
+  display: none !important;
 }
 
 .compact-heading {

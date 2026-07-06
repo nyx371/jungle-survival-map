@@ -15,6 +15,28 @@ function escapeHtml(value) {
 }
 
 const systemSectionIds = ['system-loop', 'system-resources', 'system-enemies', 'system-upgrades'];
+const defaultSystemSectionId = 'system-loop';
+
+function setSystemSection(sectionId = defaultSystemSectionId) {
+  const targetId = systemSectionIds.includes(sectionId) ? sectionId : defaultSystemSectionId;
+
+  document.querySelectorAll('.system-section').forEach((section) => {
+    const active = section.id === targetId;
+    section.classList.toggle('active', active);
+    section.hidden = !active;
+  });
+
+  document.querySelectorAll('.sub-tab').forEach((tab) => {
+    const active = tab.dataset.systemTarget === targetId;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+}
+
+function currentSystemSectionFromHash() {
+  const hash = window.location.hash.replace(/^#/, '');
+  return systemSectionIds.includes(hash) ? hash : defaultSystemSectionId;
+}
 
 function activateTab(tabName, options = {}) {
   document.querySelectorAll('.tab').forEach((tab) => {
@@ -25,7 +47,6 @@ function activateTab(tabName, options = {}) {
 
   document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
   document.getElementById(tabName)?.classList.add('active');
-  document.querySelectorAll('.sub-tab').forEach((tab) => tab.classList.remove('active'));
 
   const systemTabs = document.querySelector('.system-tabs');
   if (systemTabs) {
@@ -34,24 +55,21 @@ function activateTab(tabName, options = {}) {
     systemTabs.setAttribute('aria-hidden', showSystemTabs ? 'false' : 'true');
   }
 
+  if (tabName === 'system') {
+    setSystemSection(options.systemSection || currentSystemSectionFromHash());
+  }
+
   if (options.scroll !== false) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
 function activateSystemSection(sectionId, options = {}) {
-  activateTab('system', { scroll: false });
-  document.querySelectorAll('.sub-tab').forEach((tab) => {
-    tab.classList.toggle('active', tab.dataset.systemTarget === sectionId);
-  });
+  activateTab('system', { scroll: false, systemSection: sectionId });
+  setSystemSection(sectionId);
 
   if (options.scroll !== false) {
-    requestAnimationFrame(() => {
-      document.getElementById(sectionId)?.scrollIntoView({
-        behavior: options.smooth === false ? 'auto' : 'smooth',
-        block: 'start',
-      });
-    });
+    window.scrollTo({ top: 0, behavior: options.smooth === false ? 'auto' : 'smooth' });
   }
 }
 
@@ -62,7 +80,12 @@ function activateRouteFromHash(options = {}) {
     return;
   }
 
-  if (hash === 'system' || hash === 'home' || hash === 'source') {
+  if (hash === 'system') {
+    activateSystemSection(defaultSystemSectionId, options);
+    return;
+  }
+
+  if (hash === 'home' || hash === 'source') {
     activateTab(hash, options);
     return;
   }
@@ -136,7 +159,7 @@ function setupTabs() {
     button.addEventListener('click', () => {
       const target = button.dataset.systemTarget;
       history.replaceState(null, '', `#${target}`);
-      activateSystemSection(target);
+      activateSystemSection(target, { smooth: false });
     });
   });
 
