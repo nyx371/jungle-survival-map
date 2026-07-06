@@ -166,6 +166,7 @@ E_FileManagerSET
 S_TriggerEditorSET
 &AddText&
 Type:23,False,False,False
+/*
 const Screen = StringBuffer(256);
 
 const ORDER_TIMER = 35;
@@ -186,14 +187,7 @@ if (b.orderTargetUnit != 0) { Screen.printfAt(4, "{}", b.orderTargetUnit.unitTyp
 else { Screen.printfAt(4, "-");}
 
 
-/*
-if (b.orderID ==49) {
-var otu : CUnit = b.moveTargetUnit;
-if (otu.unitType == 176) {
-b.orderID = 85;
-}
-}
-*/
+
 
 if (b.orderID ==3) {
 b.orderID = 107;
@@ -201,15 +195,6 @@ b.orderID = 107;
 
 
 
-/*
-if (b.orderID == 49) {
-var otu = 0;
-//   var otu : CUnit = b.orderTargetUnit;
-if (otu.unitType = 176) {
-b.orderId = 85;
-}
-}
-*/
 
 
 if (b.orderID == 10) {
@@ -243,6 +228,9 @@ unit.unitType = 176;
 }
 
 }
+
+
+*/
 ElementsCount:0
 END
 
@@ -276,20 +264,20 @@ Type:0,False,False,False
 ElementsCount:4
 Type:8,False,False,False
 act:CreateUnit
-1ஐ117ஐ2ஐ2
+1ஐ117ஐ2ஐ6
 ElementsCount:0
 END
-Type:8,False,False,False
+Type:8,True,False,False
 act:CreateUnit
 3ஐ35ஐ2ஐ0
 ElementsCount:0
 END
-Type:8,False,False,False
+Type:8,True,False,False
 act:RawCode
 setup();
 ElementsCount:0
 END
-Type:8,False,False,False
+Type:8,True,False,False
 act:SetVariableToNewUnitEPD
 gஐ1ஐ1ஐ0
 ElementsCount:0
@@ -309,17 +297,17 @@ END
 &afterTriggerExec&
 Type:0,False,False,False
 ElementsCount:6
-Type:8,False,False,False
+Type:8,True,False,False
 act:RawCode
 f();
 ElementsCount:0
 END
-Type:8,False,False,False
+Type:8,True,False,False
 act:ModifyUnitHangarCount
 1ஐ1ஐ83ஐ1ஐ64
 ElementsCount:0
 END
-Type:8,False,False,False
+Type:8,True,False,False
 act:SetScore
 0ஐ0ஐwஐ7
 ElementsCount:0

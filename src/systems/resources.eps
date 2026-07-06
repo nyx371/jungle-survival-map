@@ -2,6 +2,12 @@
 // Right-click continuous mining. Harvesting locks out firing while mineral/gas trickles arrive.
 
 import core.constants;
+import core.utils;
+
+const TERRAN_COMSAT_STATION = $U("Terran Comsat Station"); // resource node placeholder marker (owned by P7)
+const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base unit; likely to be swapped later
+const MINERAL_FIELD_UNIT_TYPE = 176;                          // Mineral Field (Type 1)
+const MAX_RESOURCE_NODE_MARKERS = 64;
 
 const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
@@ -66,11 +72,32 @@ function clearHarvestState(player) {
     setPlayerHarvestLockout(player, 0);
 }
 
+function initResourceNodes() {
+    const found = EUDQueue(MAX_RESOURCE_NODE_MARKERS)();
+    foreach (unit : EUDLoopPlayerCUnit(P7)) {
+        if (unit.unitType == TERRAN_COMSAT_STATION) {
+            found.append(unit);
+        }
+    }
+
+    while (!found.empty()) {
+        const marker = CUnit(found.popleft());
+        const x = marker.posX;
+        const y = marker.posY;
+        marker.die();
+
+        setloc($L("_Place"), x, y);
+        const node = CUnit(utils.createUnitAndGetEpd(1, TERRAN_COVERT_OPS, $L("_Place"), P7));
+        node.unitType = MINERAL_FIELD_UNIT_TYPE;
+    }
+}
+
 function initResources() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         clearHarvestState(p);
     }
-    // TODO: scan preplaced candidate units and activate weighted resource nodes.
+    initResourceNodes();
+    // TODO: weighted/randomized candidate selection; this replaces every marker found.
 }
 
 function startHarvest(player, target) {

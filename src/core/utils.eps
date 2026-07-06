@@ -1,0 +1,11 @@
+// Shared low-level EUD helpers used across systems.
+
+function createUnitAndGetEpd(count, unitType, location, player) {
+    // Captures the EPD of the unit CreateUnit is about to produce. This read
+    // must stay immediately before the CreateUnit call in source order: it
+    // reads the "last created unit" slot at the well-known address 0x628438,
+    // which CreateUnit populates as a side effect.
+    const epd = f_cunitepdread_epd(EPD(0x628438))[[1]];
+    CreateUnit(count, unitType, location, player);
+    return epd;
+}

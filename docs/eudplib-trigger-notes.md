@@ -178,6 +178,10 @@ Use these to write readable state-machine logic instead of manually stitching ra
 
 For this map, these are central for hero tracking, companion ownership, resource-node indexing, mob density scans, and light structures.
 
+`EUDLoopPlayerCUnit`/`EUDLoopCUnit` are genuine runtime loops (`continue`/`break` work inside them), unlike `foreach (i : py_range(N))` which is compile-time-unrolled and does not support `continue`/`break` (see Module imports section above). Don't mutate a player's unit list (`.cgive`, kill/remove) while iterating that same player with `EUDLoopPlayerCUnit` — queue affected units first (`EUDQueue`/`EUDDeque`), then act on them in a separate loop afterward.
+
+`EUDQueue(capacity)` needs a double call to construct an instance: `const q = EUDQueue(capacity)();` (the single-call form returns the class, not an instance). Its removal method is `popleft()`, not `pop()` — `pop()` only exists on `EUDDeque`.
+
 ### Variables, arrays, structs
 
 - `EUDVariable`, `EUDCreateVariables`, `SetVariables`, `SeqCompute`, `VProc`

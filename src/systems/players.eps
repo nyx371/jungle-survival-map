@@ -2,6 +2,7 @@
 
 import core.constants;
 import core.dat_registry;
+import core.utils;
 import systems.day_night;
 import systems.audio;
 import systems.companions;
@@ -42,38 +43,31 @@ function createPlayerHero(player) {
     // PlayerHeroUnits is a compile-time list; it can only be indexed by a
     // compile-time constant, so dispatch on the runtime player id via switch.
     // Case count must match MAX_PLAYERS in core/constants.eps.
-    // Capturing the newly created unit's EPD via EPD(0x628438) must be read
-    // right before the CreateUnit call that produces it.
     // Heroes spawn at the map location named "G".
     switch (player) {
     case 0:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-            CreateUnit(1, dat_registry.PlayerHeroUnits[0], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[0], $L("G"), player);
         }
         break;
     case 1:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-            CreateUnit(1, dat_registry.PlayerHeroUnits[1], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[1], $L("G"), player);
         }
         break;
     case 2:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-            CreateUnit(1, dat_registry.PlayerHeroUnits[2], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[2], $L("G"), player);
         }
         break;
     case 3:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-            CreateUnit(1, dat_registry.PlayerHeroUnits[3], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[3], $L("G"), player);
         }
         break;
     case 4:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = f_cunitepdread_epd(EPD(0x628438))[[1]];
-            CreateUnit(1, dat_registry.PlayerHeroUnits[4], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[4], $L("G"), player);
         }
         break;
     }
