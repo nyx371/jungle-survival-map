@@ -2298,3 +2298,16 @@ pre code .tok-function { color: #f4d35e; }
 .tab.active {
   color: #061006;
 }
+
+.tab,
+.sub-tab {
+  color: #dddd11;
+}
+
+.tab.active {
+  color: #ffffff;
+}
+
+.night-card-top {
+  border: 0;
+}
