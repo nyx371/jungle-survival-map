@@ -2,6 +2,20 @@
 
 Practical notes for implementing Jungle Commandos systems in epScript/eudplib.
 
+## Module imports
+
+epScript resolves `import` as an absolute dotted path from wherever `main.eps` lives, not a relative path like C's `#include` and not a bare filename. This holds regardless of which file does the importing — everything is relative to the project root, not the importer's own folder.
+
+```js
+// src/main.eps
+import core.constants;       // src/core/constants.eps
+import systems.day_night;    // src/systems/day_night.eps
+```
+
+Even if `systems/weapons.eps` needed something from `core/constants.eps`, it would still be `import core.constants;`, never `import constants;` or `import ../core/constants;`.
+
+Source: euddraft wiki, ["08. Moving pawn, Splitting script"](https://github.com/phu54321/euddraft/wiki/08.-Moving-pawn,-Splitting-script).
+
 ## Trigger model
 
 StarCraft triggers are fixed-size records:
@@ -188,3 +202,13 @@ Likely project shape: EUDVariable/EUDArray/EUDVArray state for fixed player/area
 - `f_rand`, `f_dwrand`, `f_srand`, `f_randomize` for procedural choices.
 - `f_atan2`, `f_lengthdir`, `f_sqrt` for movement/geometry.
 - `QueueGameCommand_RightClick`, `QueueGameCommand_Select`, and related helpers can synthesize commands if needed, but should be used carefully.
+
+## Reference docs
+
+For language/tooling questions not covered above, check these before guessing:
+
+- <https://havonz.github.io/SCRMapDocs/> — StarCraft Remastered map dev docs: `What-are-Triggers`, `What-is-EUD`, `What-is-euddraft` (epScript/eudplib/euddraft relationship), `euddraft-Reference` (`.eds`/`.edd` config format, plugin lifecycle order), `epScript-Reference/` (language syntax, types, strings, built-ins), `How-epScript-Works` (runtime trigger compilation model), `Example/`.
+- <https://github.com/phu54321/euddraft/wiki> — numbered euddraft walkthrough; page 08 covers multi-file project imports (see above).
+- `eudplib/docs/funclist.txt` (referenced above) is the broad eudplib function index.
+
+Note: `.eps` files are plain UTF-8 text, but some editor tooling misidentifies the extension as binary PostScript — if a tool refuses to read/edit them for that reason, fall back to a plain-text-aware method and verify encoding (especially non-ASCII characters like em dashes) after any programmatic rewrite.

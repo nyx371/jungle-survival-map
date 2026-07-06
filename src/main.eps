@@ -1,25 +1,25 @@
 // Jungle Commandos Map — main epScript entrypoint.
 // Keep this file orchestration-only. Gameplay logic belongs in systems/*.
 
-import constants;
-import dat_registry;
-import day_night;
-import players;
-import resources;
-import critters;
-import companions;
-import weapons;
-import upgrades;
-import abilities;
-import structures;
-import lights;
-import mobs;
-import mob_evolution;
-import menus;
-import transfers;
-import audio;
-import camera;
-import victory;
+import core.constants;
+import core.dat_registry;
+import systems.day_night;
+import systems.players;
+import systems.resources;
+import systems.critters;
+import systems.companions;
+import systems.weapons;
+import systems.upgrades;
+import systems.abilities;
+import systems.structures;
+import systems.lights;
+import systems.mobs;
+import systems.mob_evolution;
+import systems.menus;
+import systems.transfers;
+import systems.audio;
+import systems.camera;
+import systems.victory;
 
 function onPluginStart() {
     initConstants();
