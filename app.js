@@ -146,7 +146,11 @@ function setupDayCycleTransition() {
       else image.style.opacity = '0';
     });
 
-    if (progressBar) progressBar.style.width = `${(progress * 100).toFixed(1)}%`;
+    if (progressBar) {
+      const segmentWidth = 100 / images.length;
+      progressBar.style.left = `${(activeIndex * segmentWidth).toFixed(3)}%`;
+      progressBar.style.width = `${(progress * segmentWidth).toFixed(3)}%`;
+    }
 
     if (elapsed >= phaseDurationMs) {
       setPhase(nextIndex);
