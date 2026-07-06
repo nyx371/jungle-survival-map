@@ -213,6 +213,10 @@ function updatePlayerHeroBehavior(player) {
         } else if (hero.orderTimer < 2) {
             hero.orderTimer = MINING_ORDER_TIMER;
             resources.addMinerals(player, 8);
+
+            const target = hero.orderTarget;
+            target.setloc($L("_Place"));
+            utils.createImageSpriteAtLocation(368, $L("_Place"));
         }
     }
 }
