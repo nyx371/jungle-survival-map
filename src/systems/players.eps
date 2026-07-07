@@ -54,10 +54,12 @@ const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
 // Per-player mining state machine. Lives here (not resources.eps) so all
 // per-player order handling is in one file; resources.eps still owns the
 // resource-node data (yield rates, node type, sounds) that this reads.
-const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
+const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND; // full resource-yield cycle
+const HARVEST_CHOP_FRAMES = 12; // sfx + mining-swing visual sub-beat; several per cycle
 const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
 const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
 const HarvestTick = EUDArray(constants.MAX_PLAYERS);
+const HarvestChopTick = EUDArray(constants.MAX_PLAYERS);
 
 const PlayerSpawnMarkerX = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
 const PlayerSpawnMarkerY = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
@@ -170,6 +172,7 @@ function clearHarvestState(player) {
     IsHarvesting[player] = 0;
     HarvestTarget[player] = 0;
     HarvestTick[player] = 0;
+    HarvestChopTick[player] = 0;
 }
 
 function initPlayers() {
@@ -309,13 +312,13 @@ function startHarvest(player, target) {
     IsHarvesting[player] = 1;
     HarvestTarget[player] = target;
     HarvestTick[player] = HARVEST_TICK_FRAMES;
+    HarvestChopTick[player] = 0;
 }
 
 function finishHarvestTick(player) {
     const resourceType = resources.getHarvestTargetResourceType(HarvestTarget[player]);
     const minerals, gas = resources.getHarvestRates(resourceType);
     resources.addHarvestResources(player, minerals, gas);
-    resources.playMiningSfx(player, resourceType);
 
     // Deplete the node's own real resourceAmount; remove it once exhausted.
     const node = CUnit(HarvestTarget[player]);
@@ -328,7 +331,19 @@ function finishHarvestTick(player) {
     }
 }
 
-// Drives continuous right-click mining off the hero's harvest order.
+// One mining swing: plays a resource-type sound and spawns the swing
+// visual on the targeted node. Fires several times per resource-yield cycle.
+function harvestChop(player) {
+    const target = getPlayerHeroUnit(player).orderTarget;
+    const resourceType = resources.getHarvestTargetResourceType(HarvestTarget[player]);
+    resources.playMiningSfx(player, resourceType);
+    utils.createImageSpriteOnUnit(364, target);
+}
+
+// Drives continuous right-click mining off the hero's harvest order. Owns
+// the whole mining loop: the sfx + swing visual (several chops per cycle)
+// and the resource payout (once per cycle). The order-timer crash guard in
+// updatePlayerHeroBehavior is separate and can be retired once this is proven.
 function updatePlayerHarvesting(player) {
     const hero = getPlayerHeroUnit(player);
     const targetingResource = hero.orderID == ORDER_HARVEST_MINERALS && hero.orderTarget != 0;
@@ -346,7 +361,15 @@ function updatePlayerHarvesting(player) {
         return;
     }
 
-    // Mining is continuous: every HARVEST_TICK_FRAMES the active node trickles resources.
+    // Sfx + swing visual several times across the cycle.
+    if (HarvestChopTick[player] > 0) {
+        HarvestChopTick[player] -= 1;
+    } else {
+        HarvestChopTick[player] = HARVEST_CHOP_FRAMES;
+        harvestChop(player);
+    }
+
+    // Resource payout once per full cycle.
     if (HarvestTick[player] > 0) {
         HarvestTick[player] -= 1;
     } else {

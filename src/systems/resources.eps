@@ -8,7 +8,7 @@ const TERRAN_COMSAT_STATION = $U("Terran Comsat Station"); // resource node plac
 const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base unit; likely to be swapped later
 const MINERAL_FIELD_UNIT_TYPE = 176;                          // Mineral Field (Type 1)
 const MAX_RESOURCE_NODE_MARKERS = 64;
-const RESOURCE_NODE_ACTIVATION_PERCENT = 75; // basic run-to-run variance
+const RESOURCE_NODE_ACTIVATION_PERCENT = 95; // basic run-to-run variance
 
 const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
@@ -62,29 +62,29 @@ RESOURCE_IMAGES.append(0);
 // runtime resourceType can index it; each element holds a bracket-literal
 // EUDArray of StringBuffers, played back with a runtime index via
 // playSoundArray (see playMiningSfx). Every type provides MINING_SFX_PER_TYPE.
-const MINING_SFX_PER_TYPE = 2;
+const MINING_SFX_PER_TYPE = 4;
 const RESOURCE_MINING_SFX = EUDArray(RESOURCE_TYPE_COUNT);
 
 function buildResourceConfig() {
     RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500);
     RESOURCE_IMAGES[RESOURCE_TREE] = list(632, 634, 636);
-    RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
+    RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit\\wav\\wood1.ogg"), StringBuffer("staredit\\wav\\wood2.ogg"), StringBuffer("staredit\\wav\\wood3.ogg"), StringBuffer("staredit\\wav\\wood4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500);
     RESOURCE_IMAGES[RESOURCE_BUSH] = list(618, 620, 622);
-    RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
+    RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit\\wav\\grass1.ogg"), StringBuffer("staredit\\wav\\grass2.ogg"), StringBuffer("staredit\\wav\\grass3.ogg"), StringBuffer("staredit\\wav\\grass4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500);
     RESOURCE_IMAGES[RESOURCE_ROCK] = list(649,650,651);
-    RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
+    RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500);
     RESOURCE_IMAGES[RESOURCE_CRYSTAL] = list(607, 607, 607);
-    RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
+    RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_MAGMA] = list(3, 3, 500);
     RESOURCE_IMAGES[RESOURCE_MAGMA] = list(600, 600, 600);
-    RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
+    RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 }
 
 // Terran Covert Ops sprite. Its image field is mutated right before each
