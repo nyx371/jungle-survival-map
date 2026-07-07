@@ -18,6 +18,21 @@ const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
 const RESOURCE_ORGANIC_GROWTH = 4;
 
+// Terran Covert Ops's sprite. Its image field is mutated right before each
+// CreateUnit call so the freshly created node's sprite bakes in a random
+// resource look; later mutations don't retroactively affect earlier nodes.
+const RESOURCE_NODE_SPRITE_ID = 256;
+
+const ROCK_IMAGE_1 = 610;
+const ROCK_IMAGE_2 = 612;
+const ROCK_IMAGE_3 = 616;
+const BUSH_IMAGE_1 = 618;
+const BUSH_IMAGE_2 = 620;
+const BUSH_IMAGE_3 = 622;
+const TREE_IMAGE_1 = 632;
+const TREE_IMAGE_2 = 634;
+const TREE_IMAGE_3 = 636;
+
 const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
 const HARVEST_WEAPON_LOCKOUT = 1;
 
@@ -80,6 +95,45 @@ function clearHarvestState(player) {
     setPlayerHarvestLockout(player, 0);
 }
 
+// Resource node images start non-clickable; players need to be able to
+// right-click them to harvest, so flip that on once per image (not per
+// node -- it's a shared images.dat property).
+function initResourceNodeImages() {
+    Image(ROCK_IMAGE_1).isClickable = 1;
+    Image(ROCK_IMAGE_2).isClickable = 1;
+    Image(ROCK_IMAGE_3).isClickable = 1;
+    Image(BUSH_IMAGE_1).isClickable = 1;
+    Image(BUSH_IMAGE_2).isClickable = 1;
+    Image(BUSH_IMAGE_3).isClickable = 1;
+    Image(TREE_IMAGE_1).isClickable = 1;
+    Image(TREE_IMAGE_2).isClickable = 1;
+    Image(TREE_IMAGE_3).isClickable = 1;
+}
+
+function chooseResourceNodeType() {
+    const roll = f_rand() % 3;
+    if (roll == 0) return RESOURCE_TREE;
+    if (roll == 1) return RESOURCE_BUSH;
+    return RESOURCE_ROCK;
+}
+
+function chooseResourceNodeImage(resourceType) {
+    const roll = f_rand() % 3;
+    if (resourceType == RESOURCE_TREE) {
+        if (roll == 0) return TREE_IMAGE_1;
+        if (roll == 1) return TREE_IMAGE_2;
+        return TREE_IMAGE_3;
+    }
+    if (resourceType == RESOURCE_BUSH) {
+        if (roll == 0) return BUSH_IMAGE_1;
+        if (roll == 1) return BUSH_IMAGE_2;
+        return BUSH_IMAGE_3;
+    }
+    if (roll == 0) return ROCK_IMAGE_1;
+    if (roll == 1) return ROCK_IMAGE_2;
+    return ROCK_IMAGE_3;
+}
+
 function initResourceNodes() {
     const found = EUDQueue(MAX_RESOURCE_NODE_MARKERS)();
     foreach (unit : EUDLoopPlayerCUnit(P7)) {
@@ -98,9 +152,13 @@ function initResourceNodes() {
         utils.removeCUnit(marker);
 
         if (f_rand() % 100 < RESOURCE_NODE_ACTIVATION_PERCENT) {
+            const resourceType = chooseResourceNodeType();
+            Sprite(RESOURCE_NODE_SPRITE_ID).image = chooseResourceNodeImage(resourceType);
+
             setloc($L("_Place"), x, y);
             const node = CUnit(utils.createUnitAndGetEpd(1, TERRAN_COVERT_OPS, $L("_Place"), P7));
             node.unitType = MINERAL_FIELD_UNIT_TYPE;
+            node.unknown0x106 = resourceType;
             node.resourceAmount = MINERAL_FIELD_STARTING_AMOUNT;
         }
     }
@@ -110,6 +168,7 @@ function initResources() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         clearHarvestState(p);
     }
+    initResourceNodeImages();
     initResourceNodes();
 }
 
@@ -140,10 +199,10 @@ function getHarvestGasPerTick(resourceType) {
 }
 
 function getHarvestTargetResourceType(target) {
-    // Only Mineral Field nodes exist for now (see initResourceNodes); everything
-    // else defaults to the Tree profile. Extend as more node types are added.
+    // Mineral Field nodes carry their randomly chosen resource type (tree,
+    // bush, rock -- see initResourceNodes) tagged on unknown0x106.
     const unit = CUnit(target);
-    if (unit.unitType == MINERAL_FIELD_UNIT_TYPE) return RESOURCE_ROCK;
+    if (unit.unitType == MINERAL_FIELD_UNIT_TYPE) return unit.unknown0x106;
     return RESOURCE_TREE;
 }
 
