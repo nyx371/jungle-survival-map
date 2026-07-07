@@ -20,18 +20,18 @@ const RESOURCE_TYPE_COUNT = 5;
 // now have images/config wired up, so all of them are spawnable.
 const SPAWNABLE_RESOURCE_TYPE_COUNT = RESOURCE_TYPE_COUNT;
 
-// One config table per resource type, indexed by the RESOURCE_* constants
+// One config row per resource type, indexed by the RESOURCE_* constants
 // above -- add a new resource type by adding one clustered block to
 // buildResourceConfig, not by inventing a new set of named constants.
-// RESOURCE_CONFIG[type] is itself a [minerals, gas, startingAmount, yieldFrames]
-// list (see RES_CFG_* below for the column indices) and RESOURCE_IMAGES[type] is
-// a list of images.dat variants, so everything about one resource type
-// lives in one clustered block. These are compile-time python lists, not
-// EUDArrays: indexing them costs nothing at runtime, but (unlike an
-// EUDArray) the index has to be a compile-time literal, never a plain
-// runtime variable -- see getHarvestRates/getResourceStartingAmount/
-// chooseResourceNodeImage below for the dispatch-on-literal pattern used to
-// work around that.
+// RESOURCE_CONFIG[type] is a [minerals, gas, startingAmount, yieldFrames]
+// row (see RES_CFG_* for column indices) and RESOURCE_IMAGES[type] is a list
+// of images.dat variants, so everything about one resource type lives in one
+// clustered block. All the resource tables are real EUDArrays of
+// bracket-literal sub-arrays so a *runtime* resourceType can index them
+// directly: read the row out (RESOURCE_CONFIG[resourceType]) then
+// EUDArray.cast(...).get(col) to index the row at runtime -- no more
+// literal-dispatch if/else chains. (A py_list only takes compile-time
+// literal indices, which is what forced those chains before.)
 const RES_CFG_MINERALS = 0;
 const RES_CFG_GAS = 1;
 const RES_CFG_STARTING_AMOUNT = 2;
@@ -41,49 +41,35 @@ const RES_CFG_YIELD_FRAMES = 3; // frames of mining between each resource payout
 // (e.g. crystal, organic growth).
 const RESOURCE_IMAGE_NONE = 228;
 
-// list(list(...), ...) auto-flattens instead of nesting, so both tables are
-// built with py_list and assigned into per-type slots afterward instead
-// (see buildResourceConfig).
-const RESOURCE_CONFIG = py_list();
-RESOURCE_CONFIG.append(0);
-RESOURCE_CONFIG.append(0);
-RESOURCE_CONFIG.append(0);
-RESOURCE_CONFIG.append(0);
-RESOURCE_CONFIG.append(0);
+const RESOURCE_CONFIG = EUDArray(RESOURCE_TYPE_COUNT);
 
-// RESOURCE_IMAGES is a real EUDArray of bracket-literal EUDArrays (not a
-// py_list like RESOURCE_CONFIG) so a runtime resourceType/variant can index
-// it -- a py_list only takes compile-time literal indices, and list(list())
-// can't nest anyway. See chooseResourceNodeImage / initResourceNodeImages.
 const RESOURCE_IMAGE_VARIANTS = 3;
 const RESOURCE_IMAGES = EUDArray(RESOURCE_TYPE_COUNT);
 
-// Per-resource-type mining sound sets. Unlike RESOURCE_CONFIG/RESOURCE_IMAGES
-// (compile-time py_lists, literal-indexed), this is a real EUDArray so a
-// runtime resourceType can index it; each element holds a bracket-literal
+// Per-resource-type mining sound sets: each element is a bracket-literal
 // EUDArray of StringBuffers, played back with a runtime index via
 // playSoundArray (see playMiningSfx). Every type provides MINING_SFX_PER_TYPE.
 const MINING_SFX_PER_TYPE = 4;
 const RESOURCE_MINING_SFX = EUDArray(RESOURCE_TYPE_COUNT);
 
 function buildResourceConfig() {
-    RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500, 48);    // 3.0s per yield
+    RESOURCE_CONFIG[RESOURCE_TREE] = [4, 1, 500, 48];    // 3.0s per yield
     RESOURCE_IMAGES[RESOURCE_TREE] = [632, 634, 636];
     RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit\\wav\\wood1.ogg"), StringBuffer("staredit\\wav\\wood2.ogg"), StringBuffer("staredit\\wav\\wood3.ogg"), StringBuffer("staredit\\wav\\wood4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500, 32);    // 2.0s -- quick, low yield
+    RESOURCE_CONFIG[RESOURCE_BUSH] = [2, 2, 500, 32];    // 2.0s -- quick, low yield
     RESOURCE_IMAGES[RESOURCE_BUSH] = [618, 620, 622];
     RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit\\wav\\grass1.ogg"), StringBuffer("staredit\\wav\\grass2.ogg"), StringBuffer("staredit\\wav\\grass3.ogg"), StringBuffer("staredit\\wav\\grass4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500, 64);    // 4.0s -- slow, high yield
+    RESOURCE_CONFIG[RESOURCE_ROCK] = [6, 1, 500, 64];    // 4.0s -- slow, high yield
     RESOURCE_IMAGES[RESOURCE_ROCK] = [649, 650, 651];
     RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500, 80); // 5.0s -- slow, gas-heavy
+    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = [2, 5, 500, 80]; // 5.0s -- slow, gas-heavy
     RESOURCE_IMAGES[RESOURCE_CRYSTAL] = [607, 607, 607];
     RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_MAGMA] = list(3, 3, 500, 64);   // 4.0s
+    RESOURCE_CONFIG[RESOURCE_MAGMA] = [3, 3, 500, 64];   // 4.0s
     RESOURCE_IMAGES[RESOURCE_MAGMA] = [600, 600, 600];
     RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 }
@@ -157,31 +143,17 @@ function chooseResourceNodeImage(resourceType) {
 // resourceType is a runtime value, so (as in chooseResourceNodeImage above)
 // it must be narrowed to a literal via if/else before indexing RESOURCE_CONFIG.
 function getHarvestRates(resourceType) {
-    if (resourceType == RESOURCE_TREE) return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_GAS];
-    if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_GAS];
-    if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_GAS];
-    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_GAS];
-    if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_GAS];
-    return 1, 0;
+    const row = EUDArray.cast(RESOURCE_CONFIG[resourceType]);
+    return row.get(RES_CFG_MINERALS), row.get(RES_CFG_GAS);
 }
 
 function getResourceStartingAmount(resourceType) {
-    if (resourceType == RESOURCE_TREE) return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_STARTING_AMOUNT];
-    if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_STARTING_AMOUNT];
-    if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_STARTING_AMOUNT];
-    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_STARTING_AMOUNT];
-    if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_STARTING_AMOUNT];
-    return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_STARTING_AMOUNT];
+    return EUDArray.cast(RESOURCE_CONFIG[resourceType]).get(RES_CFG_STARTING_AMOUNT);
 }
 
 // Frames of mining between each resource payout, per resource type.
 function getHarvestTimer(resourceType) {
-    if (resourceType == RESOURCE_TREE) return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_YIELD_FRAMES];
-    if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_YIELD_FRAMES];
-    if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_YIELD_FRAMES];
-    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_YIELD_FRAMES];
-    if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_YIELD_FRAMES];
-    return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_YIELD_FRAMES];
+    return EUDArray.cast(RESOURCE_CONFIG[resourceType]).get(RES_CFG_YIELD_FRAMES);
 }
 
 // Plays one random entry of a runtime-indexable sound EUDArray on [player]'s
