@@ -109,8 +109,7 @@ function updatePlayerStatus(player) {
     else PlayerStatus[player] = PLAYER_STATUS_OK;
 }
 
-function healPlayerHero(player, amount) {
-    const hero = getPlayerHeroUnit(player);
+function getPlayerHeroMaxHp(player) {
     var maxHp = 0;
     switch (player) {
     case 0: maxHp = dat_registry.PlayerHeroUnits[0].maxHp; break;
@@ -119,6 +118,12 @@ function healPlayerHero(player, amount) {
     case 3: maxHp = dat_registry.PlayerHeroUnits[3].maxHp; break;
     case 4: maxHp = dat_registry.PlayerHeroUnits[4].maxHp; break;
     }
+    return maxHp;
+}
+
+function healPlayerHero(player, amount) {
+    const hero = getPlayerHeroUnit(player);
+    const maxHp = getPlayerHeroMaxHp(player);
     if (hero.hp + amount > maxHp) hero.hp = maxHp;
     else hero.hp += amount;
 }

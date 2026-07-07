@@ -1,8 +1,13 @@
 // Audio Feedback: hurt sounds, heartbeat, Ghost breathing.
 
 import core.constants;
+import systems.players;
 
 const LOW_HP_PERCENT = 30;
+// TODO: swap in a dedicated heartbeat asset once one is imported to the map;
+// reusing the hurt sound keeps the two distinct only by cooldown cadence.
+const HURT_SOUND_WAV = "sound\\terran\\marine\\tmadth00.wav";
+const HEARTBEAT_WAV = HURT_SOUND_WAV;
 const HURT_SOUND_COOLDOWN = 3 * constants.FRAMES_PER_GAME_SECOND;
 const HEARTBEAT_COOLDOWN = 2 * constants.FRAMES_PER_GAME_SECOND;
 
@@ -24,9 +29,33 @@ function clearAudioDangerState(player) {
 }
 
 function updateAudioForPlayer(player) {
-    // TODO: compare current hero HP to LastHp[player].
-    // TODO: play local hurt sound if damaged and cooldown ready.
-    // TODO: play local heartbeat if HP below threshold and cooldown ready.
+    if (!players.HeroAlive[player]) return;
+
+    const hero = players.getPlayerHeroUnit(player);
+    const maxHp = players.getPlayerHeroMaxHp(player);
+    const currentHp = hero.hp;
+
+    const savedCp = getcurpl();
+    setcurpl(player);
+
+    if (currentHp < LastHp[player]) {
+        if (HurtSoundTimer[player] == 0) {
+            PlayWAV(HURT_SOUND_WAV);
+            HurtSoundTimer[player] = HURT_SOUND_COOLDOWN;
+        }
+    }
+    if (HurtSoundTimer[player] > 0) HurtSoundTimer[player] -= 1;
+
+    if (maxHp > 0 && currentHp * 100 / maxHp <= LOW_HP_PERCENT) {
+        if (HeartbeatTimer[player] == 0) {
+            PlayWAV(HEARTBEAT_WAV);
+            HeartbeatTimer[player] = HEARTBEAT_COOLDOWN;
+        }
+    }
+    if (HeartbeatTimer[player] > 0) HeartbeatTimer[player] -= 1;
+
+    setcurpl(savedCp);
+    LastHp[player] = currentHp;
 }
 
 function updateAudio() {

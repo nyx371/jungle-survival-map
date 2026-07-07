@@ -66,10 +66,159 @@ function applyHydraliskTierDat(tier) {
     }
 }
 
+function applyDroneTierDat(tier) {
+    const unit = TrgUnit("Zerg Drone");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 40 * 256;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 50 * 256;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 60 * 256;
+    } else {
+        unit.maxHp = 70 * 256;
+    }
+}
+
+function applyBroodlingTierDat(tier) {
+    // Broodling shares the base Claws weapon slot with Zergling (mutated in
+    // applyZerglingTierDat), so only HP is scaled here to avoid clobbering it.
+    const unit = TrgUnit("Zerg Broodling");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 30 * 256;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 40 * 256;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 50 * 256;
+    } else {
+        unit.maxHp = 60 * 256;
+    }
+}
+
+function applyLurkerTierDat(tier) {
+    const unit = TrgUnit("Zerg Lurker");
+    const weapon = Weapon("Subterranean Spines");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 125 * 256;
+        weapon.damage = 20;
+        weapon.cooldown = 25;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 150 * 256;
+        weapon.damage = 24;
+        weapon.cooldown = 23;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 180 * 256;
+        weapon.damage = 28;
+        weapon.cooldown = 20;
+    } else {
+        unit.maxHp = 220 * 256;
+        weapon.damage = 34;
+        weapon.cooldown = 18;
+    }
+}
+
+function applyQueenTierDat(tier) {
+    const unit = TrgUnit("Zerg Queen");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 120 * 256;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 145 * 256;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 175 * 256;
+    } else {
+        unit.maxHp = 210 * 256;
+    }
+}
+
+function applyMutaliskTierDat(tier) {
+    const unit = TrgUnit("Zerg Mutalisk");
+    const weapon = Weapon("Glave Wurm");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 120 * 256;
+        weapon.damage = 9;
+        weapon.cooldown = 30;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 145 * 256;
+        weapon.damage = 12;
+        weapon.cooldown = 27;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 175 * 256;
+        weapon.damage = 15;
+        weapon.cooldown = 24;
+    } else {
+        unit.maxHp = 210 * 256;
+        weapon.damage = 19;
+        weapon.cooldown = 20;
+    }
+}
+
+function applyGuardianTierDat(tier) {
+    const unit = TrgUnit("Zerg Guardian");
+    const weapon = Weapon("Acid Spore");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 150 * 256;
+        weapon.damage = 20;
+        weapon.maxRange = 8 * 32;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 180 * 256;
+        weapon.damage = 24;
+        weapon.maxRange = 8 * 32;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 215 * 256;
+        weapon.damage = 28;
+        weapon.maxRange = 9 * 32;
+    } else {
+        unit.maxHp = 260 * 256;
+        weapon.damage = 34;
+        weapon.maxRange = 9 * 32;
+    }
+}
+
+function applyDefilerTierDat(tier) {
+    const unit = TrgUnit("Zerg Defiler");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 80 * 256;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 100 * 256;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 120 * 256;
+    } else {
+        unit.maxHp = 145 * 256;
+    }
+}
+
+function applyUltraliskTierDat(tier) {
+    const unit = TrgUnit("Zerg Ultralisk");
+    const weapon = Weapon("Kaiser Blades");
+    if (tier == MOB_TIER_BLACK) {
+        unit.maxHp = 400 * 256;
+        weapon.damage = 20;
+        weapon.cooldown = 15;
+    } else if (tier == MOB_TIER_BROWN) {
+        unit.maxHp = 480 * 256;
+        weapon.damage = 25;
+        weapon.cooldown = 14;
+    } else if (tier == MOB_TIER_ORANGE) {
+        unit.maxHp = 570 * 256;
+        weapon.damage = 30;
+        weapon.cooldown = 12;
+    } else {
+        unit.maxHp = 680 * 256;
+        weapon.damage = 38;
+        weapon.cooldown = 10;
+    }
+}
+
 function applyAllMobTierDat(tier) {
     applyZerglingTierDat(tier);
     applyHydraliskTierDat(tier);
-    // TODO: apply Drone, Broodling, Lurker, Queen, Mutalisk, Guardian, Defiler, Ultralisk.
+    applyDroneTierDat(tier);
+    applyBroodlingTierDat(tier);
+    applyLurkerTierDat(tier);
+    applyQueenTierDat(tier);
+    applyMutaliskTierDat(tier);
+    applyGuardianTierDat(tier);
+    applyDefilerTierDat(tier);
+    applyUltraliskTierDat(tier);
 }
 
 function initMobEvolution() {
