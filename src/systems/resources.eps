@@ -10,43 +10,47 @@ const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base
 const MINERAL_FIELD_UNIT_TYPE = 176;                          // Mineral Field (Type 1)
 const MAX_RESOURCE_NODE_MARKERS = 64;
 const RESOURCE_NODE_ACTIVATION_PERCENT = 75; // basic run-to-run variance
-const MINERAL_FIELD_STARTING_AMOUNT = 500;
 
 const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
 const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
 const RESOURCE_ORGANIC_GROWTH = 4;
+const RESOURCE_TYPE_COUNT = 5;
+// How many of the RESOURCE_TYPE_COUNT types have art wired up (RESOURCE_IMAGES
+// below) and can currently spawn as a node. Extend as more images get added.
+const SPAWNABLE_RESOURCE_TYPE_COUNT = 3;
 
-// Terran Covert Ops's sprite. Its image field is mutated right before each
-// CreateUnit call so the freshly created node's sprite bakes in a random
-// resource look; later mutations don't retroactively affect earlier nodes.
+// One config table per resource type, indexed by the RESOURCE_* constants
+// above -- add a new resource type by adding one entry to each list, not by
+// inventing a new set of named constants. These are compile-time python
+// lists, not EUDArrays: indexing them costs nothing at runtime, but (unlike
+// an EUDArray) the index has to be a compile-time literal, never a plain
+// runtime variable -- see getHarvestRates/getResourceStartingAmount/
+// chooseResourceNodeImage below for the dispatch-on-literal pattern used to
+// work around that.
+const RESOURCE_MINERALS_PER_TICK = list(4, 2, 6, 2, 3);   // tree, bush, rock, crystal, organic growth
+const RESOURCE_GAS_PER_TICK      = list(1, 2, 1, 5, 3);
+const RESOURCE_STARTING_AMOUNT   = list(500, 500, 500, 500, 500);
+
+// Three images.dat variants per spawnable resource type, randomized on node
+// creation (see chooseResourceNodeImage). A nested list-of-lists here trips
+// up the compiler (list(list(...), ...) does not nest cleanly), so this is
+// a flat list addressed as RESOURCE_IMAGES[resourceType * RESOURCE_IMAGE_VARIANTS + variant].
+const RESOURCE_IMAGE_VARIANTS = 3;
+const RESOURCE_IMAGES = list(
+    632, 634, 636, // RESOURCE_TREE
+    618, 620, 622, // RESOURCE_BUSH
+    610, 612, 616  // RESOURCE_ROCK
+);
+
+// Terran Covert Ops sprite. Its image field is mutated right before each
+// CreateUnit call so the freshly created node sprite bakes in a random
+// resource look; later mutations do not retroactively affect earlier nodes.
 const RESOURCE_NODE_SPRITE_ID = 256;
-
-const ROCK_IMAGE_1 = 610;
-const ROCK_IMAGE_2 = 612;
-const ROCK_IMAGE_3 = 616;
-const BUSH_IMAGE_1 = 618;
-const BUSH_IMAGE_2 = 620;
-const BUSH_IMAGE_3 = 622;
-const TREE_IMAGE_1 = 632;
-const TREE_IMAGE_2 = 634;
-const TREE_IMAGE_3 = 636;
 
 const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
 const HARVEST_WEAPON_LOCKOUT = 1;
-
-// Baseline trickle profile per harvest tick. Final values should be tuned by map pacing.
-const TREE_MINERALS_PER_TICK = 4;
-const TREE_GAS_PER_TICK = 1;
-const BUSH_MINERALS_PER_TICK = 2;
-const BUSH_GAS_PER_TICK = 2;
-const ROCK_MINERALS_PER_TICK = 6;
-const ROCK_GAS_PER_TICK = 1;
-const CRYSTAL_MINERALS_PER_TICK = 2;
-const CRYSTAL_GAS_PER_TICK = 5;
-const ORGANIC_MINERALS_PER_TICK = 3;
-const ORGANIC_GAS_PER_TICK = 3;
 
 const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
 const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
@@ -97,41 +101,62 @@ function clearHarvestState(player) {
 
 // Resource node images start non-clickable; players need to be able to
 // right-click them to harvest, so flip that on once per image (not per
-// node -- it's a shared images.dat property).
+// node -- it is a shared images.dat property). resourceType here comes from
+// a compile-time-unrolled py_range loop, so it is a literal at each unrolled
+// step and can index straight into RESOURCE_IMAGES.
 function initResourceNodeImages() {
-    Image(ROCK_IMAGE_1).isClickable = 1;
-    Image(ROCK_IMAGE_2).isClickable = 1;
-    Image(ROCK_IMAGE_3).isClickable = 1;
-    Image(BUSH_IMAGE_1).isClickable = 1;
-    Image(BUSH_IMAGE_2).isClickable = 1;
-    Image(BUSH_IMAGE_3).isClickable = 1;
-    Image(TREE_IMAGE_1).isClickable = 1;
-    Image(TREE_IMAGE_2).isClickable = 1;
-    Image(TREE_IMAGE_3).isClickable = 1;
+    foreach (resourceType : py_range(SPAWNABLE_RESOURCE_TYPE_COUNT)) {
+        foreach (variant : py_range(RESOURCE_IMAGE_VARIANTS)) {
+            Image(RESOURCE_IMAGES[resourceType * RESOURCE_IMAGE_VARIANTS + variant]).isClickable = 1;
+        }
+    }
 }
 
 function chooseResourceNodeType() {
-    const roll = f_rand() % 3;
+    const roll = f_rand() % SPAWNABLE_RESOURCE_TYPE_COUNT;
     if (roll == 0) return RESOURCE_TREE;
     if (roll == 1) return RESOURCE_BUSH;
     return RESOURCE_ROCK;
 }
 
 function chooseResourceNodeImage(resourceType) {
-    const roll = f_rand() % 3;
+    // resourceType is a runtime value here, so it (and the roll below) must
+    // be narrowed to a literal via if/else before indexing RESOURCE_IMAGES.
+    const roll = f_rand() % RESOURCE_IMAGE_VARIANTS;
     if (resourceType == RESOURCE_TREE) {
-        if (roll == 0) return TREE_IMAGE_1;
-        if (roll == 1) return TREE_IMAGE_2;
-        return TREE_IMAGE_3;
+        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_TREE * RESOURCE_IMAGE_VARIANTS + 0];
+        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_TREE * RESOURCE_IMAGE_VARIANTS + 1];
+        return RESOURCE_IMAGES[RESOURCE_TREE * RESOURCE_IMAGE_VARIANTS + 2];
     }
     if (resourceType == RESOURCE_BUSH) {
-        if (roll == 0) return BUSH_IMAGE_1;
-        if (roll == 1) return BUSH_IMAGE_2;
-        return BUSH_IMAGE_3;
+        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_BUSH * RESOURCE_IMAGE_VARIANTS + 0];
+        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_BUSH * RESOURCE_IMAGE_VARIANTS + 1];
+        return RESOURCE_IMAGES[RESOURCE_BUSH * RESOURCE_IMAGE_VARIANTS + 2];
     }
-    if (roll == 0) return ROCK_IMAGE_1;
-    if (roll == 1) return ROCK_IMAGE_2;
-    return ROCK_IMAGE_3;
+    if (roll == 0) return RESOURCE_IMAGES[RESOURCE_ROCK * RESOURCE_IMAGE_VARIANTS + 0];
+    if (roll == 1) return RESOURCE_IMAGES[RESOURCE_ROCK * RESOURCE_IMAGE_VARIANTS + 1];
+    return RESOURCE_IMAGES[RESOURCE_ROCK * RESOURCE_IMAGE_VARIANTS + 2];
+}
+
+// resourceType is a runtime value, so (as in chooseResourceNodeImage above)
+// it must be narrowed to a literal via if/else before indexing the
+// RESOURCE_* config lists.
+function getHarvestRates(resourceType) {
+    if (resourceType == RESOURCE_TREE) return RESOURCE_MINERALS_PER_TICK[RESOURCE_TREE], RESOURCE_GAS_PER_TICK[RESOURCE_TREE];
+    if (resourceType == RESOURCE_BUSH) return RESOURCE_MINERALS_PER_TICK[RESOURCE_BUSH], RESOURCE_GAS_PER_TICK[RESOURCE_BUSH];
+    if (resourceType == RESOURCE_ROCK) return RESOURCE_MINERALS_PER_TICK[RESOURCE_ROCK], RESOURCE_GAS_PER_TICK[RESOURCE_ROCK];
+    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_MINERALS_PER_TICK[RESOURCE_CRYSTAL], RESOURCE_GAS_PER_TICK[RESOURCE_CRYSTAL];
+    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_MINERALS_PER_TICK[RESOURCE_ORGANIC_GROWTH], RESOURCE_GAS_PER_TICK[RESOURCE_ORGANIC_GROWTH];
+    return 1, 0;
+}
+
+function getResourceStartingAmount(resourceType) {
+    if (resourceType == RESOURCE_TREE) return RESOURCE_STARTING_AMOUNT[RESOURCE_TREE];
+    if (resourceType == RESOURCE_BUSH) return RESOURCE_STARTING_AMOUNT[RESOURCE_BUSH];
+    if (resourceType == RESOURCE_ROCK) return RESOURCE_STARTING_AMOUNT[RESOURCE_ROCK];
+    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_STARTING_AMOUNT[RESOURCE_CRYSTAL];
+    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_STARTING_AMOUNT[RESOURCE_ORGANIC_GROWTH];
+    return RESOURCE_STARTING_AMOUNT[RESOURCE_TREE];
 }
 
 function initResourceNodes() {
@@ -159,7 +184,7 @@ function initResourceNodes() {
             const node = CUnit(utils.createUnitAndGetEpd(1, TERRAN_COVERT_OPS, $L("_Place"), P7));
             node.unitType = MINERAL_FIELD_UNIT_TYPE;
             node.unknown0x106 = resourceType;
-            node.resourceAmount = MINERAL_FIELD_STARTING_AMOUNT;
+            node.resourceAmount = getResourceStartingAmount(resourceType);
         }
     }
 }
@@ -180,24 +205,6 @@ function startHarvest(player, target) {
     setPlayerHarvestLockout(player, HARVEST_WEAPON_LOCKOUT);
 }
 
-function getHarvestMineralsPerTick(resourceType) {
-    if (resourceType == RESOURCE_TREE) return TREE_MINERALS_PER_TICK;
-    if (resourceType == RESOURCE_BUSH) return BUSH_MINERALS_PER_TICK;
-    if (resourceType == RESOURCE_ROCK) return ROCK_MINERALS_PER_TICK;
-    if (resourceType == RESOURCE_CRYSTAL) return CRYSTAL_MINERALS_PER_TICK;
-    if (resourceType == RESOURCE_ORGANIC_GROWTH) return ORGANIC_MINERALS_PER_TICK;
-    return 1;
-}
-
-function getHarvestGasPerTick(resourceType) {
-    if (resourceType == RESOURCE_TREE) return TREE_GAS_PER_TICK;
-    if (resourceType == RESOURCE_BUSH) return BUSH_GAS_PER_TICK;
-    if (resourceType == RESOURCE_ROCK) return ROCK_GAS_PER_TICK;
-    if (resourceType == RESOURCE_CRYSTAL) return CRYSTAL_GAS_PER_TICK;
-    if (resourceType == RESOURCE_ORGANIC_GROWTH) return ORGANIC_GAS_PER_TICK;
-    return 0;
-}
-
 function getHarvestTargetResourceType(target) {
     // Mineral Field nodes carry their randomly chosen resource type (tree,
     // bush, rock -- see initResourceNodes) tagged on unknown0x106.
@@ -208,8 +215,7 @@ function getHarvestTargetResourceType(target) {
 
 function finishHarvestTick(player) {
     const resourceType = getHarvestTargetResourceType(HarvestTarget[player]);
-    const minerals = getHarvestMineralsPerTick(resourceType);
-    const gas = getHarvestGasPerTick(resourceType);
+    const minerals, gas = getHarvestRates(resourceType);
     addHarvestResources(player, minerals, gas);
 
     // Deplete the node's own real resourceAmount; remove it once exhausted.
