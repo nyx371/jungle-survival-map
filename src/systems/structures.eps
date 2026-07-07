@@ -9,6 +9,12 @@ import systems.mobs;
 const MAELSTROM_COOLDOWN_FRAMES = 8 * constants.FRAMES_PER_GAME_SECOND;
 const MAELSTROM_STUN_TICKS = 2 * constants.FRAMES_PER_GAME_SECOND;
 
+// The maelstrom mine is built for real by a hero (Ghost) construction order,
+// as a Terran Academy; once that finishes, it's morphed in place into the
+// actual mine unit and picked up by the normal structure tracking/update.
+const MAELSTROM_ACADEMY_UNIT = $U("Terran Academy");
+const MAELSTROM_MINE_UNIT = $U("Spider Mine");
+
 // Placeholder unit for every structure type; final DAT allocation TBD
 // (see docs/dat-allocation-notes.md). Behavior/stats are driven by our own
 // state arrays below, not by this unit's real DAT stats.
@@ -153,6 +159,33 @@ function updateStructureRepairs() {
     }
 }
 
+function updateMaelstromMineConstruction() {
+    foreach (ptr, epd : EUDLoopUnit()) {
+        const unit = CUnit(epd);
+        if (unit.unitID == MAELSTROM_ACADEMY_UNIT && unit.is_completed()) {
+            const player = unit.playerID;
+            const slot = findFreeStructureSlot();
+            if (slot >= 0) {
+                unit.unitType = MAELSTROM_MINE_UNIT;
+
+                StructureOwner[slot] = player;
+                StructureType[slot] = STRUCTURE_MAELSTROM_MINE;
+                StructureAlive[slot] = 1;
+                StructureRefund[slot] = 0;
+                StructureArmed[slot] = 0;
+                StructureCooldown[slot] = 0;
+                StructureTriggerRadius[slot] = 3 * 32;
+                StructureEffectRadius[slot] = 4 * 32;
+                StructureEffectTimer[slot] = 0;
+                StructureMaxHp[slot] = MINE_BASE_HP;
+                StructureHp[slot] = MINE_BASE_HP;
+                StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
+                StructureUnit[slot] = epd;
+            }
+        }
+    }
+}
+
 function updateMaelstromMines() {
     foreach (i : py_range(MAX_STRUCTURES)) {
         if (StructureAlive[i] && StructureType[i] == STRUCTURE_MAELSTROM_MINE) {
@@ -195,5 +228,6 @@ function updateMaelstromMines() {
 function updateStructures() {
     // Build/deconstruct is mostly menu/event driven.
     updateStructureRepairs();
+    updateMaelstromMineConstruction();
     updateMaelstromMines();
 }
