@@ -3,6 +3,7 @@
 // Companions are owned by the player and are wiped when that player's Ghost dies.
 
 import core.constants;
+import core.utils;
 import systems.players;
 
 const MAX_COMPANIONS_PER_PLAYER = 6;
@@ -11,6 +12,15 @@ const MAX_COMPANIONS = constants.MAX_PLAYERS * MAX_COMPANIONS_PER_PLAYER;
 const COMPANION_ROBOTIC = 0;
 const COMPANION_TAMED_ZERG = 1;
 const COMPANION_RESURRECTED_ZERG = 2;
+
+// Placeholder unit choices; final DAT allocation TBD (see docs/dat-allocation-notes.md).
+const ROBOTIC_FIGHTER_UNIT = $U("Terran Vulture");
+const ROBOTIC_FIGHTER_MINERAL_COST = 50;
+const ROBOTIC_FIGHTER_GAS_COST = 25;
+const RESURRECTED_ZERG_UNIT = $U("Zerg Zergling");
+const RESURRECT_GAS_COST = 50;
+const COMPANION_FOLLOW_DISTANCE = 4 * 32;
+const ORDER_MOVE = 6;
 
 const CompanionActive = EUDArray(MAX_COMPANIONS);
 const CompanionOwner = EUDArray(MAX_COMPANIONS);
@@ -58,21 +68,44 @@ function registerCompanion(player, unit, companionType) {
 }
 
 function craftRoboticFighter(player) {
-    // TODO: spend mineral/gas cost, create robotic fighter near Ghost, then registerCompanion(player, unit, COMPANION_ROBOTIC).
+    if (getPlayerCompanionCount(player) >= MAX_COMPANIONS_PER_PLAYER) return -1;
+    const p = TrgPlayer(player);
+    if (p.mineral < ROBOTIC_FIGHTER_MINERAL_COST || p.gas < ROBOTIC_FIGHTER_GAS_COST) return -1;
+    p.mineral -= ROBOTIC_FIGHTER_MINERAL_COST;
+    p.gas -= ROBOTIC_FIGHTER_GAS_COST;
+
+    const hero = players.getPlayerHeroUnit(player);
+    hero.setloc($L("_Place"));
+    const unit = utils.createUnitAndGetEpd(1, ROBOTIC_FIGHTER_UNIT, $L("_Place"), player);
+    return registerCompanion(player, unit, COMPANION_ROBOTIC);
 }
 
 function tameZerg(player, target) {
-    // TODO: require stun/low HP/special tool, transfer control, then registerCompanion(player, target, COMPANION_TAMED_ZERG).
+    // Caller is responsible for confirming the target is stunned/eligible
+    // before calling this -- tameZerg only performs the ownership transfer.
+    if (getPlayerCompanionCount(player) >= MAX_COMPANIONS_PER_PLAYER) return -1;
+
+    const unit = CUnit(target);
+    unit.cgive(TrgPlayer(player));
+    return registerCompanion(player, target, COMPANION_TAMED_ZERG);
 }
 
 function resurrectZerg(player, corpseOrMarker) {
-    // TODO: spend gas/biomass, create revived Zerg unit, then registerCompanion(player, unit, COMPANION_RESURRECTED_ZERG).
+    if (getPlayerCompanionCount(player) >= MAX_COMPANIONS_PER_PLAYER) return -1;
+    const p = TrgPlayer(player);
+    if (p.gas < RESURRECT_GAS_COST) return -1;
+    p.gas -= RESURRECT_GAS_COST;
+
+    const marker = CUnit(corpseOrMarker);
+    marker.setloc($L("_Place"));
+    const unit = utils.createUnitAndGetEpd(1, RESURRECTED_ZERG_UNIT, $L("_Place"), player);
+    return registerCompanion(player, unit, COMPANION_RESURRECTED_ZERG);
 }
 
 function destroyPlayerCompanions(player) {
     foreach (i : py_range(MAX_COMPANIONS)) {
         if (CompanionActive[i] && CompanionOwner[i] == player) {
-            // TODO: kill/remove CompanionUnit[i]. These units die with their commander.
+            utils.removeCUnit(CUnit(CompanionUnit[i]));
             CompanionActive[i] = 0;
             CompanionOwner[i] = -1;
             CompanionUnit[i] = 0;
@@ -81,8 +114,21 @@ function destroyPlayerCompanions(player) {
 }
 
 function updateCompanionOrders(player) {
-    // TODO: keep companions near the Ghost by default, allow focused attack/move through menu or command hooks.
-    // The player can control a small squad, but the Ghost remains the commander and failure point.
+    // Default behavior: keep companions near their commander. Manual
+    // attack/move overrides via menu/command hooks are not wired up yet
+    // (CompanionControlMode stays 0 for every companion for now).
+    const hero = players.getPlayerHeroUnit(player);
+    foreach (i : py_range(MAX_COMPANIONS)) {
+        if (CompanionActive[i] && CompanionOwner[i] == player && CompanionControlMode[i] == 0) {
+            const unit = CUnit(CompanionUnit[i]);
+            const dx = unit.posX > hero.posX ? unit.posX - hero.posX : hero.posX - unit.posX;
+            const dy = unit.posY > hero.posY ? unit.posY - hero.posY : hero.posY - unit.posY;
+            if (dx > COMPANION_FOLLOW_DISTANCE || dy > COMPANION_FOLLOW_DISTANCE) {
+                unit.orderID = ORDER_MOVE;
+                unit.orderTarget = hero;
+            }
+        }
+    }
 }
 
 function updateCompanions() {

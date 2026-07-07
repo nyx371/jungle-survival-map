@@ -3,6 +3,7 @@
 
 import core.constants;
 import core.utils;
+import systems.players;
 
 const TERRAN_COMSAT_STATION = $U("Terran Comsat Station"); // resource node placeholder marker (owned by P7)
 const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base unit; likely to be swapped later
@@ -40,8 +41,7 @@ function addMinerals(player, amount) {
 }
 
 function addGas(player, amount) {
-    // TODO: replace with exact player resource mutation helper once harness is compile-tested.
-    // Conceptually: SetResources(CurrentPlayer/player, Add, amount, Gas).
+    SetResources(player, Add, amount, Gas);
 }
 
 function addHarvestResources(player, minerals, gas) {
@@ -50,17 +50,24 @@ function addHarvestResources(player, minerals, gas) {
 }
 
 function loseMostMinerals(player, keepPercent) {
-    // TODO: read current minerals, keep keepPercent, subtract the rest.
     // Death keeps progression but destroys momentum.
+    const p = TrgPlayer(player);
+    p.mineral = p.mineral * keepPercent / 100;
 }
 
 function loseMostGas(player, keepPercent) {
-    // TODO: read current vespene gas, keep keepPercent, subtract the rest.
+    const p = TrgPlayer(player);
+    p.gas = p.gas * keepPercent / 100;
 }
 
 function setPlayerHarvestLockout(player, enabled) {
-    // TODO: while enabled, prevent the player's Ghost weapon from firing.
-    // Likely implemented by order control, weapon swap to harmless dummy, or attack interruption.
+    if (enabled) {
+        // Force weapon cooldown so the Ghost cannot fire while harvesting; naturally
+        // expires if harvesting stops without another refresh.
+        const hero = players.getPlayerHeroUnit(player);
+        hero.groundWeaponCooldown = HARVEST_TICK_FRAMES;
+        hero.airWeaponCooldown = HARVEST_TICK_FRAMES;
+    }
 }
 
 function clearHarvestState(player) {
@@ -126,7 +133,10 @@ function getHarvestGasPerTick(resourceType) {
 }
 
 function getHarvestTargetResourceType(target) {
-    // TODO: map target unit/CUnit/custom value to RESOURCE_* type.
+    // Only Mineral Field nodes exist for now (see initResourceNodes); everything
+    // else defaults to the Tree profile. Extend as more node types are added.
+    const unit = CUnit(target);
+    if (unit.unitType == MINERAL_FIELD_UNIT_TYPE) return RESOURCE_ROCK;
     return RESOURCE_TREE;
 }
 
@@ -135,22 +145,33 @@ function finishHarvestTick(player) {
     const minerals = getHarvestMineralsPerTick(resourceType);
     const gas = getHarvestGasPerTick(resourceType);
     addHarvestResources(player, minerals, gas);
-    // TODO: reduce remaining node value by minerals + gas, deplete/remove at zero.
+    // TODO: reduce remaining node value by minerals + gas, deplete/remove at zero
+    // once resource nodes track their own remaining value.
 }
 
 function updateHarvesting(player) {
-    // TODO: detect right-click/order target. If target is resource, call startHarvest.
+    const hero = players.getPlayerHeroUnit(player);
+    const targetingResource = hero.orderID == players.ORDER_HARVEST_MINERALS && hero.orderTarget != 0;
 
-    if (IsHarvesting[player]) {
-        if (HarvestTick[player] > 0) {
-            HarvestTick[player] -= 1;
-        } else {
-            HarvestTick[player] = HARVEST_TICK_FRAMES;
-            finishHarvestTick(player);
+    if (!IsHarvesting[player]) {
+        if (targetingResource) {
+            startHarvest(player, hero.orderTarget);
         }
+        return;
+    }
 
-        // TODO: cancel harvest if player gives another order, target depletes, or danger interrupt occurs.
-        // Mining is continuous: every HARVEST_TICK_FRAMES, the active node trickles resources.
+    // Cancel harvest if the player gave another order or the target is gone.
+    if (!targetingResource) {
+        clearHarvestState(player);
+        return;
+    }
+
+    // Mining is continuous: every HARVEST_TICK_FRAMES, the active node trickles resources.
+    if (HarvestTick[player] > 0) {
+        HarvestTick[player] -= 1;
+    } else {
+        HarvestTick[player] = HARVEST_TICK_FRAMES;
+        finishHarvestTick(player);
     }
 }
 

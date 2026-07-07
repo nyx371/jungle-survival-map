@@ -175,7 +175,10 @@ function respawnPlayer(player) {
     weapons.applyActiveWeaponDat(player);
     PlayerEnergy[player] = PlayerEnergyMax[player];
     updatePlayerStatus(player);
-    DisplayTextAll("A commando has re-entered the jungle.");
+    const savedCp = getcurpl();
+    setcurpl(player);
+    DisplayText("A commando has re-entered the jungle.");
+    setcurpl(savedCp);
 }
 
 function updatePlayerDeathState(player) {
@@ -206,14 +209,13 @@ function updatePlayerHeroBehavior(player) {
 
     if (hero.orderID == ORDER_HARVEST_MINERALS && hero.orderState == 5) {
         // Prevents the mining-order crash: keep the order timer from running
-        // out, granting minerals on each mining tick instead of letting the
-        // order complete/reset normally.
+        // out instead of letting the order complete/reset normally. Actual
+        // resource yield is handled by resources.eps (updateHarvesting /
+        // finishHarvestTick), which reads this same order/target.
         if (hero.orderTimer > MINING_ORDER_TIMER) {
             hero.orderTimer = MINING_ORDER_TIMER;
         } else if (hero.orderTimer < 2) {
             hero.orderTimer = MINING_ORDER_TIMER;
-            resources.addMinerals(player, 8);
-
             utils.createImageSpriteOnUnit(364, hero.orderTarget);
         }
     }

@@ -1,6 +1,7 @@
 // Team Resource Transfers
 
 import core.constants;
+import systems.resources;
 
 const TransferTarget = EUDArray(constants.MAX_PLAYERS);
 const TransferAmount = EUDArray(constants.MAX_PLAYERS);
@@ -13,8 +14,13 @@ function initTransfers() {
 }
 
 function sendMinerals(fromPlayer, toPlayer, amount) {
-    // TODO: validate amount and sender balance.
-    // TODO: subtract from sender and add to recipient.
+    if (amount <= 0) return;
+
+    const sender = TrgPlayer(fromPlayer);
+    if (sender.mineral < amount) return;
+
+    sender.mineral -= amount;
+    resources.addMinerals(toPlayer, amount);
 }
 
 function updateTransfers() {

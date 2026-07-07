@@ -2,8 +2,12 @@
 // Rare neutral wildlife that flees from Ghosts. Players must stun them before harvesting.
 
 import core.constants;
+import core.utils;
 import systems.resources;
+import systems.players;
 
+const NEURAL_CRITTER_UNIT = $U("Bengalaas");
+const ORDER_MOVE = 6;
 const MAX_NEURAL_CRITTERS = 24;
 const CRITTER_STATE_IDLE = 0;
 const CRITTER_STATE_FLEEING = 1;
@@ -22,6 +26,7 @@ const CritterFleeTimer = EUDArray(MAX_NEURAL_CRITTERS);
 const CritterStunTimer = EUDArray(MAX_NEURAL_CRITTERS);
 const CritterReward = EUDArray(MAX_NEURAL_CRITTERS);
 const CritterThreatPlayer = EUDArray(MAX_NEURAL_CRITTERS);
+const CritterUnit = EUDArray(MAX_NEURAL_CRITTERS);
 
 function initCritters() {
     foreach (i : py_range(MAX_NEURAL_CRITTERS)) {
@@ -31,17 +36,44 @@ function initCritters() {
         CritterStunTimer[i] = 0;
         CritterReward[i] = CRITTER_BASE_REWARD;
         CritterThreatPlayer[i] = -1;
+        CritterUnit[i] = 0;
     }
 }
 
+function findFreeCritterSlot() {
+    foreach (i : py_range(MAX_NEURAL_CRITTERS)) {
+        if (!CritterActive[i]) return i;
+    }
+    return -1;
+}
+
 function spawnNeuralCritter(x, y, reward) {
-    // TODO: find free critter slot and create a neutral critter/resource unit at x/y.
-    // TODO: store CUnit pointer/position once the harness has CUnit helpers.
+    const slot = findFreeCritterSlot();
+    if (slot < 0) return -1;
+
+    setloc($L("_Place"), x, y);
+    const unit = utils.createUnitAndGetEpd(1, NEURAL_CRITTER_UNIT, $L("_Place"), P7);
+
+    CritterActive[slot] = 1;
+    CritterState[slot] = CRITTER_STATE_IDLE;
+    CritterFleeTimer[slot] = 0;
+    CritterStunTimer[slot] = 0;
+    CritterReward[slot] = reward;
+    CritterThreatPlayer[slot] = -1;
+    CritterUnit[slot] = unit;
+    return slot;
 }
 
 function isPlayerNearCritter(player, critter) {
-    // TODO: distance check from player hero to critter CUnit.
-    return 0;
+    if (!players.HeroAlive[player]) return 0;
+
+    const hero = players.getPlayerHeroUnit(player);
+    const unit = CUnit(CritterUnit[critter]);
+    const dx = unit.posX > hero.posX ? unit.posX - hero.posX : hero.posX - unit.posX;
+    const dy = unit.posY > hero.posY ? unit.posY - hero.posY : hero.posY - unit.posY;
+    if (dx > CRITTER_DETECT_RADIUS || dy > CRITTER_DETECT_RADIUS) return 0;
+    if (dx * dx + dy * dy > CRITTER_DETECT_RADIUS * CRITTER_DETECT_RADIUS) return 0;
+    return 1;
 }
 
 function tryStunCritter(player, critter) {
@@ -66,12 +98,23 @@ function tryHarvestCritter(player, critter) {
 }
 
 function updateCritterFlee(critter) {
-    // TODO: issue move/order away from CritterThreatPlayer[critter].
+    const threatPlayer = CritterThreatPlayer[critter];
+    if (threatPlayer >= 0) {
+        const unit = CUnit(CritterUnit[critter]);
+        const hero = players.getPlayerHeroUnit(threatPlayer);
+        const dx = unit.posX - hero.posX;
+        const dy = unit.posY - hero.posY;
+        unit.orderID = ORDER_MOVE;
+        unit.orderTargetX = unit.posX + dx;
+        unit.orderTargetY = unit.posY + dy;
+    }
+
     CritterFleeTimer[critter] += 1;
     if (CritterFleeTimer[critter] >= CRITTER_ESCAPE_FRAMES) {
         CritterState[critter] = CRITTER_STATE_ESCAPED;
         CritterActive[critter] = 0;
-        // TODO: remove or relocate critter unit.
+        utils.removeCUnit(CUnit(CritterUnit[critter]));
+        CritterUnit[critter] = 0;
     }
 }
 
