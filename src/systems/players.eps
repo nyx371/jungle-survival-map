@@ -10,9 +10,13 @@ import systems.resources;
 import systems.structures;
 import systems.upgrades;
 import systems.weapons;
+import systems.mobs;
 
 const RESPAWN_DELAY_FRAMES = 12 * constants.FRAMES_PER_GAME_SECOND;
 const DEATH_RESOURCE_KEEP_PERCENT = 20;
+const RESPAWN_SEARCH_RADIUS = 15 * 32;
+const RESPAWN_MIN_MOB_DISTANCE = 8 * 32;
+const RESPAWN_ATTEMPTS = 5;
 
 const HeroAlive = EUDArray(constants.MAX_PLAYERS);
 const RespawnTimer = EUDArray(constants.MAX_PLAYERS);
@@ -39,35 +43,62 @@ const PlayerEnergy = EUDArray(constants.MAX_PLAYERS);
 const PlayerEnergyMax = EUDArray(constants.MAX_PLAYERS);
 const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
 
+function pickRespawnPosition() {
+    // Random point near the map's "G" drop zone, retried a few times to
+    // avoid dropping the player directly on top of an active mob cluster.
+    const baseX, baseY = getlocTL($L("G"));
+
+    foreach (attempt : py_range(RESPAWN_ATTEMPTS)) {
+        const x = baseX + f_rand() % (RESPAWN_SEARCH_RADIUS * 2) - RESPAWN_SEARCH_RADIUS;
+        const y = baseY + f_rand() % (RESPAWN_SEARCH_RADIUS * 2) - RESPAWN_SEARCH_RADIUS;
+
+        var safe = 1;
+        foreach (i : py_range(mobs.MAX_ACTIVE_MOBS)) {
+            if (mobs.MobActive[i]) {
+                const mob = CUnit(mobs.MobUnit[i]);
+                const mdx = x > mob.posX ? x - mob.posX : mob.posX - x;
+                const mdy = y > mob.posY ? y - mob.posY : mob.posY - y;
+                if (mdx < RESPAWN_MIN_MOB_DISTANCE && mdy < RESPAWN_MIN_MOB_DISTANCE) {
+                    safe = 0;
+                }
+            }
+        }
+        if (safe) return x, y;
+    }
+    return baseX, baseY;
+}
+
 function createPlayerHero(player) {
     // PlayerHeroUnits is a compile-time list; it can only be indexed by a
     // compile-time constant, so dispatch on the runtime player id via switch.
     // Case count must match MAX_PLAYERS in core/constants.eps.
-    // Heroes spawn at the map location named "G".
+    const x, y = pickRespawnPosition();
+    setloc($L("_Place"), x, y);
+
     switch (player) {
     case 0:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[0], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[0], $L("_Place"), player);
         }
         break;
     case 1:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[1], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[1], $L("_Place"), player);
         }
         break;
     case 2:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[2], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[2], $L("_Place"), player);
         }
         break;
     case 3:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[3], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[3], $L("_Place"), player);
         }
         break;
     case 4:
         if (playerexist(player)) { // only for active (non-vacant) player slots
-            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[4], $L("G"), player);
+            PlayerHeroCUnit[player] = utils.createUnitAndGetEpd(1, dat_registry.PlayerHeroUnits[4], $L("_Place"), player);
         }
         break;
     }
@@ -172,8 +203,11 @@ function markPlayerDead(player) {
 }
 
 function respawnPlayer(player) {
-    // TODO: pick a random valid respawn position away from mob clusters.
-    // TODO: remove/clean up any surviving previous hero unit before creating a new one.
+    const oldHero = CUnit(PlayerHeroCUnit[player]);
+    if (oldHero != 0) {
+        utils.removeCUnit(oldHero);
+    }
+
     createPlayerHero(player);
     HeroAlive[player] = 1;
     upgrades.applyHeroUpgradeDat(player);

@@ -23,7 +23,7 @@ const MOB_MARKER_OWNER = P7;
 const MOB_OWNER_PLAYER = P8;
 const MIN_SPAWN_DISTANCE_TO_PLAYER = 5 * 32;
 
-const MAX_ACTIVE_MOBS = 200;
+const MAX_ACTIVE_MOBS = 48; // kept modest: this cap is scanned by both mob despawn logic and player respawn-safety checks
 const MobUnit = EUDArray(MAX_ACTIVE_MOBS);
 const MobArea = EUDArray(MAX_ACTIVE_MOBS);
 const MobActive = EUDArray(MAX_ACTIVE_MOBS);

@@ -1,6 +1,7 @@
 // Deep Menu Router
 
 import core.constants;
+import systems.players;
 
 const MENU_CLOSED = 0;
 const MENU_MAIN = 1;
@@ -15,11 +16,20 @@ const MenuPage = EUDArray(constants.MAX_PLAYERS);
 const MenuCursor = EUDArray(constants.MAX_PLAYERS);
 const MenuContext = EUDArray(constants.MAX_PLAYERS);
 
+// Set by whatever concrete input detection (hotkeys/build-queue buttons) gets
+// wired up in the map/GUI layer later; this file only consumes these signals.
+const MenuNavigateDelta = EUDArray(constants.MAX_PLAYERS);
+const MenuConfirmPressed = EUDArray(constants.MAX_PLAYERS);
+const MenuBackPressed = EUDArray(constants.MAX_PLAYERS);
+
 function initMenus() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         MenuPage[p] = MENU_CLOSED;
         MenuCursor[p] = 0;
         MenuContext[p] = 0;
+        MenuNavigateDelta[p] = 0;
+        MenuConfirmPressed[p] = 0;
+        MenuBackPressed[p] = 0;
     }
 }
 
@@ -33,11 +43,49 @@ function closeMenu(player) {
 }
 
 function handleMenuInput(player) {
-    // TODO: route command/card/death-counter input to current menu page.
+    if (MenuNavigateDelta[player] != 0) {
+        MenuCursor[player] += MenuNavigateDelta[player];
+        if (MenuCursor[player] < 0) MenuCursor[player] = 0;
+        MenuNavigateDelta[player] = 0;
+    }
+
+    if (MenuBackPressed[player]) {
+        MenuBackPressed[player] = 0;
+        if (MenuPage[player] == MENU_MAIN) {
+            closeMenu(player);
+        } else {
+            openMenu(player, MENU_MAIN);
+        }
+    }
+
+    if (MenuConfirmPressed[player]) {
+        MenuConfirmPressed[player] = 0;
+        // TODO: dispatch the confirm action for MenuPage[player]/MenuCursor[player]
+        // once concrete per-page option lists exist (weapon list, upgrade list, etc.).
+    }
 }
 
 function renderMenu(player) {
-    // TODO: display concise local menu text.
+    const savedCp = getcurpl();
+    setcurpl(player);
+
+    if (MenuPage[player] == MENU_MAIN) {
+        players.Screen.printfAt(2, "Menu: Main ({})", MenuCursor[player]);
+    } else if (MenuPage[player] == MENU_WEAPONS) {
+        players.Screen.printfAt(2, "Menu: Weapons ({})", MenuCursor[player]);
+    } else if (MenuPage[player] == MENU_HERO_UPGRADES) {
+        players.Screen.printfAt(2, "Menu: Hero Upgrades ({})", MenuCursor[player]);
+    } else if (MenuPage[player] == MENU_WEAPON_UPGRADES) {
+        players.Screen.printfAt(2, "Menu: Weapon Upgrades ({})", MenuCursor[player]);
+    } else if (MenuPage[player] == MENU_STRUCTURES) {
+        players.Screen.printfAt(2, "Menu: Structures ({})", MenuCursor[player]);
+    } else if (MenuPage[player] == MENU_TRANSFER) {
+        players.Screen.printfAt(2, "Menu: Transfer ({})", MenuCursor[player]);
+    } else if (MenuPage[player] == MENU_OPTIONS) {
+        players.Screen.printfAt(2, "Menu: Options ({})", MenuCursor[player]);
+    }
+
+    setcurpl(savedCp);
 }
 
 function updateMenus() {
