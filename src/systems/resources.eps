@@ -52,26 +52,39 @@ const RESOURCE_IMAGES = EUDArray(RESOURCE_TYPE_COUNT);
 const MINING_SFX_PER_TYPE = 4;
 const RESOURCE_MINING_SFX = EUDArray(RESOURCE_TYPE_COUNT);
 
+// Stock SCV repair sounds, played in order on every mining chop on top of
+// the resource-specific sound above -- a complementary tool loop. Not
+// resource-specific, so it's a single flat set with one shared cycle per player.
+const MINING_TOOL_SFX = [
+    StringBuffer("sound/terran/SCV/EDrRep00.wav"),
+    StringBuffer("sound/terran/SCV/EDrRep01.wav"),
+    StringBuffer("sound/terran/SCV/EDrRep02.wav"),
+    StringBuffer("sound/terran/SCV/EDrRep03.wav"),
+    StringBuffer("sound/terran/SCV/EDrRep04.wav"),
+];
+const MINING_TOOL_SFX_COUNT = 5;
+const MiningToolCycle = EUDArray(constants.MAX_PLAYERS);
+
 function buildResourceConfig() {
     RESOURCE_CONFIG[RESOURCE_TREE] = [4, 1, 500, 48];    // 3.0s per yield
     RESOURCE_IMAGES[RESOURCE_TREE] = [632, 634, 636];
-    RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit\\wav\\wood1.ogg"), StringBuffer("staredit\\wav\\wood2.ogg"), StringBuffer("staredit\\wav\\wood3.ogg"), StringBuffer("staredit\\wav\\wood4.ogg")];
+    RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit/wav/wood1.ogg"), StringBuffer("staredit/wav/wood2.ogg"), StringBuffer("staredit/wav/wood3.ogg"), StringBuffer("staredit/wav/wood4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_BUSH] = [2, 2, 500, 32];    // 2.0s -- quick, low yield
     RESOURCE_IMAGES[RESOURCE_BUSH] = [618, 620, 622];
-    RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit\\wav\\grass1.ogg"), StringBuffer("staredit\\wav\\grass2.ogg"), StringBuffer("staredit\\wav\\grass3.ogg"), StringBuffer("staredit\\wav\\grass4.ogg")];
+    RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit/wav/grass1.ogg"), StringBuffer("staredit/wav/grass2.ogg"), StringBuffer("staredit/wav/grass3.ogg"), StringBuffer("staredit/wav/grass4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_ROCK] = [6, 1, 500, 64];    // 4.0s -- slow, high yield
     RESOURCE_IMAGES[RESOURCE_ROCK] = [649, 650, 651];
-    RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
+    RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_CRYSTAL] = [2, 5, 500, 80]; // 5.0s -- slow, gas-heavy
     RESOURCE_IMAGES[RESOURCE_CRYSTAL] = [607, 607, 607];
-    RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
+    RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_MAGMA] = [3, 3, 500, 64];   // 4.0s
     RESOURCE_IMAGES[RESOURCE_MAGMA] = [600, 600, 600];
-    RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
+    RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
 }
 
 // Terran Covert Ops sprite. Its image field is mutated right before each
@@ -160,6 +173,13 @@ function playMiningSfx(player, resourceType) {
     utils.playSoundArray(RESOURCE_MINING_SFX[resourceType], player, MINING_SFX_PER_TYPE);
 }
 
+// Complementary SCV tool sound, cycled in order across mining chops.
+function playMiningToolSfx(player) {
+    utils.playSoundArrayAt(MINING_TOOL_SFX, player, MiningToolCycle[player]);
+    MiningToolCycle[player] += 1;
+    if (MiningToolCycle[player] >= MINING_TOOL_SFX_COUNT) MiningToolCycle[player] = 0;
+}
+
 function initResourceNodes() {
     const found = EUDQueue(MAX_RESOURCE_NODE_MARKERS)();
     foreach (unit : EUDLoopPlayerCUnit(P7)) {
@@ -194,6 +214,9 @@ function initResources() {
     initResourceConfig();
     initResourceNodeImages();
     initResourceNodes();
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        MiningToolCycle[p] = 0;
+    }
 }
 
 function getHarvestTargetResourceType(target) {

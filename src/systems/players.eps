@@ -340,6 +340,7 @@ function harvestChop(player) {
     const target = getPlayerHeroUnit(player).orderTarget;
     const resourceType = resources.getHarvestTargetResourceType(HarvestTarget[player]);
     resources.playMiningSfx(player, resourceType);
+    resources.playMiningToolSfx(player);
     utils.createImageSpriteOnUnit(526, target);
 }
 
