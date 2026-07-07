@@ -12,8 +12,7 @@ const WEAPON_ACID = 4;
 const WEAPON_COUNT = 5;
 
 const ActiveWeapon = EUDArray(constants.MAX_PLAYERS);
-// TODO: represent UnlockedWeapon[player][weapon] with flattened array.
-const UnlockedWeapon = EUDArray(constants.MAX_PLAYERS * WEAPON_COUNT);
+const UnlockedWeapon = EUDArray(constants.MAX_PLAYERS * WEAPON_COUNT); // flattened [player][weapon]
 function weaponIndex(player, weaponType) {
     return player * WEAPON_COUNT + weaponType;
 }
@@ -55,7 +54,8 @@ function applyActiveWeaponDat(player) {
             weapon.damage = 8;
             weapon.cooldown = 6;
             weapon.maxRange = 4 * 32;
-            // TODO: choose behavior/explosion type for area denial.
+            weapon.splashInnerRadius = 32;
+            weapon.splashMiddleRadius = 64;
         }
         break;
     }
@@ -84,7 +84,8 @@ function applyActiveWeaponDat(player) {
             weapon.damage = 8;
             weapon.cooldown = 6;
             weapon.maxRange = 4 * 32;
-            // TODO: choose behavior/explosion type for area denial.
+            weapon.splashInnerRadius = 32;
+            weapon.splashMiddleRadius = 64;
         }
         break;
     }
@@ -113,7 +114,8 @@ function applyActiveWeaponDat(player) {
             weapon.damage = 8;
             weapon.cooldown = 6;
             weapon.maxRange = 4 * 32;
-            // TODO: choose behavior/explosion type for area denial.
+            weapon.splashInnerRadius = 32;
+            weapon.splashMiddleRadius = 64;
         }
         break;
     }
@@ -142,7 +144,8 @@ function applyActiveWeaponDat(player) {
             weapon.damage = 8;
             weapon.cooldown = 6;
             weapon.maxRange = 4 * 32;
-            // TODO: choose behavior/explosion type for area denial.
+            weapon.splashInnerRadius = 32;
+            weapon.splashMiddleRadius = 64;
         }
         break;
     }
@@ -171,7 +174,8 @@ function applyActiveWeaponDat(player) {
             weapon.damage = 8;
             weapon.cooldown = 6;
             weapon.maxRange = 4 * 32;
-            // TODO: choose behavior/explosion type for area denial.
+            weapon.splashInnerRadius = 32;
+            weapon.splashMiddleRadius = 64;
         }
         break;
     }
@@ -198,10 +202,33 @@ function switchWeapon(player, weaponType) {
     }
 }
 
+const WEAPON_CRAFT_COST_SHOTGUN = 75;
+const WEAPON_CRAFT_COST_SNIPER = 100;
+const WEAPON_CRAFT_COST_EXPLOSIVE = 100;
+const WEAPON_CRAFT_COST_ACID = 90;
+
+function getWeaponCraftCost(weaponType) {
+    if (weaponType == WEAPON_SHOTGUN) return WEAPON_CRAFT_COST_SHOTGUN;
+    if (weaponType == WEAPON_SNIPER) return WEAPON_CRAFT_COST_SNIPER;
+    if (weaponType == WEAPON_EXPLOSIVE) return WEAPON_CRAFT_COST_EXPLOSIVE;
+    if (weaponType == WEAPON_ACID) return WEAPON_CRAFT_COST_ACID;
+    return 0; // WEAPON_RIFLE starts unlocked, free
+}
+
 function craftWeapon(player, weaponType) {
-    // TODO: check mineral cost from weapon definition table.
+    if (isWeaponUnlocked(player, weaponType)) {
+        switchWeapon(player, weaponType);
+        return 1;
+    }
+
+    const cost = getWeaponCraftCost(weaponType);
+    const p = TrgPlayer(player);
+    if (p.mineral < cost) return 0;
+
+    p.mineral -= cost;
     UnlockedWeapon[weaponIndex(player, weaponType)] = 1;
     switchWeapon(player, weaponType);
+    return 1;
 }
 
 function updateWeapons() {
