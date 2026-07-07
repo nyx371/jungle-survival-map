@@ -1,30 +1,59 @@
-// Audio Feedback: hurt sounds, heartbeat, Ghost breathing.
+// Audio Feedback: hurt sounds, footsteps, low-HP heartbeat.
 
 import core.constants;
+import core.utils;
 import systems.players;
 
 const LOW_HP_PERCENT = 30;
-// TODO: swap in a dedicated heartbeat asset once one is imported to the map;
-// reusing the hurt sound keeps the two distinct only by cooldown cadence.
-const HURT_SOUND_WAV = "sound\\terran\\marine\\tmadth00.wav";
-const HEARTBEAT_WAV = HURT_SOUND_WAV;
+
+// Hurt: randomized between variants, rate-limited so taking damage doesn't
+// spam it (a single hit or a burst both trigger at most one per cooldown).
+const HURT_SFX = [
+    StringBuffer("staredit\wav\player_hurt_01.ogg"),
+    StringBuffer("staredit\wav\player_hurt_02.ogg"),
+    StringBuffer("staredit\wav\player_hurt_03.ogg"),
+    StringBuffer("staredit\wav\player_hurt_04.ogg"),
+];
+const HURT_SFX_COUNT = 4;
 const HURT_SOUND_COOLDOWN = 3 * constants.FRAMES_PER_GAME_SECOND;
+
+// Footsteps: randomized, played on a cadence while the hero has a move or
+// attack-move order (i.e. is actually walking).
+const STEP_SFX = [
+    StringBuffer("staredit\wav\player_step_grass_01.ogg"),
+    StringBuffer("staredit\wav\player_step_grass_02.ogg"),
+    StringBuffer("staredit\wav\player_step_grass_03.ogg"),
+    StringBuffer("staredit\wav\player_step_grass_04.ogg"),
+    StringBuffer("staredit\wav\player_step_grass_05.ogg"),
+    StringBuffer("staredit\wav\player_step_grass_06.ogg"),
+];
+const STEP_SFX_COUNT = 6;
+const STEP_SOUND_INTERVAL = 8; // frames between footsteps while moving
+
+const ORDER_MOVE = 6;         // Move / Ignore
+const ORDER_ATTACK_MOVE = 14; // Attack Move
+
+// Low-HP heartbeat still uses a placeholder WAV (no dedicated asset yet).
+const HEARTBEAT_WAV = "sound\terran\marine\tmadth00.wav";
 const HEARTBEAT_COOLDOWN = 2 * constants.FRAMES_PER_GAME_SECOND;
 
 const LastHp = EUDArray(constants.MAX_PLAYERS);
 const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
+const StepSoundTimer = EUDArray(constants.MAX_PLAYERS);
 const HeartbeatTimer = EUDArray(constants.MAX_PLAYERS);
 
 function initAudio() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         LastHp[p] = 0;
         HurtSoundTimer[p] = 0;
+        StepSoundTimer[p] = 0;
         HeartbeatTimer[p] = 0;
     }
 }
 
 function clearAudioDangerState(player) {
     HurtSoundTimer[player] = 0;
+    StepSoundTimer[player] = 0;
     HeartbeatTimer[player] = 0;
 }
 
@@ -35,26 +64,34 @@ function updateAudioForPlayer(player) {
     const maxHp = players.getPlayerHeroMaxHp(player);
     const currentHp = hero.hp;
 
-    const savedCp = getcurpl();
-    setcurpl(player);
-
-    if (currentHp < LastHp[player]) {
-        if (HurtSoundTimer[player] == 0) {
-            PlayWAV(HURT_SOUND_WAV);
-            HurtSoundTimer[player] = HURT_SOUND_COOLDOWN;
-        }
+    // Hurt sound: fire once when HP drops, then hold off for the cooldown.
+    if (currentHp < LastHp[player] && HurtSoundTimer[player] == 0) {
+        utils.playSoundArray(HURT_SFX, player, HURT_SFX_COUNT);
+        HurtSoundTimer[player] = HURT_SOUND_COOLDOWN;
     }
     if (HurtSoundTimer[player] > 0) HurtSoundTimer[player] -= 1;
 
+    // Footsteps while moving (Move / Attack Move), on a step cadence.
+    if (hero.orderID == ORDER_MOVE || hero.orderID == ORDER_ATTACK_MOVE) {
+        if (StepSoundTimer[player] == 0) {
+            utils.playSoundArray(STEP_SFX, player, STEP_SFX_COUNT);
+            StepSoundTimer[player] = STEP_SOUND_INTERVAL;
+        }
+    }
+    if (StepSoundTimer[player] > 0) StepSoundTimer[player] -= 1;
+
+    // Low-HP heartbeat.
     if (maxHp > 0 && currentHp * 100 / maxHp <= LOW_HP_PERCENT) {
         if (HeartbeatTimer[player] == 0) {
+            const savedCp = getcurpl();
+            setcurpl(player);
             PlayWAV(HEARTBEAT_WAV);
+            setcurpl(savedCp);
             HeartbeatTimer[player] = HEARTBEAT_COOLDOWN;
         }
     }
     if (HeartbeatTimer[player] > 0) HeartbeatTimer[player] -= 1;
 
-    setcurpl(savedCp);
     LastHp[player] = currentHp;
 }
 

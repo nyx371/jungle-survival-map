@@ -38,3 +38,15 @@ function random(n) {
     if (dwrand() % (100) < n) return true;
     return false;
 }
+
+// Plays one random entry of a runtime-indexable sound EUDArray on [player]'s
+// machine. soundArray is typed EUDArray so a value read out of another
+// EUDArray (e.g. a per-type sound set) can be re-indexed at runtime.
+function playSoundArray(soundArray : EUDArray, player, count) {
+    if (soundArray == 0) return;
+    const savedCp = getcurpl();
+    setcurpl(player);
+    const idx = f_rand() % count;
+    StringBuffer.cast(soundArray[idx]).Play();
+    setcurpl(savedCp);
+}

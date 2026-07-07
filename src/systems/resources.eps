@@ -156,20 +156,8 @@ function getHarvestTimer(resourceType) {
     return EUDArray.cast(RESOURCE_CONFIG[resourceType]).get(RES_CFG_YIELD_FRAMES);
 }
 
-// Plays one random entry of a runtime-indexable sound EUDArray on [player]'s
-// machine. soundArray is typed EUDArray so a value read out of another
-// EUDArray (RESOURCE_MINING_SFX[resourceType]) can be re-indexed at runtime.
-function playSoundArray(soundArray : EUDArray, player, count) {
-    if (soundArray == 0) return;
-    const savedCp = getcurpl();
-    setcurpl(player);
-    const idx = f_rand() % count;
-    StringBuffer.cast(soundArray[idx]).Play();
-    setcurpl(savedCp);
-}
-
 function playMiningSfx(player, resourceType) {
-    playSoundArray(RESOURCE_MINING_SFX[resourceType], player, MINING_SFX_PER_TYPE);
+    utils.playSoundArray(RESOURCE_MINING_SFX[resourceType], player, MINING_SFX_PER_TYPE);
 }
 
 function initResourceNodes() {
