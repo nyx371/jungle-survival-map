@@ -1,0 +1,3044 @@
+/*
+
+Next version
+- [x] Add storage
+- [x] Add shared buildings
+- [_] Fix shared buildings edge cases
+- [x] Update map layout to favor all directions + more blueprints
+- [_] Fix Defilers and guardian attacks are bugged
+- [x] Make enemy units AI better
+- [x] Experiment with randomized resource placement
+- [x] Re-place technology disks
+- [x] Re-place spawners
+- [x] Repair heals gradually over time, not instantly
+- [x] Explore adding overlays blocking resource mining that you have to destroy
+- [_] Utilize Kiyanite resource
+- [_] Utilize Hollowstone resource
+- [_] Remove Biomass Resource
+- [_] Rebalance upgrades
+- [_] Rebalance abilities
+- [_] Rebalance structures
+- [_] Revisit enemy ai walls
+- [_] Revisit enemy ai scv spazzed out
+- [_] Add more titanium and andesite
+Later
+- [_] Add notification for hungry and starving
+- [_] Add support to resurrect allies
+- [_] Consider whether to make camera follow an option
+- [_] Consider how to make Processing require more player activity
+- [_] Consider harvest faster when rested?
+- [_] Consider Mob balancing: Frequency, HP, Armor, Damage
+- [_] Consider adding consistent day count somewhere
+- [_] Fix ABLT_SELF_MINESPEED when already mining a resource <----
+- [_] Consider adding back neary requirement for structures (PSI req)
+- [_] Consider adding caves with perpetual darkness and mobs
+- [_] Tweak Resources balancing: Quantity, Speed, Frequency
+- [_] Tweak Hero balancing: HP, energy
+- [_] Tweak Building balancing: Cost, HP
+- [_] Tweak Tech balancing: Frequency, Cost
+- [_] Tweak Abilities balancing: Cooldown
+- [_] Add day X always on
+- [_] Make self destruct get some resources back
+- [_] Make it possible to repair turrets
+- [_] Mobs attack open walls
+- [x] Make fire burn faster- valuealbe to upg
+- [_] GunTurret no collision
+- [_] Make hide spawn more often / make mning speed more interesting
+- [x] Make enemy AI work better actually harder
+- [_] Explore prodecurally generated resource regions
+- [_] Droids Crash if SCV dies and there are drones out
+Potential
+- [_] Add indicator of current mining speed
+ */
+const CONST_EXPIRY = 1705248014 + 14 * 86400; // import time; int(time.time())
+const CONST_CAN_EXPIRE = false;
+const CONST_DEV_MODE = true;
+
+const PlayerHeroUnit = PVariable();
+const PlayerSelectedUnit = PVariable();
+const PlayerLight = PVariable();
+const PlayerScreenWidth = PVariable();
+const PlayerScreenHeight = PVariable();
+const PlayerSelectedResourceType = PVariable();
+const PlayerHarvestingItemCount = PVariable();
+const PlayerSpecificLocations = [$L("_P1"), $L("_P2"), $L("_P3"), $L("_P4"), $L("_P5"), $L("_P6"), $L("_P7"), $L("_P8")];
+const PlayerRangeLocations = [$L("_P1Range"), $L("_P2Range"), $L("_P3Range"), $L("_P4Range"), $L("_P5Range")];
+const PlayerLMouseDown = PVariable();
+const PlayerRMouseDown = PVariable();
+const PlayerF7KeyDown = PVariable();
+const PlayerF8KeyDown = PVariable();
+const PlayerF9KeyDown = PVariable();
+const PlayerF12KeyDown = PVariable();
+const PlayerFKeyDown = PVariable();
+const PlayerAltKeyPress = PVariable();
+const PlayerCtrlKeyPress = PVariable();
+const PlayerShiftKeyPress = PVariable();
+const PlayerButtonSetChanged = EUDLightBool();
+const PlayerButtonSet = PVariable();
+EUDRegisterObjectToNamespace("PlayerLMouseDown", PlayerLMouseDown);
+EUDRegisterObjectToNamespace("PlayerRMouseDown", PlayerRMouseDown);
+EUDRegisterObjectToNamespace("PlayerF7KeyDown", PlayerF7KeyDown);
+EUDRegisterObjectToNamespace("PlayerF8KeyDown", PlayerF8KeyDown);
+EUDRegisterObjectToNamespace("PlayerF9KeyDown", PlayerF9KeyDown);
+EUDRegisterObjectToNamespace("PlayerF12KeyDown", PlayerF12KeyDown);
+EUDRegisterObjectToNamespace("PlayerFKeyDown", PlayerFKeyDown);
+EUDRegisterObjectToNamespace("PlayerAltKeyPress", PlayerAltKeyPress);
+EUDRegisterObjectToNamespace("PlayerCtrlKeyPress", PlayerCtrlKeyPress);
+EUDRegisterObjectToNamespace("PlayerShiftKeyPress", PlayerShiftKeyPress);
+EUDRegisterObjectToNamespace("PlayerButtonSetChanged", PlayerButtonSetChanged);
+EUDRegisterObjectToNamespace("PlayerButtonSet", PlayerButtonSet);
+const PlayerInventoryPage = PVariable();
+const PlayerStoragePage = PVariable();
+const PlayerSoundCycleCounter = PVariable();
+const PlayerHarvestSoundTimer = PVariable();
+const PlayerScreenFollowDisabled = PVariable();
+const PlayerHeroPortraitIndex = PVariable();
+
+const PlayerSelfAbilitiesAvailable = PVariable();
+const PlayerSelfAbilityID = PVariable();
+const PlayerSelfAbilityCooldown = PVariable();
+const PlayerSelfAbilityTimer = PVariable();
+
+const PlayerTargetAbilitiesAvailable = PVariable();
+const PlayerTargetAbilityID = PVariable();
+const PlayerTargetAbilityCooldown = PVariable();
+const PlayerTargetAbilityTimer = PVariable();
+
+const PlayerEnergy = PVariable();
+const PlayerStatus = PVariable();
+const PlayerDebugMode = PVariable();
+
+const PlayerResources = PVariable();
+const PlayerTechnology = PVariable();
+const PlayerHasResourcesToConsume = PVariable();
+const PlayerResourcesToConsume = PVariable();
+
+const Screen = StringBuffer(256);
+const SelectionAddresses = [0x6284E8, 0x628518, 0x628548, 0x628578, 0x6285A8, 0x6285D8];
+
+const FPS = 24;
+const MSPF = 42;
+const DU = 256;
+const TILE = 32;
+const PLAYER_NEUTRAL = $P8;
+const PLAYER_CRITTERS = $P10;
+const PLAYER_BLOCKADE = $P10;
+const PLAYER_SHARED_STRUCTURE = $P8;
+const PLAYER_STORAGE = PLAYER_SHARED_STRUCTURE;
+const PLAYER_HARVEST_SOUND_TIMER_MAX = 13;
+
+const LOC_ANYWHERE = $L("Anywhere");
+const LOC_RANGE = $L("_Range");
+const LOC_ATTACK_RANGE = $L("_AttackRange");
+const LOC_REPLACE = $L("_Replace");
+const LOC_SCREEN = $L("_Screen");
+const LOC_OFFSCREEN = $L("_Offscreen");
+const LOC_FX = $L("_Fx");
+const LOC_DEV_AREA = $L("_DevArea");
+
+// const UNIT_RESOURCE_PLACEHOLDER1 = $U("Map Revealer");
+const UNIT_RESOURCE_PLACEHOLDER1 = $U("Nuclear Missile");
+const UNIT_RESOURCE_PLACEHOLDER2 = $U("Nuclear Missile");
+const UNIT_RESOURCE = $U("Mineral Field (Type 1)");
+const UNIT_HERO = $U("Terran SCV");
+const UNIT_TECH = $U("Protoss Pylon");
+const UNIT_OVERLAY = $U("Disruption Web");
+const UNIT_LIGHT_OVERLAY = $U("Dark Swarm");
+const UNIT_MOB_SPAWNER = $U("Zerg Beacon");
+const UNIT_CRITTER_SPAWNER = $U("Protoss Beacon");
+const UNIT_DROID = $U("Protoss Probe");
+const UNIT_RESOURCE_BLOCKADE_SMALL = $U("Zerg Cerebrate");
+const UNIT_RESOURCE_BLOCKADE_LARGE = $U("Zerg Cerebrate Daggoth");
+
+const STRING_RESOURCE_UNIT = UNIT_RESOURCE+1;
+const STRING_HERO_UNIT = UNIT_HERO+1;
+const STRING_RESOURCE_LABEL = 796;
+const STRING_STRU_DESCRIPTION_LABEL = 831;
+const STRING_HERO_DESCRIPTION_LABEL = 1303;
+
+const SPRITE_OVERLAY = 503;
+
+const CONST_DAY_HOUR_START = 6;
+const CONST_DAY_NIGHT_START = 22;
+const CONST_DAY_LENGTH = 6;
+const CONST_CYCLE_LENGTH_FRAMES = 8 * 60 * FPS;
+
+const CONST_INV_WEAPON = 129;
+const CONST_INV_ICON_DEFAULT = 321;
+const CONST_INV_ICON_ACTIVE = 321;
+const CONST_INV_TOOLTIP_STRING = 997;
+const CONST_STORAGE_TOOLTIP_STRING = 994;
+const CONST_INV_ICON_TIMER = 4;
+const CONST_HERO_HP_MAX = 100*DU;
+const CONST_HERO_ENERGY_MAX = 250*DU;
+const CONST_HERO_HP_REGEN_HIGH_ENERGY = 1*DU/2;
+const CONST_HERO_HP_DRAIN_EMPTY_ENERGY = DU/5;
+const CONST_HERO_ENERGY_DRAIN = DU/4;
+const CONST_HERO_ENERGY_REGEN_FURNACE = DU/10;
+const CONST_HERO_ENERGY_RESTED_LEVEL = CONST_HERO_ENERGY_MAX - CONST_HERO_ENERGY_MAX/5;
+const CONST_MINESPEED_TIMER = 8;
+
+const CONST_LIGHTPOST_HP = 50*DU;
+const CONST_FURNACE_HP = 100*DU;
+const CONST_WALL_HP = 100*DU;
+const CONST_WALL_REPAIR_REGEN = 1*DU/3;
+const CONST_LIGHT_SOURCE_RESTORE_COST = 10;
+const CONST_WALL_REPAIR_COST = 2;
+const CONST_LIGHT_SOURCE_HP_DRAIN = 1*DU/4;
+const CONST_LIGHT_SOURCE_HP_MIN = 10*DU;
+const CONST_FURNACE_REGEN_RANGE = 4*TILE;
+const CONST_TECH_ACQUISITION_RANGE = 2*TILE;
+const CONST_MOB_AGGRO_RANGE_MIN_TILES = 5;
+const CONST_STRU_CONTROL_RANGE_MP = TILE*3;
+const CONST_STRU_CONTROL_RANGE_SP = TILE*6;
+
+const CONST_PORTRAIT_OPTIONS = [65535,10,6,13,90,15,93,17,3,94,12,5,14,8,9,91,11,92,16];
+
+const SOUND_EAT = [
+	StringBuffer("staredit\\wav\\eat1.ogg"),
+	StringBuffer("staredit\\wav\\eat2.ogg"),
+	StringBuffer("staredit\\wav\\eat1.ogg"),
+	StringBuffer("staredit\\wav\\eat2.ogg"),
+];
+
+const SOUND_HARVEST_BUSH = [
+	StringBuffer("staredit\\wav\\grass1.ogg"),
+	StringBuffer("staredit\\wav\\grass2.ogg"),
+	StringBuffer("staredit\\wav\\grass3.ogg"),
+	StringBuffer("staredit\\wav\\grass4.ogg"),
+];
+
+const SOUND_HARVEST_WOOD = [
+	StringBuffer("staredit\\wav\\wood1.ogg"),
+	StringBuffer("staredit\\wav\\wood2.ogg"),
+	StringBuffer("staredit\\wav\\wood3.ogg"),
+	StringBuffer("staredit\\wav\\wood4.ogg"),
+];
+
+const SOUND_HARVEST_STONE = [
+	StringBuffer("staredit\\wav\\stone1.ogg"),
+	StringBuffer("staredit\\wav\\stone2.ogg"),
+	StringBuffer("staredit\\wav\\stone3.ogg"),
+	StringBuffer("staredit\\wav\\stone4.ogg"),
+];
+
+const SOUND_HARVEST_ORGANIC = [
+	StringBuffer("staredit\\wav\\grass1.ogg"),
+	StringBuffer("staredit\\wav\\grass2.ogg"),
+	StringBuffer("staredit\\wav\\grass3.ogg"),
+	StringBuffer("staredit\\wav\\grass4.ogg"),
+];
+
+const CONST_ORDER_DECOLLIDE = 151;
+const CONST_ORDER_TARGET_ABILITY = 186;
+const CONST_ORDER_ROAM = 187;
+const CONST_ORDER_MINE_NEARBY = 85;
+const CONST_ORDER_MINE = 87;
+
+const BTN_HIDDEN = 0;
+const BTN_ENABLED = 1;
+const BTN_DISABLED = 2;
+
+const OPT_1 = 71;
+const OPT_2 = 72;
+const OPT_3 = 73;
+const OPT_4 = 74;
+const OPT_5 = 75;
+const OPT_6 = 76;
+const OPT_7 = 77;
+const OPT_8 = 78;
+const OPT_9 = 79;
+const OPT_10 = 80;
+const OPT_11 = 81;
+const OPT_12 = 82;
+const OPT_13 = 83;
+const OPT_14 = 84;
+const OPT_15 = 85;
+const OPT_16 = 86;
+const OPT_17 = 87;
+const OPT_18 = 88;
+const OPT_DESTROY = 0;
+
+const UPGR_ARMOR = 0;
+const UPGR_WEAPON = 1;
+const UPGR_MINING = 2;
+const UPGR_LIGHT = 3;
+const UPGR_STRU_ARMOR = 4;
+const UPGR_ENERGY = 5;
+const UPGR_COUNT = 6;
+
+const UPGR_TOOLTIP = EUDArray(UPGR_COUNT);
+const UPGR_UPGRADE = EUDArray(UPGR_COUNT);
+const UPGR_COST = EUDArray(UPGR_COUNT);
+const UPGR_MAX_LEVEL = EUDArray(UPGR_COUNT);
+const UPGR_COST_INCREASE = EUDArray(UPGR_COUNT);
+const CONST_UPGR_STRING_START_INDEX = 1020;
+
+const CONST_CONSUME_BTN_INDEX = 0;
+const CONST_SELF_ABILITY_BTN_INDEX = 1;
+const CONST_TARGET_ABILITY_BTN_INDEX = 2;
+
+const STATUS_NORMAL = 0;
+const STATUS_RESTED = 1;
+const STATUS_HUNGRY = 2;
+const STATUS_STARVING = 3;
+const STATUS_STRINGS = [
+	Db(""),
+	Db("Rested"),
+	Db("\x11Hungry"),
+	Db("\x06Starving"),
+];
+const CONST_STATUS_HUNGRY_LEVEL = CONST_HERO_ENERGY_MAX/4;
+
+const RESTORE_ENERGY_STRING_INDEX = 1004;
+const RESTORE_ENERGY_STRING_TOOLTIP_PREFIX = Db("q\x01(\x03Q\x01) Restore 15 energy\nHealth regenerates slowly when you are Rested (>200 energy), and drains when you are Starving (0 energy)");
+
+const ABLT_SELF_HEAL = 0;
+const ABLT_SELF_SPEED = 1;
+const ABLT_SELF_SHIELD = 2;
+const ABLT_SELF_MINESPEED = 3;
+const ABLT_SELF_VISION = 4;
+const ABLT_SELF_RECALL = 5;
+const ABLT_SELF_DROIDS = 6;
+const ABLT_TARGET_STUN = 7;
+const ABLT_TARGET_DAMAGE = 8;
+const ABLT_TARGET_REGROW = 9;
+const ABLT_TARGET_SLOW = 10;
+const ABLT_TARGET_BLINK = 11;
+const ABLT_COUNT = 12;
+
+const ABLT_TYPE_SELFCAST = 0;
+const ABLT_TYPE_TARGET = 1;
+const CONST_ALBT_STRING_START_INDEX = 1110;
+
+const ABLT_TYPE = EUDArray(ABLT_COUNT);
+const ABLT_TOOLTIP = EUDArray(ABLT_COUNT);
+const ABLT_RESEARCH_TOOLTIP = EUDArray(ABLT_COUNT);
+const ABLT_ICON = EUDArray(ABLT_COUNT);
+const ABLT_COOLDOWN = EUDArray(ABLT_COUNT);
+const ABLT_TIMER = EUDArray(ABLT_COUNT);
+const ABLT_ACTIVATE_SOUND = EUDArray(ABLT_COUNT);
+const ABLT_DEACTIVATE_SOUND = EUDArray(ABLT_COUNT);
+const ABLT_ENERGY_COST = EUDArray(ABLT_COUNT);
+const ABLT_COST = EUDArray(ABLT_COUNT);
+const ABLT_SELF_TOOLTIP_PREFIX = Db("w\x01(\x03W\x01) ");
+const ABLT_TARGET_TOOLTIP_PREFIX = Db("e\x01(\x03E\x01) ");
+const ABLT_TOOLTIP_SUFFIX = Db("\n\n\x03Alt\x01 + \x03Click\x01 to cycle through your available abilities");
+const ABLT_SELF_TOOLTIP_CD_PREFIX = Db("(W) ");
+const ABLT_TARGET_TOOLTIP_CD_PREFIX = Db("(E) ");
+const ABLT_TOOLTIP_CD_SUFFIX = Db("\n\nCooldown: ");
+
+const CONST_ABLT_SELF_SPEED_DEFAULT = 1280;
+const CONST_ABLT_SELF_SPEED_FAST = 2280;
+
+const STR_RES_DISPLAY = Db(512); 
+
+const DEFAULT_NIGHT_LIGHT_MIN = 20;
+const DEFAULT_NIGHT_LIGHT_L1 = 23;
+const DEFAULT_NIGHT_LIGHT_L2 = 26;
+const DEFAULT_NIGHT_LIGHT_L3 = 29;
+const DEFAULT_NIGHT_LIGHT_L4 = 31;
+const DEFAULT_DAY_LIGHT = 31;
+
+const RES_LEAVES = 0;
+const RES_WOOD = 1;
+const RES_STONE = 2;
+const RES_BERRIES = 3;
+
+const RES_BOARDS = 4;
+const RES_CONCRETE = 5;
+const RES_ANDESITE = 6;
+const RES_TITANIUM = 7;
+const RES_BONE = 8;
+
+const RES_KYANITE = 9;
+const RES_HOLLOWSTONE = 10;
+const RES_OBSIDIAN = 11;
+const RES_BIOMASS = 12;
+
+const RES_MAGMA = 13;
+const RES_HIDE = 14;
+const RES_RESIDUE = 15;
+const RES_EPIDERMIS = 16;
+
+const RES_FRAGMENT = 17;
+const RES_SHARD = 18;
+const RES_CORE = 19;
+
+const RES_UNUSED20 = 20;
+const RES_UNUSED21 = 21;
+const RES_UNUSED22 = 22;
+const RES_UNUSED23 = 23;
+const RES_UNUSED24 = 24;
+const RES_UNUSED25 = 25;
+const RES_UNUSED26 = 26;
+const RES_UNUSED27 = 27;
+
+const RES_SPAWN_MAP = [
+	RES_LEAVES,
+	RES_WOOD,
+	RES_STONE,
+	RES_TITANIUM,
+	RES_ANDESITE,
+	RES_BONE,
+	RES_KYANITE,
+	RES_HOLLOWSTONE,
+	RES_OBSIDIAN,
+	RES_BIOMASS,
+	RES_MAGMA,
+];
+
+const RES_COUNT = 28;
+const RES_NULL = RES_COUNT;
+const RES_HARVEST_SOUND_COUNT = 4;
+
+const INV_TOOLTIP_LINES = 4;
+const CONST_INV_PAGES = (RES_COUNT/INV_TOOLTIP_LINES)-1;
+const INV_TOOLTIP_STRING = Db(1024);
+
+const RES_TOTAL_AMOUNT = EUDArray(RES_COUNT);
+const RES_HARVESTING_QUANTITY = EUDArray(RES_COUNT);
+const RES_HARVESTING_TIMER = EUDArray(RES_COUNT);
+const RES_IMAGES = EUDArray(RES_COUNT);
+const RES_SPAWNABLE = EUDArray(RES_COUNT);
+const RES_UNIT_STRING = EUDArray(RES_COUNT);
+const RES_LABEL_STRING = EUDArray(RES_COUNT);
+const RES_NAME = EUDArray(RES_COUNT);
+const RES_SECONDARY_RES = EUDArray(RES_COUNT);
+const RES_SECONDARY_RES_FREQUENCY = EUDArray(RES_COUNT);
+const RES_HARVEST_SOUND = EUDArray(RES_COUNT);
+const RES_ENERGY_REGEN = EUDArray(RES_COUNT);
+const RES_INITIALLY_BLOCKED = EUDArray(RES_COUNT);
+const RES_BLOCKADE_OFFSET = EUDArray(RES_COUNT);
+
+const BIOME_ROCKY_JUNGLE = [RES_LEAVES, RES_WOOD, RES_STONE, RES_NULL, RES_NULL, RES_NULL];
+const BIOME_PLAIN_JUNGLE = [RES_LEAVES, RES_WOOD, RES_NULL, RES_NULL, RES_NULL, RES_NULL];
+const BIOME_BONE_FIELD = [RES_LEAVES, RES_WOOD, RES_STONE, RES_BONE, RES_NULL, RES_NULL];
+const BIOME_ANDESITE_FIELD = [RES_LEAVES, RES_NULL, RES_STONE, RES_TITANIUM, RES_NULL, RES_NULL];
+const BIOME_TITANIUM_FIELD = [RES_LEAVES, RES_NULL, RES_STONE, RES_TITANIUM, RES_NULL, RES_NULL];
+const BIOME_HOLLOWSTONE_FIELD = [RES_LEAVES, RES_WOOD, RES_STONE, RES_ANDESITE, RES_HOLLOWSTONE, RES_NULL];
+const BIOME_KYANITE_FIELD = [RES_LEAVES, RES_NULL, RES_STONE, RES_ANDESITE, RES_KYANITE, RES_NULL];
+const BIOME_OBSIDIAN_FIELD = [RES_LEAVES, RES_WOOD, RES_STONE, RES_ANDESITE, RES_HOLLOWSTONE, RES_OBSIDIAN];
+const BIOME_MAGMA_FIELD = [RES_LEAVES, RES_WOOD, RES_NULL, RES_ANDESITE, RES_KYANITE, RES_MAGMA];
+// const BIOME_TEST_SETUP = [RES_MAGMA, RES_MAGMA, RES_MAGMA, RES_MAGMA, RES_MAGMA, RES_MAGMA];
+const BIOME_TEST_SETUP = [RES_NULL, RES_NULL, RES_NULL, RES_NULL, RES_NULL, RES_NULL];
+//const BIOME_TEST_SETUP = [RES_LEAVES, RES_WOOD, RES_STONE, RES_ANDESITE, RES_HOLLOWSTONE, RES_MAGMA];
+
+const BIOME_TEST_MODE = false;
+
+const BIOME_TYPES = [BIOME_ROCKY_JUNGLE, BIOME_PLAIN_JUNGLE,
+	BIOME_BONE_FIELD,BIOME_ANDESITE_FIELD, BIOME_TITANIUM_FIELD,
+	BIOME_HOLLOWSTONE_FIELD, BIOME_KYANITE_FIELD,
+	BIOME_OBSIDIAN_FIELD, BIOME_MAGMA_FIELD];
+
+const BIOME_TYPE_BOOST = 10000;
+const BIOME_TYPE_WEIGHTS = [400, 300, 200, 200, 200, 50+BIOME_TYPE_BOOST, 50+BIOME_TYPE_BOOST, 10+BIOME_TYPE_BOOST, 10+BIOME_TYPE_BOOST];
+
+const BIOME_TYPE_MIN_SPAWN_COUNT = [3, 3, 3, 3, 3, 4, 4, 4, 4];
+const BIOME_TYPE_SPAWN_COUNT = EUDArray(BIOME_TYPES.length);
+
+const BIOME_START_LOCATION_ID = 35;
+const BIOME_END_LOCATION_ID = 80;
+const BIOME_COUNT = 1 + BIOME_END_LOCATION_ID - BIOME_START_LOCATION_ID;
+const BIOME_ID_TYPE_MAP = EUDArray(BIOME_COUNT);
+
+const CONV_LIMESTONE_LIMENITE = 0;
+const CONV_WOOD_BOARDS = 1;
+const CONV_2 = 2;
+const CONV_3 = 3;
+const CONV_4 = 4;
+const CONV_5 = 5;
+const CONV_6 = 6;
+const CONV_7 = 7;
+const CONV_COUNT = 8;
+
+const CONST_CONV_STRING_START_INDEX = 1130;
+
+const CONV_TOOLTIP = EUDArray(CONV_COUNT);
+const CONV_RES_INPUTS = EUDArray(CONV_COUNT);
+const CONV_RES_INPUT_COSTS = EUDArray(CONV_COUNT);
+const CONV_RES_OUTPUTS = EUDArray(CONV_COUNT);
+
+const STRU_WALL = $U("Terran Supply Depot");
+const STRU_OWALL = $U("Terran Academy");
+const STRU_FURNACE = $U("Terran Missile Turret");
+const STRU_LIGHTPOST = $U("Terran Science Facility");
+const STRU_TOWER = $U("Terran Bunker");
+const STRU_GTRAP = $U("Floor Gun Trap");
+const STRU_MTRAP = $U("Floor Missile Trap");
+const STRU_WORKSTATION = $U("Terran Machine Shop");
+const STRU_LAB = $U("Terran Comsat Station");
+const STRU_CONVERTER = $U("Terran Control Tower");
+const STRU_GREENHOUSE = $U("Terran Covert Ops");
+const STRU_MINERALDRILL = $U("Terran Physics Lab");
+const STRU_GROWBED = $U("Terran Armory");
+const STRU_INCUBATOR = $U("Terran Barracks");
+const STRU_STORAGE = $U("Terran Factory");
+const STRU_MININGBASE = $U("Terran Command Center");
+const STRU_COUNT = 228;
+
+const STRU_COST = EUDArray(STRU_COUNT);
+const STRU_TOOLTIP = EUDArray(STRU_COUNT);
+const STRU_DESCRIPTION = EUDArray(STRU_COUNT);
+const STRU_BUTTON_STRING = EUDArray(STRU_COUNT);
+
+const MOB_GRAZER = $U("Rhynadon");
+const MOB_STALKER = $U("Bengalaas");
+const MOB_STINGER = $U("Scantid");
+const MOB_CHIRPER = $U("Kakaru");
+const MOB_CRAWLER = $U("Ragnasaur");
+const MOB_ROAMER = $U("Ursadon");
+const MOB_T1_BROODLING = $U("Zerg Broodling");
+const MOB_T2_DEFILER = $U("Zerg Defiler");
+const MOB_T3_QUEEN = $U("Kukulza (Guardian)");
+const MOB_T4_MUTALISK = $U("Zerg Mutalisk");
+const MOB_T5_GUARDIAN = $U("Zerg Guardian");
+const MOB_T6_DEVOURER = $U("Zerg Devourer");
+const MOB_T7_OVERLORD = $U("Zerg Overlord");
+const MOB_T8_SCOURGE = $U("Zerg Scourge");
+
+const MOB_LOOT_1 = EUDArray(228);
+const MOB_LOOT_2 = EUDArray(228);
+const MOB_LOOT_2_CHANCE = EUDArray(228);
+
+const MOB_CRITTER_TYPES = [
+	MOB_GRAZER,
+	MOB_STALKER,
+	MOB_STINGER,
+	MOB_CHIRPER,
+	MOB_CRAWLER,
+	MOB_ROAMER,
+];
+
+const SPAWNER_TIERS = [
+	MOB_T1_BROODLING,
+	MOB_T2_DEFILER,
+	MOB_T3_QUEEN,
+	MOB_T4_MUTALISK,
+	MOB_T5_GUARDIAN,
+	MOB_T6_DEVOURER,
+	//MOB_T7_OVERLORD,
+];
+const CONST_SPAWNER_TIER_LEVELUP = 10;
+const CONST_DEFAULT_SPAWNER_MAX_HP = 100*256;
+const CONST_DEFAULT_MOB_SPAWN_SPEED = 10*256;
+const CONST_DEFAULT_CRITTER_SPAWN_SPEED = 10*256;
+
+const CONST_DEFAULT_CRITTER_SPAWN_LIMIT = 4;
+const CONST_SPAWNER_RANGE_CHECK = 2*TILE;
+
+const TECH_LIGHTPOST = 0;
+const TECH_GTRAP = 1; 
+const TECH_TOWER = 2; 
+const TECH_MTRAP = 3; 
+const TECH_SELF_HEAL = 4;
+const TECH_TARGET_SLOW = 5; 
+const TECH_SELF_SHIELD = 6;
+const TECH_TARGET_STUN = 7; 
+const TECH_SELF_SPEED = 8; 
+const TECH_GROWBED = 9; 
+const TECH_TARGET_DAMAGE = 10; 
+const TECH_SELF_MINESPEED = 11; 
+const TECH_SELF_VISION = 12; 
+const TECH_TARGET_REGROW = 13;
+const TECH_SELF_DROIDS = 14; 
+const TECH_TARGET_BLINK = 15;
+const TECH_SELF_RECALL = 16; 
+const TECH_INCUBATOR = 17; 
+const TECH_GREENHOUSE = 18; 
+const TECH_MINERALDRILL = 19;
+const TECH_UNKNOWN20 = 20; 
+const TECH_UNKNOWN21 = 21; 
+const TECH_UNKNOWN22 = 22; 
+const TECH_UNKNOWN23 = 23;
+const TECH_UNKNOWN24 = 24; 
+const TECH_UNKNOWN25 = 25; 
+const TECH_UNKNOWN26 = 26; 
+const TECH_UNKNOWN27 = 27; 
+const TECH_UNKNOWN28 = 28;
+const TECH_UNKNOWN29 = 29;
+const TECH_COUNT = 30;
+const TECH_NULL = TECH_COUNT;
+
+const TECH_STRING = EUDArray(TECH_COUNT);
+const TECH_DESCRIPTION = EUDArray(TECH_COUNT);
+const TECH_STRUCTURE = EUDArray(TECH_COUNT);
+
+const BIOME_ID_TECH_MAP = [
+	TECH_SELF_MINESPEED,TECH_SELF_MINESPEED,TECH_SELF_MINESPEED,
+	TECH_TARGET_DAMAGE,TECH_TARGET_DAMAGE,TECH_TARGET_DAMAGE,
+	TECH_SELF_SPEED,TECH_SELF_SPEED,TECH_SELF_SPEED,
+	TECH_TOWER,TECH_TOWER,TECH_TOWER,
+	TECH_TARGET_STUN,TECH_TARGET_STUN,TECH_TARGET_STUN,
+	TECH_GROWBED,TECH_GROWBED,TECH_GROWBED,TECH_GROWBED,
+	TECH_MTRAP,TECH_MTRAP,TECH_MTRAP,TECH_MTRAP,TECH_MTRAP,
+	TECH_TARGET_SLOW,TECH_TARGET_SLOW,TECH_TARGET_SLOW,TECH_TARGET_SLOW,
+	TECH_SELF_SHIELD,TECH_SELF_SHIELD,TECH_SELF_SHIELD,TECH_SELF_SHIELD,
+	TECH_GTRAP,TECH_GTRAP,TECH_GTRAP,TECH_GTRAP,TECH_GTRAP,TECH_GTRAP,
+	TECH_SELF_HEAL,TECH_SELF_HEAL,TECH_SELF_HEAL,TECH_SELF_HEAL,
+	TECH_LIGHTPOST,TECH_LIGHTPOST,TECH_LIGHTPOST,TECH_LIGHTPOST,
+];
+
+const CONST_AGGRO_TIMER_MAX = 24;
+
+var Time = CONST_CYCLE_LENGTH_FRAMES/24*CONST_DAY_HOUR_START;
+var Expired = false;
+var Night = false;
+var AM = false;
+var Day = 1;
+var Multiplayer = false;
+var AggroTimer = 0;
+var UpdatePlayerScreenDimensionsTimer = 0;
+var ReplacedInitialResources = false;
+var MobSpawnLimit = 5;
+var MobAggroRange = CONST_MOB_AGGRO_RANGE_MIN_TILES*TILE;
+var StructureControlRange = CONST_STRU_CONTROL_RANGE_MP;
+
+function SelectAbility(playerID, abilityID);
+function ReplaceUnit(unit:CUnit, unitType);
+function ReplaceUnitWithOffset(unit:CUnit, unitType, yOffset);
+function CreateOverlayUnit(unit:CUnit, imageID, playerID);
+function UpdatePlayerTooltips(playerID);
+function GetPlayerResourceAmount(playerID, resourceType);
+function AddPlayerResourceAmount(playerID, resourceType, amount, display);
+function CreateCUnit(unitType, playerID, location);
+function SelectUnit(unit: CUnit, playerID);
+function GiveUnit(unit : CUnit, playerID);
+function SetupRandomizedBiomes();
+
+function abs(n) {
+	return n.AtLeast(1<<31) ? -n : n;
+}
+
+function Rand(n) {
+	if (dwrand() % (100) < n) return true;
+	return false;
+}
+
+function Setup() {
+	SetupRandomizedBiomes();
+	// Resources
+	foreach(i : py_range(0, RES_COUNT)) {
+		RES_SECONDARY_RES[i] = RES_COUNT;
+		RES_HARVESTING_QUANTITY[i] = 1;
+	}
+
+	foreach(i : py_range(OPT_1, OPT_18+1)) {
+	    wwrite(0x65FD00 + 15240 + i * 2, 0);
+	    wwrite(0x65FD00 + 0 + i * 2, 0);
+	    wwrite(0x65FD00 + 1832 + i * 2, 30000);
+	    bwrite(0x65FD00 + 16360 + i * 1, 0);
+	}
+
+	RES_NAME[RES_LEAVES] = Db("Leaves");
+	RES_UNIT_STRING[RES_LEAVES] = Db("Bush");
+	RES_LABEL_STRING[RES_LEAVES] = Db("Leaves & Berries");
+	RES_SPAWNABLE[RES_LEAVES] = true;
+	RES_IMAGES[RES_LEAVES] = [618,620,622,618];	
+	RES_TOTAL_AMOUNT[RES_LEAVES] = 25;
+	RES_HARVESTING_TIMER[RES_LEAVES] = 32;
+	RES_HARVESTING_QUANTITY[RES_LEAVES] = 1;
+	RES_SECONDARY_RES[RES_LEAVES] = RES_BERRIES;
+	RES_SECONDARY_RES_FREQUENCY[RES_LEAVES] = 3;
+	RES_HARVEST_SOUND[RES_LEAVES] = SOUND_HARVEST_BUSH;
+
+	RES_NAME[RES_WOOD] = Db("Wood");
+	RES_UNIT_STRING[RES_WOOD] = Db("Tree");
+	RES_LABEL_STRING[RES_WOOD] = Db("Wood & Leaves");
+	RES_SPAWNABLE[RES_WOOD] = true;
+	RES_IMAGES[RES_WOOD] = [632,634,636,638];
+	RES_TOTAL_AMOUNT[RES_WOOD] = 50;
+	RES_HARVESTING_TIMER[RES_WOOD] = 48;
+	RES_HARVESTING_QUANTITY[RES_WOOD] = 1;
+	RES_SECONDARY_RES[RES_WOOD] = RES_LEAVES;
+	RES_SECONDARY_RES_FREQUENCY[RES_WOOD] = 4;
+	RES_HARVEST_SOUND[RES_WOOD] = SOUND_HARVEST_WOOD;
+
+	RES_NAME[RES_STONE] = Db("Stone");
+	RES_UNIT_STRING[RES_STONE] = Db("Stone formation");
+	RES_LABEL_STRING[RES_STONE] = Db("Stone");
+	RES_SPAWNABLE[RES_STONE] = true;
+	RES_IMAGES[RES_STONE] = [654,655,654,655];
+	RES_TOTAL_AMOUNT[RES_STONE] = 75;
+	RES_HARVESTING_TIMER[RES_STONE] = 64;
+	RES_HARVEST_SOUND[RES_STONE] = SOUND_HARVEST_STONE;
+	RES_SECONDARY_RES[RES_STONE] = RES_ANDESITE;
+	RES_SECONDARY_RES_FREQUENCY[RES_STONE] = 15;
+
+	RES_NAME[RES_BONE] = Db("Bone");
+	RES_UNIT_STRING[RES_BONE] = Db("Bone");
+	RES_LABEL_STRING[RES_BONE] = Db("Bone");
+	RES_HARVEST_SOUND[RES_BONE] = SOUND_HARVEST_STONE;
+	RES_SPAWNABLE[RES_BONE] = true;
+	RES_TOTAL_AMOUNT[RES_BONE] = 100;
+	RES_HARVESTING_TIMER[RES_BONE] = 128;
+	RES_IMAGES[RES_BONE] = [601,602,603];
+
+	RES_NAME[RES_ANDESITE] = Db("Andesite");
+	RES_UNIT_STRING[RES_ANDESITE] = Db("Andesite formation");
+	RES_LABEL_STRING[RES_ANDESITE] = Db("Andesite");
+	RES_SPAWNABLE[RES_ANDESITE] = true;
+	RES_IMAGES[RES_ANDESITE] = [604,605,606,604];
+	RES_TOTAL_AMOUNT[RES_ANDESITE] = 100;
+	RES_HARVESTING_TIMER[RES_ANDESITE] = 96;
+	RES_HARVEST_SOUND[RES_ANDESITE] = SOUND_HARVEST_STONE;
+	RES_SECONDARY_RES[RES_ANDESITE] = RES_TITANIUM;
+	RES_SECONDARY_RES_FREQUENCY[RES_ANDESITE] = 10;
+
+	RES_NAME[RES_TITANIUM] = Db("Titanium");
+	RES_UNIT_STRING[RES_TITANIUM] = Db("Titanium formation");
+	RES_LABEL_STRING[RES_TITANIUM] = Db("Titanium");
+	RES_SPAWNABLE[RES_TITANIUM] = true;
+	RES_IMAGES[RES_TITANIUM] = [649,650,651,649];
+	RES_TOTAL_AMOUNT[RES_TITANIUM] = 100;
+	RES_HARVESTING_TIMER[RES_TITANIUM] = 96;
+	RES_HARVEST_SOUND[RES_TITANIUM] = SOUND_HARVEST_STONE;
+
+	RES_NAME[RES_KYANITE] = Db("Kyanite");
+	RES_UNIT_STRING[RES_KYANITE] = Db("Kyanite Fragment");
+	RES_LABEL_STRING[RES_KYANITE] = Db("Kyanite");
+	RES_HARVEST_SOUND[RES_KYANITE] = SOUND_HARVEST_STONE;
+	RES_SPAWNABLE[RES_KYANITE] = true;
+	RES_TOTAL_AMOUNT[RES_KYANITE] = 100;
+	RES_HARVESTING_TIMER[RES_KYANITE] = 128;
+	RES_INITIALLY_BLOCKED[RES_KYANITE] = true;
+	RES_BLOCKADE_OFFSET[RES_KYANITE] = -24;
+	RES_IMAGES[RES_KYANITE] = [593,595,597,595];
+
+	RES_NAME[RES_HOLLOWSTONE] = Db("Hollowstone");
+	RES_UNIT_STRING[RES_HOLLOWSTONE] = Db("Hollowstone Fragment");
+	RES_LABEL_STRING[RES_HOLLOWSTONE] = Db("Hollowstone");
+	RES_HARVEST_SOUND[RES_HOLLOWSTONE] = SOUND_HARVEST_STONE;
+	RES_SPAWNABLE[RES_HOLLOWSTONE] = true;
+	RES_TOTAL_AMOUNT[RES_HOLLOWSTONE] = 100;
+	RES_HARVESTING_TIMER[RES_HOLLOWSTONE] = 128;
+	RES_INITIALLY_BLOCKED[RES_HOLLOWSTONE] = true;	
+	RES_IMAGES[RES_HOLLOWSTONE] = [656,656,656,656];	
+
+	RES_NAME[RES_OBSIDIAN] = Db("Obsidian");
+	RES_UNIT_STRING[RES_OBSIDIAN] = Db("Obsidian formation");
+	RES_LABEL_STRING[RES_OBSIDIAN] = Db("Obsidian");
+	RES_SPAWNABLE[RES_OBSIDIAN] = true;
+	RES_IMAGES[RES_OBSIDIAN] = [607,608,609,607];
+	RES_TOTAL_AMOUNT[RES_OBSIDIAN] = 50;
+	RES_HARVESTING_TIMER[RES_OBSIDIAN] = 96;
+	RES_HARVEST_SOUND[RES_OBSIDIAN] = SOUND_HARVEST_STONE;
+	RES_SECONDARY_RES[RES_OBSIDIAN] = RES_MAGMA;
+	RES_INITIALLY_BLOCKED[RES_OBSIDIAN] = true;	
+	RES_SECONDARY_RES_FREQUENCY[RES_OBSIDIAN] = 25;
+
+	RES_NAME[RES_MAGMA] = Db("Magma");
+	RES_UNIT_STRING[RES_MAGMA] = Db("Magma formation");
+	RES_LABEL_STRING[RES_MAGMA] = Db("Magma");
+	RES_SPAWNABLE[RES_MAGMA] = true;
+	RES_IMAGES[RES_MAGMA] = [600,600,600,600];
+	RES_TOTAL_AMOUNT[RES_MAGMA] = 75;
+	RES_HARVESTING_TIMER[RES_MAGMA] = 164;
+	RES_INITIALLY_BLOCKED[RES_MAGMA] = true;
+	RES_BLOCKADE_OFFSET[RES_MAGMA] = -32;
+	RES_HARVEST_SOUND[RES_MAGMA] = SOUND_HARVEST_STONE;
+
+	RES_NAME[RES_BERRIES] = Db("Berries");
+	RES_ENERGY_REGEN[RES_BERRIES] = 15*256;
+	RES_NAME[RES_HIDE] = Db("Hide");
+	RES_NAME[RES_RESIDUE] = Db("Dim Residue");
+	RES_NAME[RES_EPIDERMIS] = Db("Epidermis");
+	RES_NAME[RES_FRAGMENT] = Db("Ebon Fragment");
+	RES_NAME[RES_SHARD] = Db("Achromatium");
+	RES_NAME[RES_CORE] = Db("Tenebritium");	
+	
+	RES_NAME[RES_BOARDS] = Db("Boards");
+	RES_NAME[RES_CONCRETE] = Db("Concrete");
+	RES_NAME[RES_BIOMASS] = Db("Biomass");	
+	RES_NAME[RES_UNUSED20] = Db("Unknown #21");
+	RES_NAME[RES_UNUSED21] = Db("Unknown #21");
+	RES_NAME[RES_UNUSED22] = Db("Unknown #22");
+	RES_NAME[RES_UNUSED23] = Db("Unknown #23");
+	RES_NAME[RES_UNUSED24] = Db("Unknown #24");
+	RES_NAME[RES_UNUSED25] = Db("Unknown #25");
+	RES_NAME[RES_UNUSED26] = Db("Unknown #26");
+	RES_NAME[RES_UNUSED27] = Db("Unknown #27");
+
+	//Add players
+	foreach(playerID : py_range($P1, $P6)) {
+		PlayerResources[playerID] = EUDArray(RES_COUNT);
+		PlayerResourcesToConsume[playerID] = EUDArray(RES_COUNT);
+		PlayerTechnology[playerID] = EUDArray(TECH_COUNT);
+		PlayerSelfAbilitiesAvailable[playerID] = EUDArray(ABLT_COUNT);
+		PlayerTargetAbilitiesAvailable[playerID] = EUDArray(ABLT_COUNT);
+		PlayerSelfAbilityID[playerID] = ABLT_COUNT;
+		PlayerTargetAbilityID[playerID] = ABLT_COUNT;
+		PlayerSelectedResourceType[playerID] = RES_COUNT;
+	}
+	PlayerResources[PLAYER_STORAGE] = EUDArray(RES_COUNT);
+
+	foreach(i : py_range(0, STRU_COUNT)) {
+		STRU_COST[i] = EUDArray(RES_COUNT);		
+		MOB_LOOT_1[i] = EUDArray(RES_COUNT);
+		MOB_LOOT_2[i] = EUDArray(RES_COUNT);
+	}
+
+	foreach(i : py_range(0, ABLT_COUNT)) {
+		ABLT_COST[i] = EUDArray(RES_COUNT);
+	}
+
+	foreach(i : py_range(0, UPGR_COUNT)) {
+		UPGR_COST[i] = EUDArray(RES_COUNT);
+		UPGR_COST_INCREASE[i] = EUDArray(RES_COUNT);
+	}
+
+	// Upgrades
+	UPGR_TOOLTIP[UPGR_ARMOR] = Db("q\x01(\x03Q\x01) Upgrade Armor");
+	UPGR_UPGRADE[UPGR_ARMOR] = 0;	
+	UPGR_MAX_LEVEL[UPGR_ARMOR] = 10;
+	EUDArray.cast(UPGR_COST[UPGR_ARMOR]).set(RES_TITANIUM, 5);
+	EUDArray.cast(UPGR_COST[UPGR_ARMOR]).set(RES_HIDE, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_ARMOR]).set(RES_TITANIUM, 0);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_ARMOR]).set(RES_HIDE, 15);
+
+	UPGR_TOOLTIP[UPGR_WEAPON] = Db("w\x01(\x03W\x01) Upgrade Weapon");
+	UPGR_UPGRADE[UPGR_WEAPON] = 7;
+	UPGR_MAX_LEVEL[UPGR_WEAPON] = 10;
+	EUDArray.cast(UPGR_COST[UPGR_WEAPON]).set(RES_TITANIUM, 5);
+	EUDArray.cast(UPGR_COST[UPGR_WEAPON]).set(RES_ANDESITE, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_WEAPON]).set(RES_TITANIUM, 0);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_WEAPON]).set(RES_ANDESITE, 15);
+		
+	UPGR_TOOLTIP[UPGR_MINING] = Db("a\x01(\x03A\x01) Upgrade Mining Efficiency");
+	UPGR_UPGRADE[UPGR_MINING] = 8;
+	UPGR_MAX_LEVEL[UPGR_MINING] = 7;
+	EUDArray.cast(UPGR_COST[UPGR_MINING]).set(RES_TITANIUM, 10);
+	EUDArray.cast(UPGR_COST[UPGR_MINING]).set(RES_HIDE, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_MINING]).set(RES_HIDE, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_MINING]).set(RES_OBSIDIAN, 1);
+
+	UPGR_TOOLTIP[UPGR_LIGHT] = Db("s\x01(\x03S\x01) Upgrade Fire Endurance");
+	UPGR_UPGRADE[UPGR_LIGHT] = 2;
+	UPGR_MAX_LEVEL[UPGR_LIGHT] = 5;
+	EUDArray.cast(UPGR_COST[UPGR_LIGHT]).set(RES_TITANIUM, 5);
+	EUDArray.cast(UPGR_COST[UPGR_LIGHT]).set(RES_MAGMA, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_LIGHT]).set(RES_TITANIUM, 0);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_LIGHT]).set(RES_MAGMA, 5);
+
+	UPGR_TOOLTIP[UPGR_STRU_ARMOR] = Db("z\x01(\x03Z\x01) Upgrade Structure Armor");
+	UPGR_UPGRADE[UPGR_STRU_ARMOR] = 1;	
+	UPGR_MAX_LEVEL[UPGR_STRU_ARMOR] = 5;
+	EUDArray.cast(UPGR_COST[UPGR_STRU_ARMOR]).set(RES_TITANIUM, 10);
+	EUDArray.cast(UPGR_COST[UPGR_STRU_ARMOR]).set(RES_OBSIDIAN, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_STRU_ARMOR]).set(RES_TITANIUM, 0);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_STRU_ARMOR]).set(RES_OBSIDIAN, 5);
+
+
+	UPGR_TOOLTIP[UPGR_ENERGY] = Db("x\x01(\x03X\x01) Upgrade Energy Recovery");
+	UPGR_UPGRADE[UPGR_ENERGY] = 9;
+	UPGR_MAX_LEVEL[UPGR_ENERGY] = 5;
+	EUDArray.cast(UPGR_COST[UPGR_ENERGY]).set(RES_TITANIUM, 5);
+	EUDArray.cast(UPGR_COST[UPGR_ENERGY]).set(RES_BIOMASS, 5);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_ENERGY]).set(RES_TITANIUM, 0);
+	EUDArray.cast(UPGR_COST_INCREASE[UPGR_ENERGY]).set(RES_BIOMASS, 15);
+
+
+	// Resource conversion
+
+	foreach(i : py_range(0, CONV_COUNT)) {
+		CONV_RES_INPUTS[i] = EUDArray(RES_COUNT);
+		CONV_RES_OUTPUTS[i] = EUDArray(RES_COUNT);
+	}
+
+	CONV_TOOLTIP[CONV_LIMESTONE_LIMENITE] = Db("q\x01(\x03Q\x01) Convert Stone to Concrete");
+	EUDArray.cast(CONV_RES_INPUTS[CONV_LIMESTONE_LIMENITE]).set(RES_STONE, 1);
+	EUDArray.cast(CONV_RES_OUTPUTS[CONV_LIMESTONE_LIMENITE]).set(RES_CONCRETE, 2);
+
+	CONV_TOOLTIP[CONV_WOOD_BOARDS] = Db("w\x01(\x03W\x01) Convert Wood to Boards");
+	EUDArray.cast(CONV_RES_INPUTS[CONV_WOOD_BOARDS]).set(RES_WOOD, 1);
+	EUDArray.cast(CONV_RES_OUTPUTS[CONV_WOOD_BOARDS]).set(RES_BOARDS, 2);
+
+	CONV_TOOLTIP[CONV_2] = Db("e\x01(\x03E\x01) Convert Resource to Resource");
+	CONV_TOOLTIP[CONV_3] = Db("a\x01(\x03A\x01) Convert Resource to Resource");
+	CONV_TOOLTIP[CONV_4] = Db("s\x01(\x03S\x01) Convert Resource to Resource");
+	CONV_TOOLTIP[CONV_5] = Db("d\x01(\x03D\x01) Convert Resource to Resource");
+	CONV_TOOLTIP[CONV_6] = Db("z\x01(\x03Z\x01) Convert Resource to Resource");
+	CONV_TOOLTIP[CONV_7] = Db("x\x01(\x03X\x01) Convert Resource to Resource");
+
+	// Structures
+	STRU_TOOLTIP[STRU_WALL] = Db("q\x01(\x03Q\x01) Build Stone Wall\nBlocking structure that can be lowered.");
+	STRU_DESCRIPTION[STRU_WALL] = Db("Can be lowered");
+	STRU_BUTTON_STRING[STRU_WALL] = 647;
+	EUDArray.cast(STRU_COST[STRU_WALL]).set(RES_STONE, 5);
+
+	STRU_DESCRIPTION[STRU_OWALL] = Db("Can be raised");
+
+	STRU_TOOLTIP[STRU_FURNACE] = Db("a\x01(\x03A\x01) Build Furnace\nProvides light. Slowly rejuvenates energy drain when nearby.");
+	STRU_DESCRIPTION[STRU_FURNACE] = Db("Rejuvenates energy");
+	STRU_BUTTON_STRING[STRU_FURNACE] = 652;
+	EUDArray.cast(STRU_COST[STRU_FURNACE]).set(RES_LEAVES, 15);
+	EUDArray.cast(STRU_COST[STRU_FURNACE]).set(RES_WOOD, 10);
+	EUDArray.cast(STRU_COST[STRU_FURNACE]).set(RES_STONE, 5);
+
+	STRU_TOOLTIP[STRU_LIGHTPOST] = Db("w\x01(\x03W\x01) Build Light Post\nProvides light. Reduces energy drain when nearby.");
+	STRU_DESCRIPTION[STRU_LIGHTPOST] = Db("Reduces Energy drain");
+	STRU_BUTTON_STRING[STRU_LIGHTPOST] = 648;
+	EUDArray.cast(STRU_COST[STRU_LIGHTPOST]).set(RES_BOARDS, 10);
+	EUDArray.cast(STRU_COST[STRU_LIGHTPOST]).set(RES_CONCRETE, 10);
+
+	STRU_TOOLTIP[STRU_TOWER] = Db("a\x01(\x03A\x01) Build Watch Tower\nEnables shelter and increased vision range");
+	STRU_DESCRIPTION[STRU_TOWER] = Db("Occupied");
+	STRU_BUTTON_STRING[STRU_TOWER] = 650;
+	EUDArray.cast(STRU_COST[STRU_TOWER]).set(RES_CONCRETE, 25);
+	EUDArray.cast(STRU_COST[STRU_TOWER]).set(RES_ANDESITE, 25);
+	EUDArray.cast(STRU_COST[STRU_TOWER]).set(RES_TITANIUM, 5);
+
+	STRU_TOOLTIP[STRU_GTRAP] = Db("q\x01(\x03Q\x01) Build Gun Turret\nDefensive structure");
+	STRU_DESCRIPTION[STRU_GTRAP] = Db("Online");
+	STRU_BUTTON_STRING[STRU_GTRAP] = 653;
+	EUDArray.cast(STRU_COST[STRU_GTRAP]).set(RES_CONCRETE, 25);
+	EUDArray.cast(STRU_COST[STRU_GTRAP]).set(RES_TITANIUM, 10);
+	EUDArray.cast(STRU_COST[STRU_GTRAP]).set(RES_OBSIDIAN, 1);
+
+	STRU_TOOLTIP[STRU_MTRAP] = Db("w\x01(\x03W\x01) Build Missile Turret\nDefensive structure");
+	STRU_DESCRIPTION[STRU_MTRAP] = Db("Online");
+	STRU_BUTTON_STRING[STRU_MTRAP] = 654;
+	EUDArray.cast(STRU_COST[STRU_MTRAP]).set(RES_CONCRETE, 25);
+	EUDArray.cast(STRU_COST[STRU_MTRAP]).set(RES_TITANIUM, 20);
+	EUDArray.cast(STRU_COST[STRU_MTRAP]).set(RES_OBSIDIAN, 1);
+
+	STRU_TOOLTIP[STRU_WORKSTATION] = Db("z\x01(\x03Z\x01) Build Workstation\nCraft equipment upgrades.");
+	STRU_DESCRIPTION[STRU_WORKSTATION] = Db("Craft equipment upgrades");
+	STRU_BUTTON_STRING[STRU_WORKSTATION] = 630;
+	EUDArray.cast(STRU_COST[STRU_WORKSTATION]).set(RES_CONCRETE, 25);
+	EUDArray.cast(STRU_COST[STRU_WORKSTATION]).set(RES_BOARDS, 10);
+
+	STRU_TOOLTIP[STRU_LAB] = Db("x\x01(\x03X\x01) Build Lab\nSuit ability upgrades");
+	STRU_DESCRIPTION[STRU_LAB] = Db("Suit ability upgrades");
+	STRU_BUTTON_STRING[STRU_LAB] = 631;
+	EUDArray.cast(STRU_COST[STRU_LAB]).set(RES_CONCRETE, 45);
+	EUDArray.cast(STRU_COST[STRU_LAB]).set(RES_BOARDS, 10);
+	EUDArray.cast(STRU_COST[STRU_LAB]).set(RES_ANDESITE, 5);
+
+	STRU_TOOLTIP[STRU_CONVERTER] = Db("s\x01(\x03S\x01) Build Resource Processor\nResource materials processing");
+	STRU_DESCRIPTION[STRU_CONVERTER] = Db("Resource materials processing");
+	STRU_BUTTON_STRING[STRU_CONVERTER] = 632;
+	EUDArray.cast(STRU_COST[STRU_CONVERTER]).set(RES_STONE, 10);
+	EUDArray.cast(STRU_COST[STRU_CONVERTER]).set(RES_WOOD, 10);
+
+	STRU_TOOLTIP[STRU_GREENHOUSE] = Db("s\x01(\x03S\x01) Build Greenhouse\nAutomatic plant cultivation");
+	STRU_DESCRIPTION[STRU_GREENHOUSE] = Db("Automatic plant cultivation");
+	STRU_BUTTON_STRING[STRU_GREENHOUSE] = 633;
+	EUDArray.cast(STRU_COST[STRU_GREENHOUSE]).set(RES_ANDESITE, 25);
+	EUDArray.cast(STRU_COST[STRU_GREENHOUSE]).set(RES_TITANIUM, 10);
+	EUDArray.cast(STRU_COST[STRU_GREENHOUSE]).set(RES_OBSIDIAN, 5);
+
+	STRU_TOOLTIP[STRU_MINERALDRILL] = Db("z\x01(\x03Z\x01) Build Mineral Drill\nAutomatic resource excavation");
+	STRU_DESCRIPTION[STRU_MINERALDRILL] = Db("Automatic resource excavation");
+	STRU_BUTTON_STRING[STRU_MINERALDRILL] = 634;
+	EUDArray.cast(STRU_COST[STRU_MINERALDRILL]).set(RES_CONCRETE, 100);
+	EUDArray.cast(STRU_COST[STRU_MINERALDRILL]).set(RES_ANDESITE, 25);
+	EUDArray.cast(STRU_COST[STRU_MINERALDRILL]).set(RES_TITANIUM, 15);
+	EUDArray.cast(STRU_COST[STRU_MINERALDRILL]).set(RES_MAGMA, 5);
+
+	STRU_TOOLTIP[STRU_GROWBED] = Db("q\x01(\x03Q\x01) Build Growbed\nPlant cultivation");
+	STRU_DESCRIPTION[STRU_GROWBED] = Db("Plant cultivation");
+	STRU_BUTTON_STRING[STRU_GROWBED] = 640;
+	EUDArray.cast(STRU_COST[STRU_GROWBED]).set(RES_CONCRETE, 20);
+	EUDArray.cast(STRU_COST[STRU_GROWBED]).set(RES_LEAVES, 50);
+
+	STRU_TOOLTIP[STRU_INCUBATOR] = Db("w\x01(\x03W\x01) Build Incubator\nArtificial gestation of animals");
+	STRU_DESCRIPTION[STRU_INCUBATOR] = Db("Artificial gestation of animals");
+	STRU_BUTTON_STRING[STRU_INCUBATOR] = 641;
+	EUDArray.cast(STRU_COST[STRU_INCUBATOR]).set(RES_CONCRETE, 100);
+	EUDArray.cast(STRU_COST[STRU_INCUBATOR]).set(RES_ANDESITE, 25);
+	EUDArray.cast(STRU_COST[STRU_INCUBATOR]).set(RES_TITANIUM, 5);
+	EUDArray.cast(STRU_COST[STRU_INCUBATOR]).set(RES_MAGMA, 5);
+
+	STRU_TOOLTIP[STRU_STORAGE] = Db("a\x01(\x03A\x01) Build Stockpile\nShared resource storage depot.");
+	STRU_DESCRIPTION[STRU_STORAGE] = Db("Shared resource storage");
+	STRU_BUTTON_STRING[STRU_STORAGE] = 644;
+	EUDArray.cast(STRU_COST[STRU_STORAGE]).set(RES_CONCRETE, 100);
+	EUDArray.cast(STRU_COST[STRU_STORAGE]).set(RES_ANDESITE, 25);
+	EUDArray.cast(STRU_COST[STRU_STORAGE]).set(RES_TITANIUM, 5);
+
+	STRU_TOOLTIP[STRU_MININGBASE] = Db("x\x01(\x03X\x01) Build Mining Base\nUnused");
+	STRU_DESCRIPTION[STRU_MININGBASE] = Db("Unused");
+	STRU_BUTTON_STRING[STRU_MININGBASE] = 630;
+	EUDArray.cast(STRU_COST[STRU_MININGBASE]).set(RES_MAGMA, 999);
+
+	// Mobs
+	EUDArray.cast(MOB_LOOT_1[MOB_GRAZER]).set(RES_BIOMASS, 2);
+	EUDArray.cast(MOB_LOOT_2[MOB_GRAZER]).set(RES_HIDE, 2);
+	MOB_LOOT_2_CHANCE[MOB_GRAZER] = 50;
+
+	EUDArray.cast(MOB_LOOT_1[MOB_STALKER]).set(RES_BIOMASS, 2);
+	EUDArray.cast(MOB_LOOT_2[MOB_STALKER]).set(RES_HIDE, 2);
+	MOB_LOOT_2_CHANCE[MOB_STALKER] = 50;	
+
+	EUDArray.cast(MOB_LOOT_1[MOB_STINGER]).set(RES_BIOMASS, 2);
+	EUDArray.cast(MOB_LOOT_2[MOB_STINGER]).set(RES_HIDE, 2);
+	MOB_LOOT_2_CHANCE[MOB_STINGER] = 50;
+
+	EUDArray.cast(MOB_LOOT_1[MOB_CHIRPER]).set(RES_BIOMASS, 2);
+	EUDArray.cast(MOB_LOOT_2[MOB_CHIRPER]).set(RES_HIDE, 2);
+	MOB_LOOT_2_CHANCE[MOB_CHIRPER] = 50;
+
+	EUDArray.cast(MOB_LOOT_1[MOB_CRAWLER]).set(RES_BIOMASS, 2);
+	EUDArray.cast(MOB_LOOT_2[MOB_CRAWLER]).set(RES_HIDE, 4);
+	MOB_LOOT_2_CHANCE[MOB_CRAWLER] = 50;
+
+	EUDArray.cast(MOB_LOOT_1[MOB_ROAMER]).set(RES_BIOMASS, 2);
+	EUDArray.cast(MOB_LOOT_2[MOB_ROAMER]).set(RES_HIDE, 2);
+	MOB_LOOT_2_CHANCE[MOB_ROAMER] = 50;
+
+	EUDArray.cast(MOB_LOOT_1[MOB_T1_BROODLING]).set(RES_RESIDUE, 1);
+
+	EUDArray.cast(MOB_LOOT_1[MOB_T2_DEFILER]).set(RES_RESIDUE, 2);
+	EUDArray.cast(MOB_LOOT_1[MOB_T2_DEFILER]).set(RES_EPIDERMIS, 1);
+	
+	EUDArray.cast(MOB_LOOT_1[MOB_T3_QUEEN]).set(RES_RESIDUE, 1);
+	EUDArray.cast(MOB_LOOT_1[MOB_T3_QUEEN]).set(RES_EPIDERMIS, 2);
+	
+	EUDArray.cast(MOB_LOOT_1[MOB_T4_MUTALISK]).set(RES_RESIDUE, 4);
+	EUDArray.cast(MOB_LOOT_1[MOB_T4_MUTALISK]).set(RES_EPIDERMIS, 4);
+	EUDArray.cast(MOB_LOOT_1[MOB_T4_MUTALISK]).set(RES_FRAGMENT, 1);
+	
+	EUDArray.cast(MOB_LOOT_1[MOB_T5_GUARDIAN]).set(RES_RESIDUE, 6);
+	EUDArray.cast(MOB_LOOT_1[MOB_T5_GUARDIAN]).set(RES_EPIDERMIS, 6);
+	EUDArray.cast(MOB_LOOT_1[MOB_T5_GUARDIAN]).set(RES_FRAGMENT, 2);
+	EUDArray.cast(MOB_LOOT_1[MOB_T5_GUARDIAN]).set(RES_SHARD, 1);
+	
+	EUDArray.cast(MOB_LOOT_1[MOB_T6_DEVOURER]).set(RES_RESIDUE, 10);
+	EUDArray.cast(MOB_LOOT_1[MOB_T6_DEVOURER]).set(RES_EPIDERMIS, 10);
+	EUDArray.cast(MOB_LOOT_1[MOB_T6_DEVOURER]).set(RES_FRAGMENT, 5);
+	EUDArray.cast(MOB_LOOT_1[MOB_T6_DEVOURER]).set(RES_SHARD, 5);
+	
+	EUDArray.cast(MOB_LOOT_1[MOB_T7_OVERLORD]).set(RES_RESIDUE, 15);
+	EUDArray.cast(MOB_LOOT_1[MOB_T7_OVERLORD]).set(RES_EPIDERMIS, 15);
+	EUDArray.cast(MOB_LOOT_1[MOB_T7_OVERLORD]).set(RES_FRAGMENT, 15);
+	EUDArray.cast(MOB_LOOT_1[MOB_T7_OVERLORD]).set(RES_SHARD, 10);
+	EUDArray.cast(MOB_LOOT_1[MOB_T7_OVERLORD]).set(RES_CORE, 1);
+
+	// Technology
+
+	///
+	TECH_STRING[TECH_LIGHTPOST] = Db("Lightpost");
+	TECH_DESCRIPTION[TECH_LIGHTPOST] = Db("You can now construct Lightpost.");
+	TECH_STRING[TECH_GTRAP] = Db("Gun Trap");
+	TECH_DESCRIPTION[TECH_GTRAP] = Db("You can now construct Gun Trap.");
+	TECH_STRING[TECH_TOWER] = Db("Watch Tower");
+	TECH_DESCRIPTION[TECH_TOWER] = Db("You can now construct Watch Tower.");
+	TECH_STRING[TECH_MTRAP] = Db("Missile Trap");
+	TECH_DESCRIPTION[TECH_MTRAP] = Db("You can now construct Missile Trap.");
+	TECH_STRING[TECH_SELF_HEAL] = Db("Caduceus Stimpack");
+	TECH_DESCRIPTION[TECH_SELF_HEAL] = Db("You can now research Caduceus Stimpack at the lab.");
+	TECH_STRING[TECH_TARGET_SLOW] = Db("Slow");
+	TECH_DESCRIPTION[TECH_TARGET_SLOW] = Db("You can now research Slow at the lab.");
+	TECH_STRING[TECH_SELF_SHIELD] = Db("Personal Matrix");
+	TECH_DESCRIPTION[TECH_SELF_SHIELD] = Db("You can now research Personal Matrix at the lab.");
+	TECH_STRING[TECH_TARGET_STUN] = Db("Stun");
+	TECH_DESCRIPTION[TECH_TARGET_STUN] = Db("You can now research Stun at the lab.");
+	TECH_STRING[TECH_SELF_SPEED] = Db("Engine Burn");
+	TECH_DESCRIPTION[TECH_SELF_SPEED] = Db("You can now research Engine Burn at the lab.");
+	TECH_STRING[TECH_GROWBED] = Db("Growbed");
+	TECH_DESCRIPTION[TECH_GROWBED] = Db("You can now construct Growbed.");
+	TECH_STRING[TECH_TARGET_DAMAGE] = Db("Damage");
+	TECH_DESCRIPTION[TECH_TARGET_DAMAGE] = Db("You can now research Damage at the lab.");
+	TECH_STRING[TECH_SELF_MINESPEED] = Db("Fusion Surge");
+	TECH_DESCRIPTION[TECH_SELF_MINESPEED] = Db("You can now research Fusion Surge at the lab.");
+	TECH_STRING[TECH_SELF_VISION] = Db("Ocular Sweep");
+	TECH_DESCRIPTION[TECH_SELF_VISION] = Db("You can now research Ocular Sweep at the lab.");
+	TECH_STRING[TECH_TARGET_REGROW] = Db("Regrow");
+	TECH_DESCRIPTION[TECH_TARGET_REGROW] = Db("You can now research Regrow at the lab.");
+	TECH_STRING[TECH_SELF_DROIDS] = Db("Release Harvesting Droids");
+	TECH_DESCRIPTION[TECH_SELF_DROIDS] = Db("You can now research Release Harvesting Droids at the lab.");
+	TECH_STRING[TECH_TARGET_BLINK] = Db("Blink");
+	TECH_DESCRIPTION[TECH_TARGET_BLINK] = Db("You can now research Blink at the lab.");
+	TECH_STRING[TECH_SELF_RECALL] = Db("Recall");
+	TECH_DESCRIPTION[TECH_SELF_RECALL] = Db("You can now research Recall at the lab.");
+	TECH_STRING[TECH_INCUBATOR] = Db("Incubator");
+	TECH_DESCRIPTION[TECH_INCUBATOR] = Db("You can now construct Incubator");
+	TECH_STRING[TECH_GREENHOUSE] = Db("Greenhouse");
+	TECH_DESCRIPTION[TECH_GREENHOUSE] = Db("You can now construct Greenhouse");
+	TECH_STRING[TECH_MINERALDRILL] = Db("Mineral Drill");
+	TECH_DESCRIPTION[TECH_MINERALDRILL] = Db("You can now construct Mineral Dril");
+	TECH_STRING[TECH_UNKNOWN20] = Db("Tech 20");
+	TECH_DESCRIPTION[TECH_UNKNOWN20] = Db("You can now use/build Tech 20");
+	TECH_STRING[TECH_UNKNOWN21] = Db("Tech 21");
+	TECH_DESCRIPTION[TECH_UNKNOWN21] = Db("You can now use/build Tech 21");
+	TECH_STRING[TECH_UNKNOWN22] = Db("Tech 22");
+	TECH_DESCRIPTION[TECH_UNKNOWN22] = Db("You can now use/build Tech 22");
+	TECH_STRING[TECH_UNKNOWN23] = Db("Tech 23");
+	TECH_DESCRIPTION[TECH_UNKNOWN23] = Db("You can now use/build Tech 23");
+	TECH_STRING[TECH_UNKNOWN24] = Db("Tech 24");
+	TECH_DESCRIPTION[TECH_UNKNOWN24] = Db("You can now use/build Tech 24");
+	TECH_STRING[TECH_UNKNOWN25] = Db("Tech 25");
+	TECH_DESCRIPTION[TECH_UNKNOWN25] = Db("You can now use/build Tech 25");
+	TECH_STRING[TECH_UNKNOWN26] = Db("Tech 26");
+	TECH_DESCRIPTION[TECH_UNKNOWN26] = Db("You can now use/build Tech 26");
+	TECH_STRING[TECH_UNKNOWN27] = Db("Tech 27");
+	TECH_DESCRIPTION[TECH_UNKNOWN27] = Db("You can now use/build Tech 27");
+	TECH_STRING[TECH_UNKNOWN28] = Db("Tech 28");
+	TECH_DESCRIPTION[TECH_UNKNOWN28] = Db("You can now use/build Tech 28");
+	TECH_STRING[TECH_UNKNOWN29] = Db("Tech 29");
+	TECH_DESCRIPTION[TECH_UNKNOWN29] = Db("You can now use/build Tech 29");
+
+	
+	ABLT_TYPE[ABLT_SELF_HEAL] = ABLT_TYPE_SELFCAST;// Abilities
+	ABLT_TOOLTIP[ABLT_SELF_HEAL] = Db("Caduceus Stimpack\nHeals you back to full health");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_HEAL] = Db("X\x01(\x03X\x01) Research Caduceus Stimpack\nHeals you back to full health");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_HEAL] = StringBuffer("sound\\terran\\medic\\TMedHeal.wav");
+	ABLT_ICON[ABLT_SELF_HEAL] = 365;
+	ABLT_COOLDOWN[ABLT_SELF_HEAL] = 5*24;
+	ABLT_ENERGY_COST[ABLT_SELF_HEAL] = 5 * 256;		
+	EUDArray.cast(ABLT_COST[ABLT_SELF_HEAL]).set(RES_TITANIUM, 25);
+	
+	ABLT_TYPE[ABLT_SELF_SPEED] = ABLT_TYPE_SELFCAST;
+	ABLT_TOOLTIP[ABLT_SELF_SPEED] = Db("Engine Burn\nGives you the zoomies for 2 seconds");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_SPEED] = Db("X\x01(\x03X\x01) Research Engine Burn\nGives you the zoomies for 2 seconds");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_SPEED] = StringBuffer("sound\\terran\\frigate\\afteron.wav");
+	ABLT_DEACTIVATE_SOUND[ABLT_SELF_SPEED] = StringBuffer("sound\\terran\\frigate\\afteroff.wav");
+	ABLT_ICON[ABLT_SELF_SPEED] = 374;
+	ABLT_TIMER[ABLT_SELF_SPEED] = 2*24;
+	ABLT_COOLDOWN[ABLT_SELF_SPEED] = ABLT_TIMER[ABLT_SELF_SPEED];
+	ABLT_ENERGY_COST[ABLT_SELF_SPEED] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_SELF_SPEED]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_SELF_SHIELD] = ABLT_TYPE_SELFCAST;
+	ABLT_TOOLTIP[ABLT_SELF_SHIELD] = Db("Personal Matrix\nShields you from harm for 10 seconds");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_SHIELD] = Db("X\x01(\x03X\x01) Research Personal Matrix\nShields you from harm for 10 seconds");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_SHIELD] = StringBuffer("sound\\terran\\vessel\\tvedef00.wav");
+	ABLT_ICON[ABLT_SELF_SHIELD] = 247;
+	ABLT_TIMER[ABLT_SELF_SHIELD] = 10*24;
+	ABLT_COOLDOWN[ABLT_SELF_SHIELD] = ABLT_TIMER[ABLT_SELF_SHIELD];
+	ABLT_ENERGY_COST[ABLT_SELF_SHIELD] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_SELF_SHIELD]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_SELF_MINESPEED] = ABLT_TYPE_SELFCAST;
+	ABLT_TOOLTIP[ABLT_SELF_MINESPEED] = Db("Fusion Surge\nGreatly accelerates mining for 3 seconds.");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_MINESPEED] = Db("X\x01(\x03X\x01) Research Fusion Surge\nGreatly accelerates mining for 3 seconds.");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_MINESPEED] = StringBuffer("sound\\terran\\SCV\\TSCMin01.wav");
+	ABLT_ICON[ABLT_SELF_MINESPEED] = 251;
+	ABLT_TIMER[ABLT_SELF_MINESPEED] = 6*24;
+	ABLT_COOLDOWN[ABLT_SELF_MINESPEED] = ABLT_TIMER[ABLT_SELF_MINESPEED];
+	ABLT_ENERGY_COST[ABLT_SELF_MINESPEED] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_SELF_MINESPEED]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_SELF_VISION] = ABLT_TYPE_SELFCAST;
+	ABLT_TOOLTIP[ABLT_SELF_VISION] = Db("Ocular Sweep\nGreatly expands vision for 5 seconds.");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_VISION] = Db("X\x01(\x03X\x01) Research Ocular Sweep\nGreatly expands vision for 5 seconds.");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_VISION] = StringBuffer("sound\\terran\\bldg\\tcssca00.wav");
+	ABLT_ICON[ABLT_SELF_VISION] = 277;
+	ABLT_TIMER[ABLT_SELF_VISION] = 5*24;
+	ABLT_COOLDOWN[ABLT_SELF_VISION] = ABLT_TIMER[ABLT_SELF_VISION];
+	ABLT_ENERGY_COST[ABLT_SELF_VISION] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_SELF_VISION]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_SELF_RECALL] = ABLT_TYPE_SELFCAST;
+	ABLT_TOOLTIP[ABLT_SELF_RECALL] = Db("Recall\nImmediately teleport back to your base.");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_RECALL] = Db("X\x01(\x03X\x01) Research Recall\nImmediately teleport back to your base");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_RECALL] = StringBuffer("sound\\protoss\\arbiter\\pabfol03.wav");
+	ABLT_ICON[ABLT_SELF_RECALL] = 280;
+	ABLT_COOLDOWN[ABLT_SELF_RECALL] = 10*24;
+	ABLT_ENERGY_COST[ABLT_SELF_RECALL] = 20*256;
+	EUDArray.cast(ABLT_COST[ABLT_SELF_RECALL]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_SELF_DROIDS] = ABLT_TYPE_SELFCAST;
+	ABLT_TOOLTIP[ABLT_SELF_DROIDS] = Db("Release Harvesting Droids\nLaunch droids gather resources for 15 seconds.");
+	ABLT_RESEARCH_TOOLTIP[ABLT_SELF_DROIDS] = Db("X\x01(\x03X\x01) Research Release Harvesting Droids\nLaunch droids gather resources for 15 seconds.");
+	ABLT_ACTIVATE_SOUND[ABLT_SELF_DROIDS] = StringBuffer("sound\\terran\\scv\\tscmin00.wav");
+	ABLT_ICON[ABLT_SELF_DROIDS] = 381;
+	ABLT_TIMER[ABLT_SELF_DROIDS] = 15*24;
+	ABLT_COOLDOWN[ABLT_SELF_DROIDS] = ABLT_TIMER[ABLT_SELF_DROIDS];
+	ABLT_ENERGY_COST[ABLT_SELF_DROIDS] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_SELF_DROIDS]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_TARGET_STUN] = ABLT_TYPE_TARGET;
+	ABLT_TOOLTIP[ABLT_TARGET_STUN] = Db("Stun\nStun enemy units for 5 seconds.");
+	ABLT_RESEARCH_TOOLTIP[ABLT_TARGET_STUN] = Db("X\x01(\x03X\x01) Research Stun\nStun enemy units for 5 seconds.");
+	ABLT_ACTIVATE_SOUND[ABLT_TARGET_STUN] = StringBuffer("sound\\Bullet\\tscFir00.wav");
+	ABLT_ICON[ABLT_TARGET_STUN] = 241;
+	ABLT_TIMER[ABLT_TARGET_STUN] = 5*24;
+	ABLT_COOLDOWN[ABLT_TARGET_STUN] = 5*24;
+	ABLT_ENERGY_COST[ABLT_TARGET_STUN] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_TARGET_STUN]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_TARGET_DAMAGE] = ABLT_TYPE_TARGET;
+	ABLT_TOOLTIP[ABLT_TARGET_DAMAGE] = Db("Damage\nDeal 50 damage to enemy unit.");
+	ABLT_RESEARCH_TOOLTIP[ABLT_TARGET_DAMAGE] = Db("X\x01(\x03X\x01) Research Damage\nDeal 50 damage to enemy unit.");
+	ABLT_ACTIVATE_SOUND[ABLT_TARGET_DAMAGE] = StringBuffer("sound\\Bullet\\LaserHit.wav");
+	ABLT_ICON[ABLT_TARGET_DAMAGE] = 373;
+	ABLT_COOLDOWN[ABLT_TARGET_DAMAGE] = 5*24;
+	ABLT_ENERGY_COST[ABLT_TARGET_DAMAGE] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_TARGET_DAMAGE]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_TARGET_REGROW] = ABLT_TYPE_TARGET;
+	ABLT_TOOLTIP[ABLT_TARGET_REGROW] = Db("Regrow\nFully restore resources for organic resources (trees & bushes)");
+	ABLT_RESEARCH_TOOLTIP[ABLT_TARGET_REGROW] = Db("X\x01(\x03X\x01) Research Regrow\nFully restore resources for organic resources (trees & bushes)");
+	ABLT_ACTIVATE_SOUND[ABLT_TARGET_REGROW] = StringBuffer("sound\\Bullet\\LaserHit.wav");
+	ABLT_ICON[ABLT_TARGET_REGROW] = 372;
+	ABLT_COOLDOWN[ABLT_TARGET_REGROW] = 5*24;
+	ABLT_ENERGY_COST[ABLT_TARGET_REGROW] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_TARGET_REGROW]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_TARGET_SLOW] = ABLT_TYPE_TARGET;
+	ABLT_TOOLTIP[ABLT_TARGET_SLOW] = Db("Slow\nSlow target enemy unit for 10 seconds");
+	ABLT_RESEARCH_TOOLTIP[ABLT_TARGET_SLOW] = Db("X\x01(\x03X\x01) Research Slow\nSlow target enemy unit for 10 seconds");
+	ABLT_TIMER[ABLT_TARGET_SLOW] = 6*24;
+	ABLT_ICON[ABLT_TARGET_SLOW] = 242;
+	ABLT_ACTIVATE_SOUND[ABLT_TARGET_SLOW] = StringBuffer("sound\\Misc\\ZPwrDown.wav");
+	ABLT_COOLDOWN[ABLT_TARGET_SLOW] = 10*24;
+	ABLT_ENERGY_COST[ABLT_TARGET_SLOW] = 20*256;	
+	EUDArray.cast(ABLT_COST[ABLT_TARGET_SLOW]).set(RES_TITANIUM, 25);
+
+	ABLT_TYPE[ABLT_TARGET_BLINK] = ABLT_TYPE_TARGET;
+	ABLT_TOOLTIP[ABLT_TARGET_BLINK] = Db("Blink\nTeleport short distances");
+	ABLT_RESEARCH_TOOLTIP[ABLT_TARGET_BLINK] = Db("X\x01(\x03X\x01) Research Blink\nTeleport short distances");
+	ABLT_ACTIVATE_SOUND[ABLT_TARGET_BLINK] = StringBuffer("sound\\Bullet\\LaserHit.wav");
+	ABLT_ICON[ABLT_TARGET_BLINK] = 366;
+	ABLT_COOLDOWN[ABLT_TARGET_BLINK] = 5*24;
+	ABLT_ENERGY_COST[ABLT_TARGET_BLINK] = 7*256;	
+	EUDArray.cast(ABLT_COST[ABLT_TARGET_BLINK]).set(RES_TITANIUM, 25);
+
+	// Other setup
+	settbl(STRING_RESOURCE_UNIT, 0, "");
+	settbl(STRING_RESOURCE_LABEL, 0, "Resources:");
+
+	foreach(unit : EUDLoopCUnit()) {
+		if (unit.unitID == UNIT_TECH) {
+			if (Rand(80)) {
+				const biomeID = unit.hp/256;
+				const technologyType = BIOME_ID_TECH_MAP[biomeID];
+				const replacedUnit = ReplaceUnit(unit, UNIT_TECH);
+				replacedUnit.hp = technologyType*256;
+				replacedUnit.unknown0x106 = technologyType;
+			} else {
+				unit.remove();
+			}
+		} else if (unit.unitID == UNIT_MOB_SPAWNER) {
+			ReplaceUnit(unit, UNIT_MOB_SPAWNER);
+		} else if (unit.unitID == UNIT_CRITTER_SPAWNER) {
+			unit.unknown0x26 = MOB_CRITTER_TYPES.length; // reset
+			const mobID = unit.hp/256;
+			const replacedUnit = ReplaceUnit(unit, UNIT_CRITTER_SPAWNER);			
+			replacedUnit.unknown0x26 = mobID;
+		}
+	}	
+
+	EUDPlayerLoop()();
+	const playerID = getcurpl();
+	if (playerID < $P6) {
+		MobSpawnLimit++;
+		SetAllianceStatus(PLAYER_SHARED_STRUCTURE, Ally);
+		SetAllianceStatus(PLAYER_CRITTERS, Ally);
+		AddPlayerResourceAmount(playerID, RES_BERRIES, 5, false);
+		UpdatePlayerTooltips(playerID);
+		PlayerEnergy[playerID] = CONST_HERO_ENERGY_MAX;
+		const unit = CUnit.from_read(EPD(0x628438));
+		PlayerHeroUnit[playerID] = unit;
+		CreateUnit(1, UNIT_HERO, playerID+1, playerID); 
+		// Auto mine
+		unit.order = CONST_ORDER_MINE_NEARBY;
+	}	
+	EUDEndPlayerLoop();
+
+	setcurpl($P6);
+	SetAllianceStatus(PLAYER_SHARED_STRUCTURE, Enemy);
+	SetAllianceStatus(PLAYER_CRITTERS, Ally);
+	setcurpl($P7);
+	SetAllianceStatus(PLAYER_SHARED_STRUCTURE, Enemy);	
+	SetAllianceStatus(PLAYER_CRITTERS, Ally);	
+	setcurpl(PLAYER_SHARED_STRUCTURE);
+	SetAllianceStatus(17, Ally);
+	SetAllianceStatus($P6, Enemy);
+	SetAllianceStatus($P7, Enemy);
+}
+
+
+function GetBiomeWeighted(n) : EUDArray {
+	var weightTotal = 0;
+	for(var i = 0 ; i < BIOME_TYPE_WEIGHTS.length; i++) {
+		weightTotal += BIOME_TYPE_WEIGHTS[i];
+	}
+	var weightRandom = dwrand() % weightTotal;
+	for (var biomeType = 0; biomeType < BIOME_TYPES.length; biomeType++) {
+		if (weightRandom < BIOME_TYPE_WEIGHTS[biomeType]) {
+			if (BIOME_TYPE_SPAWN_COUNT[biomeType] >= BIOME_TYPE_MIN_SPAWN_COUNT[biomeType] && BIOME_TYPE_WEIGHTS[biomeType] > BIOME_TYPE_BOOST) {
+				BIOME_TYPE_WEIGHTS[biomeType] -= BIOME_TYPE_BOOST;
+			}
+			BIOME_TYPE_SPAWN_COUNT[biomeType]++;
+			return BIOME_TYPES[biomeType];
+		}
+		weightRandom -= BIOME_TYPE_WEIGHTS[biomeType];
+	}
+}
+
+function SetupRandomizedBiomes() {
+	// Keep HP/ID 0 for manually placed resources (BIOME_ROCKY_JUNGLE)
+	for (var biomeIndex = 1; biomeIndex < BIOME_COUNT; biomeIndex++) {
+		ModifyUnitHitPoints(1, UNIT_TECH, AllPlayers, BIOME_START_LOCATION_ID + biomeIndex, biomeIndex);
+		ModifyUnitHitPoints(999, UNIT_RESOURCE_PLACEHOLDER1, AllPlayers, BIOME_START_LOCATION_ID + biomeIndex, biomeIndex);
+	}
+	BIOME_ID_TYPE_MAP[0] = BIOME_ROCKY_JUNGLE;
+
+	if (BIOME_TEST_MODE) {
+		for (var i = 0; i < BIOME_COUNT; i++) {
+			BIOME_ID_TYPE_MAP[i] = BIOME_TEST_SETUP;
+		}
+		return;
+	}
+	for (var i = 1; i < BIOME_COUNT; i++) {
+		BIOME_ID_TYPE_MAP[i] = GetBiomeWeighted(dwrand() % BIOME_TYPES.length+1);
+	}
+	// for (var i = 0; i < 1; i++) { BIOME_ID_TYPE_MAP[i] = BIOME_TEST_SETUP; }
+}
+
+function UpdatePortaitForPlayerHero(playerID) {
+	if (!IsUserCP()) return;
+	const portraitIndex = PlayerHeroPortraitIndex[playerID];
+	wwrite(0x65FD00 + 12936 + UNIT_HERO * 2, CONST_PORTRAIT_OPTIONS[portraitIndex]);
+	TalkingPortrait((177), 1);
+}
+
+
+function SwitchToNextHeroPortrait(playerID) {
+	var portraitIndex = PlayerHeroPortraitIndex[playerID];
+	if (portraitIndex >= CONST_PORTRAIT_OPTIONS.length - 1) portraitIndex = 0;
+	else portraitIndex++;
+	PlayerHeroPortraitIndex[playerID] = portraitIndex;
+	UpdatePortaitForPlayerHero(playerID);
+	PlayWAV("sound\\Misc\\Button.wav");
+}
+
+function GetLocationPoint(location) {
+	const locTable = EPD(0x58DC4C);
+	return dwread_epd(locTable + location * 5), dwread_epd(locTable + location * 5 + 1);
+}
+
+function SetButtonIcon(buttonSet, buttonIndex, iconID, state) {
+	if (!IsUserCP()) return;
+	var btnPtr = EPD(0x5187EC) + buttonSet * 3;
+	dwadd_epd(btnPtr, 0);
+	var btnPos = 5 * buttonIndex;
+	btnPos += epdread_epd(btnPtr);
+
+	var conditionValue;
+	switch(state) {
+		case BTN_HIDDEN: conditionValue = 5106496; break;
+		case BTN_ENABLED: conditionValue = 4358864; break;
+		case BTN_DISABLED: conditionValue = 4359904; break;
+	}
+
+	var oldCP = getcurpl();
+		DoActions(list(
+		SetMemory(0x6509B0, SetTo, btnPos),
+		SetDeaths(CurrentPlayer, SetTo, (iconID * 65536), 0),
+		SetMemory(0x6509B0, Add, 1),
+		SetDeaths(CurrentPlayer, SetTo, conditionValue, 0),
+		SetMemory(0x6509B0, Add, 1),
+		//SetDeaths(CurrentPlayer, SetTo, actionPrefix, 0),
+		SetMemory(0x6509B0, Add, 1),
+		//SetDeaths(CurrentPlayer, SetTo, actionValue, 0),
+		SetMemory(0x6509B0, Add, 1),
+		//SetDeaths(CurrentPlayer, SetTo, stringID, 0),
+		SetMemory(0x6509B0, SetTo, oldCP),
+	));
+}
+
+function UnitIsStructure(unitID) {
+	switch(unitID) {
+		case STRU_WALL:
+		case STRU_OWALL:
+		case STRU_FURNACE:
+		case STRU_LIGHTPOST:
+		case STRU_TOWER:
+		case STRU_GTRAP:
+		case STRU_MTRAP:
+		case STRU_WORKSTATION:
+		case STRU_LAB:
+		case STRU_CONVERTER:
+		case STRU_GREENHOUSE:
+		case STRU_MINERALDRILL:
+		case STRU_GROWBED:
+		case STRU_INCUBATOR:
+		case STRU_STORAGE:
+		case STRU_MININGBASE:
+			return true;
+	}
+	return false;
+}
+
+function UpdateSelectedUnit(playerID) {
+	const previouslySelectedUnit = CUnit.cast(PlayerSelectedUnit[playerID]);
+	const unit = CUnit.from_read(EPD(SelectionAddresses[playerID]));
+	if (unit != previouslySelectedUnit) {
+		//Screen.printf("{}: {} --> {}: {}", previouslySelectedUnit.unitID, previouslySelectedUnit, unit.unitID, unit);
+		PlayerSelectedUnit[playerID] = unit;		
+		if (unit.unitID == UNIT_RESOURCE && PlayerSelectedResourceType[playerID] != unit.unknown0x106) {
+			PlayerSelectedResourceType[playerID] = unit.unknown0x106;
+			if (IsUserCP()) {
+				settblf(STRING_RESOURCE_UNIT, 0, "{:s}", RES_UNIT_STRING[unit.unknown0x106]);
+				settblf(STRING_RESOURCE_LABEL, 0, "{:s}:", RES_LABEL_STRING[unit.unknown0x106]);
+			}
+		} else if (unit.unitID == UNIT_HERO) {
+			UpdatePortaitForPlayerHero(unit.playerID);
+			if (IsUserCP()) {
+				settblf(STRING_HERO_UNIT, 0, "{:n}", unit.playerID);
+			}
+			UpdatePlayerTooltips(playerID);
+		} else if (unit.unitID == STRU_STORAGE) {
+			UpdatePlayerTooltips(playerID);		
+		} else if (STRU_DESCRIPTION[unit.unitID] != 0) {
+			// Other units, compare unitID to structures etc
+			if (IsUserCP()) {
+				settblf(STRING_STRU_DESCRIPTION_LABEL, 0, "{:s}", STRU_DESCRIPTION[unit.unitID]);
+			}
+		}
+	}
+}
+
+function SetUpgrade(playerID, upgradeID, level) {
+	const rawUpgradeID = UPGR_UPGRADE[upgradeID];
+	bwrite(0x58D2B0 + 0x207C * (rawUpgradeID / 46) + (playerID) * (46 - 31 * (rawUpgradeID / 46)) + (rawUpgradeID % 46), level);
+}
+
+function GetUpgrade(playerID, upgradeID) {
+	const rawUpgradeID = UPGR_UPGRADE[upgradeID];
+	return bread(0x58D2B0 + 0x207C * (rawUpgradeID / 46) + playerID * (46 - 31 * (rawUpgradeID / 46)) + (rawUpgradeID % 46));
+}
+
+function UpdatePlayerTooltips(playerID) {
+	if (!IsUserCP()) return;
+
+	const upgradeTooltipString = Db(512);
+	//foreach(upgradeID : py_range(0, UPGR_COUNT)) { // TODO switch to this when building for release
+	for (var upgradeID = 0; upgradeID < UPGR_COUNT; upgradeID++) {
+		const upgradeLevel = GetUpgrade(playerID, upgradeID);
+		if (UPGR_TOOLTIP[upgradeID] != 0) {
+			sprintf(upgradeTooltipString, "{:s} Level {}/{}\nRequires:\n", UPGR_TOOLTIP[upgradeID], upgradeLevel + 1, UPGR_MAX_LEVEL[upgradeID]);
+			for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+				var cost = EUDArray.cast(UPGR_COST[upgradeID]).get(resourceType);
+				cost += EUDArray.cast(UPGR_COST_INCREASE[upgradeID]).get(resourceType) * upgradeLevel;
+				if (cost != 0) {
+					const have = GetPlayerResourceAmount(playerID, resourceType);
+					if (have >= cost) sprintf(upgradeTooltipString, "{:s}\x02- {} {:s} ({}/{})\n", upgradeTooltipString, cost, RES_NAME[resourceType], have, cost);
+					else sprintf(upgradeTooltipString, "{:s}\x02- {} {:s} (\x11{}\x02/{})\n", upgradeTooltipString, cost, RES_NAME[resourceType], have, cost);
+				}				
+			}
+			settblf(CONST_UPGR_STRING_START_INDEX + upgradeID, 0, "{:s}", upgradeTooltipString);
+		}
+	}
+
+	const conversionTooltipString = Db(512);
+	//foreach(conversionID : py_range(0, CONV_COUNT)) { // TODO switch to this when building for release
+	for (var conversionID = 0; conversionID < CONV_COUNT; conversionID++) {
+		if (CONV_TOOLTIP[conversionID] != 0) {
+			sprintf(conversionTooltipString, "{:s}\nRequires:\n", CONV_TOOLTIP[conversionID]);
+			for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+				const cost = EUDArray.cast(CONV_RES_INPUTS[conversionID]).get(resourceType);
+				if (cost != 0) {
+					const have = GetPlayerResourceAmount(playerID, resourceType);
+					if (have >= cost) sprintf(conversionTooltipString, "{:s}\x02- {} {:s} ({}/{})\n", conversionTooltipString, cost, RES_NAME[resourceType], have, cost);
+					else sprintf(conversionTooltipString, "{:s}\x02- {} {:s} (\x11{}\x02/{})\n", conversionTooltipString, cost, RES_NAME[resourceType], have, cost);
+				}				 
+			}
+			sprintf(conversionTooltipString, "{:s}\nProduces:\n", conversionTooltipString);
+			for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+				const qty = EUDArray.cast(CONV_RES_OUTPUTS[conversionID]).get(resourceType);
+				const have = GetPlayerResourceAmount(playerID, resourceType);
+				if (qty != 0) sprintf(conversionTooltipString, "{:s}\x02- {} {:s} ({})\n", conversionTooltipString, qty, RES_NAME[resourceType], have);
+			}
+			settblf(CONST_CONV_STRING_START_INDEX + conversionID, 0, "{:s}", conversionTooltipString);
+		}
+	}
+
+	const structureTooltipString = Db(512);
+	//foreach(structureType : py_range(0, STRU_COUNT)) { // TODO switch to this when building for release
+	for (var structureType = 0; structureType < STRU_COUNT; structureType++) {
+		if (STRU_TOOLTIP[structureType] != 0) {
+			sprintf(structureTooltipString, "{:s}\nRequires:\n", STRU_TOOLTIP[structureType]);
+			for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+				const cost = EUDArray.cast(STRU_COST[structureType]).get(resourceType);
+				if (cost != 0) {
+					const have = GetPlayerResourceAmount(playerID, resourceType);
+					if (have >= cost) sprintf(structureTooltipString, "{:s}\x02- {} {:s} ({}/{})\n", structureTooltipString, cost, RES_NAME[resourceType], have, cost);
+					else sprintf(structureTooltipString, "{:s}\x02- {} {:s} (\x11{}\x02/{})\n", structureTooltipString, cost, RES_NAME[resourceType], have, cost);
+				}
+			}
+			settblf(STRU_BUTTON_STRING[structureType], 0, "{:s}", structureTooltipString);
+		}
+	}
+
+	const abilityTooltipString = Db(512);
+	//foreach(abilityID : py_range(0, ABLT_COUNT)) { // TODO switch to this when building for release
+	for (var abilityID = 0; abilityID < ABLT_COUNT; abilityID++) {
+		if (ABLT_RESEARCH_TOOLTIP[abilityID] != 0) {
+			sprintf(abilityTooltipString, "{:s}\nRequires:\n", ABLT_RESEARCH_TOOLTIP[abilityID]);
+			for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+				const cost = EUDArray.cast(ABLT_COST[abilityID]).get(resourceType);
+				if (cost != 0) {
+					const have = GetPlayerResourceAmount(playerID, resourceType);
+					if (have >= cost) sprintf(abilityTooltipString, "{:s}\x02- {} {:s} ({}/{})\n", abilityTooltipString, cost, RES_NAME[resourceType], have, cost);
+					else sprintf(abilityTooltipString, "{:s}\x02- {} {:s} (\x11{}\x02/{})\n", abilityTooltipString, cost, RES_NAME[resourceType], have, cost);
+				}
+			}
+			settblf(CONST_ALBT_STRING_START_INDEX + abilityID, 0, "{:s}", abilityTooltipString);
+		}
+	}
+
+
+	// TODO: Update Reignite tooltip
+	{
+		const restoreEnergyTooltipString = Db(512);
+		const resourceType = RES_BERRIES;
+		const cost = 1;
+		const have = GetPlayerResourceAmount(playerID, RES_BERRIES);
+		const energy = (RES_ENERGY_REGEN[RES_BERRIES] + RES_ENERGY_REGEN[RES_BERRIES] * GetUpgrade(playerID, UPGR_ENERGY)) / 256;
+		if (have >= cost) sprintf(restoreEnergyTooltipString, "\x02- {} {:s} ({}/{})\n", cost, RES_NAME[resourceType], have, cost);
+		else sprintf(restoreEnergyTooltipString, "\x02- {} {:s} (\x11{}\x02/{})\n", cost, RES_NAME[resourceType], have, cost);
+		settblf(RESTORE_ENERGY_STRING_INDEX, 0, "q\x01(\x03Q\x01) Restore {} energy\nHealth regenerates slowly when you are Rested (>200 energy), and drains when you are Starving (0 energy)\nRequires:\n{:s}", energy, restoreEnergyTooltipString);
+	}
+
+	// Inventory & Storage
+	const selectedUnit = CUnit(PlayerSelectedUnit[playerID]);
+	const selectedUnitID = selectedUnit.unitID;
+	if (selectedUnit.unitID == UNIT_HERO || selectedUnit.unitID == STRU_STORAGE) {
+		const isInventory = selectedUnitID == UNIT_HERO ? true : false;
+		const tooltipString = isInventory ? CONST_INV_TOOLTIP_STRING : CONST_STORAGE_TOOLTIP_STRING;
+		if (selectedUnit.playerID == playerID) {
+			const inventoryPlayerID = isInventory ? playerID : PLAYER_STORAGE;
+			const inventoryPage = isInventory ? PlayerInventoryPage[playerID] : PlayerStoragePage[playerID];
+			var inventoryLineCount = 0;
+			if (isInventory) sprintf(INV_TOOLTIP_STRING, "\x04Inventory       pg. {}/{}\n", inventoryPage+1, CONST_INV_PAGES+1);
+			else sprintf(INV_TOOLTIP_STRING, "\x04Storage       pg. {}/{}\n", inventoryPage+1, CONST_INV_PAGES+1);
+			for (var resourceType = inventoryPage*INV_TOOLTIP_LINES; resourceType < RES_COUNT; resourceType++) {
+				const resourceTypeCount = GetPlayerResourceAmount(inventoryPlayerID, resourceType);
+				sprintf(INV_TOOLTIP_STRING, "{:s}\x02- {} {:s}\n", INV_TOOLTIP_STRING, resourceTypeCount, RES_NAME[resourceType]);
+				inventoryLineCount++;
+				if (inventoryLineCount >= INV_TOOLTIP_LINES) break;
+			}
+			settblf(tooltipString, 0, "{:s} \x03LClick \x04↓ \x03RClick \x04↑\x0C", INV_TOOLTIP_STRING);	
+		} else {
+			settblf(tooltipString, 0, "You cannot view other players' inventory.\x0C");
+		}	
+	}
+}
+
+function PlaySound(soundArray :EUDArray, playerID) {
+	if (soundArray == 0) return;
+	var index = PlayerSoundCycleCounter[playerID];
+	StringBuffer.cast(soundArray[index]).Play();
+	index++;
+	if (index > 3) index = 0;
+	PlayerSoundCycleCounter[playerID] = index;
+}
+
+function GiveUnit(unit : CUnit, playerID) {
+	unit.setloc(LOC_REPLACE);
+	GiveUnits(1, unit.unitID, unit.playerID, LOC_REPLACE, playerID);
+}
+
+function CreateCUnit(unitType, playerID, location) : CUnit {
+	const newUnit = CUnit.from_read(EPD(0x628438));
+	CreateUnit(1, unitType, location, playerID);
+	return newUnit;
+}
+
+function CreateImageSpriteAtLocation(imageID, location) {
+	SetMemoryX(0x00666458, SetTo, imageID, 0x0000ffff);
+	CreateUnit(1, 33, location, $P8);
+	RemoveUnit(33, AllPlayers);
+	SetMemoryX(0x00666458, SetTo, 546, 0x0000ffff);
+}
+
+function CreateImageSpriteAtUnitLocalPlayer(imageID, unit: CUnit, playerID) {
+	const prevPlayerID = getcurpl();
+	setcurpl(playerID);
+	unit.setloc(LOC_FX);
+	SetMemoryX(0x00666458, SetTo, 503, 0x0000ffff);
+	if (IsUserCP()) SetMemoryX(0x00666458, SetTo, imageID, 0x0000ffff);
+	CreateUnit(1, 33, LOC_FX, $P8);
+	RemoveUnit(33, AllPlayers);
+	SetMemoryX(0x00666458, SetTo, 546, 0x0000ffff);
+	setcurpl(prevPlayerID);
+}
+
+function CreateImageSpriteAtUnit(imageID, unit: CUnit) {
+	unit.setloc(LOC_FX);
+	CreateImageSpriteAtLocation(imageID, LOC_FX);
+}
+
+function DamageUnit(unit:CUnit, damage) {
+	if (unit.hp < damage) unit.hp = 0;
+	if (unit.hp == 0) unit.die();
+	else unit.hp -= damage;
+}
+
+function HealUnit(unit:CUnit, heal, maxHP) {
+	if (unit.hp + heal > maxHP) unit.hp = maxHP;
+	else unit.hp += heal;
+}
+
+function HealUnitEnergy(unit:CUnit, heal, maxHP) {
+	if (unit.energy + heal > maxHP) unit.energy = maxHP;
+	else unit.energy += heal;
+}
+
+function ReplaceUnit(unit:CUnit, unitType) : CUnit {
+	return ReplaceUnitWithOffset(unit, unitType, 0);
+}
+function ReplaceUnitWithOffset(unit:CUnit, unitType, yOffset) : CUnit {
+	unit.setloc(LOC_REPLACE);
+	const playerID = unit.playerID;
+	RemoveUnitAt(1, unit.unitType, LOC_REPLACE, playerID);
+	const newUnit = CUnit.from_read(EPD(0x628438));
+	if (yOffset != 0) addloc(LOC_REPLACE, 0, yOffset);
+	CreateUnit(1, unitType, LOC_REPLACE, playerID);
+	return newUnit;
+}
+
+function CreateOverlayUnitWithRemoveTimer(unit:CUnit, imageID, playerID, removeTimer) : CUnit {
+	if (unit.connectedUnit) unit.connectedUnit.remove();
+	unit.setloc(LOC_REPLACE);
+	const newUnit = CUnit.from_read(EPD(0x628438));
+	wwrite(0x665AC0 + 1696 + SPRITE_OVERLAY * 2, imageID);
+	CreateUnit(1, UNIT_OVERLAY, LOC_REPLACE, playerID);
+	if (removeTimer != 0) newUnit.removeTimer = removeTimer;
+	newUnit.set_noclip();
+	newUnit.remove_collision();
+	newUnit.connectedUnit = unit;
+	unit.connectedUnit = newUnit;
+	return newUnit;
+}
+
+function CreateOverlayUnit(unit:CUnit, imageID, playerID) : CUnit {
+	return CreateOverlayUnitWithRemoveTimer(unit, imageID, playerID, 0);
+}
+
+function UpdateBrightness(playerID) {
+	MoveLocation(LOC_SCREEN, UNIT_HERO, playerID, LOC_ANYWHERE);
+	var lightSources = 0;
+	var targetBrightness = DEFAULT_DAY_LIGHT;
+	if (Night) {		
+		if (Bring(AllPlayers, AtLeast, 4, UNIT_LIGHT_OVERLAY, LOC_SCREEN)) targetBrightness = DEFAULT_NIGHT_LIGHT_L4;
+		else if (Bring(AllPlayers, AtLeast, 3, UNIT_LIGHT_OVERLAY, LOC_SCREEN)) targetBrightness = DEFAULT_NIGHT_LIGHT_L3;
+		else if (Bring(AllPlayers, AtLeast, 2, UNIT_LIGHT_OVERLAY, LOC_SCREEN)) targetBrightness = DEFAULT_NIGHT_LIGHT_L2;
+		else if (Bring(AllPlayers, AtLeast, 1, UNIT_LIGHT_OVERLAY, LOC_SCREEN)) targetBrightness = DEFAULT_NIGHT_LIGHT_L1;
+		else if (Bring(AllPlayers, Exactly, 0, UNIT_LIGHT_OVERLAY, LOC_SCREEN)) targetBrightness = DEFAULT_NIGHT_LIGHT_MIN;
+	}
+	if (PlayerLight[playerID] > targetBrightness) PlayerLight[playerID]--;
+	else if (PlayerLight[playerID] < targetBrightness) PlayerLight[playerID]++;
+	if (IsUserCP()) SetMemoryEPD(EPD(0x657A9C), SetTo, PlayerLight[playerID]);
+}
+
+function UpdateHints(realHours) {
+	once(realHours >= 8) {
+		printAllAt(0,"\x13\x07HINT:\x02 Keep track of your energy. If it drops to 0 you will start starving.\n\x13Consume Berries to regenerate energy.");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once(realHours >= 10) {
+		printAllAt(0,"\x13\x07HINT:\x02 The clock at the top of the screen displays the current time.\n\x13The sun sets at 10PM");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once(realHours >= 12) {
+		printAllAt(0,"\x13\x07HINT:\x02 Click the Help icon in the bottom right corner for help");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once(realHours >= 16) {
+		printAllAt(0,"\x13\x07HINT:\x02 The sun will set at 10PM - Make sure you plan\n\x13for how you will shelter during night.");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once(realHours >= 21) {
+		printAllAt(0,"\x13\x07HINT:\x02 Nightfall is upon us. Take shelter if you haven't already.");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once(Day >= 2 && realHours >= 7) {
+		printAllAt(0,"\x13\x07HINT:\x02 Explore far and wide during the day to find new resources and technology.");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once (Command(AllPlayers, AtLeast, 1, STRU_FURNACE)) {
+		printAllAt(0,"\x13\x07HINT:\x02 The Furnace rejuvenates energy for all allied survivors around it.");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+
+	once (Command(AllPlayers, AtLeast, 1, STRU_WALL)) {
+		printAllAt(0,"\x13\x07HINT:\x02 Structures are shared between players.\n\x13The player that's closest to a structure controls it.");
+		PlayWAVAll("sound\\Misc\\Transmission.wav");
+	}
+}
+
+function UpdateTime() {
+	if (Time >= CONST_CYCLE_LENGTH_FRAMES) Time = 0;
+	else Time += 1;
+
+	var realHours, frameMinutes = div(Time,CONST_CYCLE_LENGTH_FRAMES/24);
+	var clockMinutes = frameMinutes * 60 / (CONST_CYCLE_LENGTH_FRAMES/24);
+	var clockHours;
+	
+	AM = realHours < 12 ? true : false;
+	// Check for Midnight/Noon
+	if (realHours % 12 == 0) {
+		clockHours = 12;
+	} else {
+		clockHours = realHours % 12;
+	}
+
+	var dayNightCycleDidChange = false;	
+	//Screen.printfAt(4, "IsNight: {} IsAM: {} Time: {}/{} clockTime: ({}){}:{} ", Night, AM, Time, CONST_CYCLE_LENGTH_FRAMES, realHours, clockHours, clockMinutes);
+	if (!Night && realHours >= CONST_DAY_NIGHT_START) {
+		Night = true;
+		dayNightCycleDidChange = true;
+	} else if (Night && AM && realHours >= CONST_DAY_HOUR_START) {
+		Night = false;
+		dayNightCycleDidChange = true;
+		Day++;
+		MobSpawnLimit++;
+		MobAggroRange = (CONST_MOB_AGGRO_RANGE_MIN_TILES + Day) * TILE;
+	}
+
+	// Set Clock
+	SetCountdownTimer(SetTo, (clockHours * 60) + clockMinutes);
+	// Hero vision range
+	if (Night && bread(0x65FD00 + 13624 + UNIT_HERO) != 2) bwrite(0x65FD00 + 13624 + UNIT_HERO, 2);
+	else if (!Night && bread(0x65FD00 + 13624 + UNIT_HERO) != 11) bwrite(0x65FD00 + 13624 + UNIT_HERO, 11);
+
+	if (dwread(0x51CE98) == 0) dwwrite(0x51CE98, 1);
+	else dwwrite(0x51CE98, 1);
+	UpdateHints(realHours);
+	return dayNightCycleDidChange;
+}
+
+function GetStructureResourceCost(structureType, resourceType) {
+	return EUDArray.cast(STRU_COST[structureType]).get(resourceType);
+}
+
+function GetPlayerResourceAmount(playerID, resourceType) {
+	return EUDArray.cast(PlayerResources[playerID]).get(resourceType);
+}
+
+function SetPlayerResourceAmount(playerID, resourceType, amount) {
+	EUDArray.cast(PlayerResources[playerID]).set(resourceType, amount);
+}
+
+function AddPlayerResourceAmountMulti(playerID, resourceType, amount, resourceType2, amount2, display) {
+	EUDArray.cast(PlayerResources[playerID]).iadditem(resourceType, amount);
+	if (amount2 > 0) EUDArray.cast(PlayerResources[playerID]).iadditem(resourceType2, amount2);
+	
+	if (display) {
+		const prevplayer = getcurpl();
+		setcurpl(playerID);		
+		if (amount2 > 0) eprintf("\x04+ {} {:s} ({}), {} {:s} ({})", amount, RES_NAME[resourceType], GetPlayerResourceAmount(playerID, resourceType), amount2, RES_NAME[resourceType2], GetPlayerResourceAmount(playerID, resourceType2));
+		else eprintf("\x04+ {} {:s} ({})", amount, RES_NAME[resourceType], GetPlayerResourceAmount(playerID, resourceType));
+		PlayWAV("staredit\\wav\\pop.ogg");
+		setcurpl(prevplayer);
+	}
+	UpdatePlayerTooltips(playerID);
+}
+
+function AddPlayerResourceAmount(playerID, resourceType, amount, display) {
+	AddPlayerResourceAmountMulti(playerID, resourceType, amount, RES_COUNT, 0, display);
+}
+
+function AddPlayerMobLoot(playerID, mobID) {
+	if (playerID > 7) return;
+	for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+		const resource1Amount = EUDArray.cast(MOB_LOOT_1[mobID]).get(resourceType);
+		if (resource1Amount != 0) {
+			AddPlayerResourceAmount(playerID, resourceType, resource1Amount, true);
+		}
+		const resource2Amount = EUDArray.cast(MOB_LOOT_2[mobID]).get(resourceType);
+		if (resource2Amount != 0 && Rand(MOB_LOOT_2_CHANCE[mobID])) {
+			AddPlayerResourceAmount(playerID, resourceType, resource2Amount, true);
+		}
+	}
+}
+
+function PlayerHasTechnology(playerID, technologyType) {
+	return EUDArray.cast(PlayerTechnology[playerID]).get(technologyType) == 1 ? true : false;
+}
+
+function AddPlayerTechnology(playerID, technologyType, display) {	
+	if (EUDArray.cast(PlayerTechnology[playerID]).get(technologyType) != 1) {
+		EUDArray.cast(PlayerTechnology[playerID]).set(technologyType, 1);
+		bwrite(0x58CF44 + 0x21FC * ((technologyType) / 24) + (playerID) * (24 - 4 * ((technologyType) / 24)) + ((technologyType) % 24), 1);
+		if (display) {
+			const prevplayer = getcurpl();
+			setcurpl(playerID);
+			Screen.printf("Blueprint acquired: \x03{:s}\x01 - {:s}", TECH_STRING[technologyType], TECH_DESCRIPTION[technologyType]);
+			PlayWAV("sound\\Misc\\TRescue.wav");
+			setcurpl(prevplayer);
+		}
+	} else {
+		if (display) {
+			const prevplayer = getcurpl();
+			setcurpl(playerID);
+			Screen.printf("You already have blueprint for: \x03{:s}", TECH_STRING[technologyType]);
+			//PlayWAV
+			setcurpl(prevplayer);
+		}
+	}
+}
+
+function SubtractPlayerResourceAmount(playerID, resourceType, amount) {
+	if (amount == 0) return;
+	EUDArray.cast(PlayerResources[playerID]).isubitem(resourceType, amount);
+	//Screen.printf("subtr {} {:s}", amount, RES_NAME[resourceType]);
+	UpdatePlayerTooltips(playerID);
+}
+
+function ValidatePlayerResourceAmount(playerID, resourceType, amount) {
+	if (amount == 0) return true;
+	if (EUDArray.cast(PlayerResources[playerID]).get(resourceType) >= amount) return true;
+	else return false;
+}
+
+function TransferResourceAmount(sendingPlayerID, receivingPlayerID, resourceType, amount, display) {
+	if (amount == 0) return;
+	if (ValidatePlayerResourceAmount(sendingPlayerID, resourceType, amount)) {		
+		EUDArray.cast(PlayerResources[sendingPlayerID]).isubitem(resourceType, amount);
+		AddPlayerResourceAmount(receivingPlayerID, resourceType, amount, display);
+	}
+}
+
+
+function ValidateCostMulti(playerID, costArray:EUDArray, display, multiples) {
+	var valid = true;
+	for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+		const amount = EUDArray.cast(costArray).get(resourceType);
+		if (amount > 0 && ValidatePlayerResourceAmount(playerID, resourceType, amount*multiples) == false) {
+			valid = false;
+			break;
+		}
+	}
+	if (!valid && display) eprintln("\x04Not enough resources");
+	return valid;
+}
+
+function ValidateCostIncreaseMulti(playerID, baseCostArray:EUDArray, increaseCostArray:EUDArray, display, multiples) {
+	var valid = true;
+	for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+		var amount = EUDArray.cast(baseCostArray).get(resourceType);
+		amount += EUDArray.cast(increaseCostArray).get(resourceType) * multiples;
+		if (amount > 0) {
+			if (ValidatePlayerResourceAmount(playerID, resourceType, amount) == false) {
+				valid = false;
+				break;
+			}
+		}
+	}
+	if (!valid && display) eprintln("\x04Not enough resources");
+	return valid;
+}
+
+function ValidateCost(playerID, costArray:EUDArray, display) {
+	return ValidateCostMulti(playerID, costArray, display, 1);
+}
+
+function ProcessCostMulti(playerID, costArray:EUDArray, multiples) {
+	for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+		SubtractPlayerResourceAmount(playerID, resourceType, EUDArray.cast(costArray).get(resourceType) * multiples);
+	}
+}
+
+function ProcessCost(playerID, costArray:EUDArray) {
+	return ProcessCostMulti(playerID, costArray, 1);
+}
+
+function ProcessResourceConversion(playerID, conversionID) {
+	if (ValidateCost(playerID, CONV_RES_INPUTS[conversionID], true)) {		
+		ProcessCost(playerID, CONV_RES_INPUTS[conversionID]);
+		for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+			const qty = EUDArray.cast(CONV_RES_OUTPUTS[conversionID]).get(resourceType);
+			if (qty != 0) AddPlayerResourceAmount(playerID, resourceType, qty, true);
+		}
+		PlayWAV("sound\\Terran\\SCV\\TScTra00.wav");
+		eprintln("\x04Resource conversion complete");
+	}
+}
+
+function ProcessUpgrade(playerID, upgradeID, buttonSet, buttonIndex) {
+	const upgradeLevel = GetUpgrade(playerID, upgradeID);
+	const rawUpgradeID = UPGR_UPGRADE[upgradeID];
+	const amount = 1;
+	if (upgradeLevel+1 < UPGR_MAX_LEVEL[upgradeID]) {
+		if (ValidateCostIncreaseMulti(playerID, UPGR_COST[upgradeID], UPGR_COST_INCREASE[upgradeID], true, upgradeLevel)) {
+			SetMemoryEPD(EPD(0x58D2B0 + 0x207C * (rawUpgradeID / 46) + playerID * (46 - 31 * (rawUpgradeID / 46)) + (rawUpgradeID % 46)), (8), bitlshift(amount, 8 * ((playerID * (46 - 31 * (rawUpgradeID / 46)) + (rawUpgradeID % 46)) % 4)));
+			ProcessCost(playerID, UPGR_COST[upgradeID]);	
+			ProcessCostMulti(playerID, UPGR_COST_INCREASE[upgradeID], upgradeLevel);
+			PlayWAV("sound\\Terran\\SCV\\TScTra00.wav");
+			eprintln("\x04Upgrade complete");
+			if (upgradeLevel+2 >= UPGR_MAX_LEVEL[upgradeID]) SetButtonIcon(buttonSet, buttonIndex, 0, BTN_HIDDEN);
+		}
+	} else {
+		eprintln("\x04Upgrade at max level");
+	}
+}
+
+function AddResourceToConsume(playerID, structureType) {
+	for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+		EUDArray.cast(PlayerResourcesToConsume[playerID]).set(resourceType, GetStructureResourceCost(structureType, resourceType));
+	}
+}
+
+function SettleResourceToConsume(playerID) {
+	for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+		SubtractPlayerResourceAmount(playerID, resourceType, EUDArray.cast(PlayerResourcesToConsume[playerID]).get(resourceType));
+	}
+}
+
+function EnableAbility(playerID, abilityID, display) {
+	if (display) Screen.printf("Suit ability enabled \x02{:s}", ABLT_TOOLTIP[abilityID]);
+	if (ABLT_TYPE[abilityID] == ABLT_TYPE_SELFCAST) EUDArray.cast(PlayerSelfAbilitiesAvailable[playerID]).set(abilityID, 1);
+	else EUDArray.cast(PlayerTargetAbilitiesAvailable[playerID]).set(abilityID, 1);
+	SelectAbility(playerID, abilityID);
+}
+
+function SelectAbility(playerID, abilityID) {
+	if (abilityID >= ABLT_COUNT) return;
+	
+	//if (ABLT_TYPE[abilityID] == ABLT_TYPE_SELFCAST) Screen.printf("Self {} -> {}", PlayerSelfAbilityID[playerID], abilityID);
+	//else Screen.printf("Target {} -> {}", PlayerTargetAbilityID[playerID], abilityID);
+
+	if (ABLT_TYPE[abilityID] == ABLT_TYPE_SELFCAST) PlayerSelfAbilityID[playerID] = abilityID;
+	else PlayerTargetAbilityID[playerID] = abilityID;
+}
+
+function ValidateAbilityEnergy(playerID, abilityID) {
+	if (PlayerEnergy[playerID] >= ABLT_ENERGY_COST[abilityID]) return true;
+	else {
+		eprintln("\x04Not enough energy");
+		return false;
+	}
+}
+
+function CastSelfAbility(playerID) {
+	const abilityID = PlayerSelfAbilityID[playerID];
+	if (abilityID >= ABLT_COUNT) return;
+	const heroUnit = CUnit(PlayerHeroUnit[playerID]);
+	//Screen.printf("CastSelfAbility id {} playerID {}", abilityID, playerID);
+	var abilityCasted = false;
+	switch(abilityID) {
+		case ABLT_SELF_HEAL:		
+			heroUnit.hp = CONST_HERO_HP_MAX;
+			CreateImageSpriteAtUnit(967, heroUnit);
+			abilityCasted = true;
+			break;
+		case ABLT_SELF_SHIELD:
+			CreateOverlayUnitWithRemoveTimer(heroUnit, 371, $P8, ABLT_TIMER[abilityID]);
+			abilityCasted = true;
+			break;
+		case ABLT_SELF_MINESPEED:
+			heroUnit.order = CONST_ORDER_MINE_NEARBY;
+			abilityCasted = true;
+			break;
+		case ABLT_SELF_VISION:
+			CreateOverlayUnitWithRemoveTimer(heroUnit, 546, playerID, ABLT_TIMER[abilityID]);
+			abilityCasted = true;
+			break;
+		case ABLT_SELF_RECALL:
+			CreateImageSpriteAtUnit(391, heroUnit);
+			MoveUnit(1, UNIT_HERO, playerID, LOC_ANYWHERE, playerID+1);
+			CreateImageSpriteAtUnit(391, heroUnit);
+			abilityCasted = true;
+			break;
+		case ABLT_SELF_DROIDS:
+			for (var i = 0; i < 3; i++) {
+				heroUnit.setloc(LOC_REPLACE);
+				const droidUnit = CreateCUnit(UNIT_DROID, playerID, LOC_REPLACE);
+				droidUnit.remove_collision();
+				droidUnit.removeTimer = ABLT_TIMER[abilityID];
+				droidUnit.parent = heroUnit;
+			}
+			abilityCasted = true;
+			break;
+	}
+	if (abilityCasted) {		
+		PlayerEnergy[playerID] -= ABLT_ENERGY_COST[abilityID];
+		PlayerSelfAbilityTimer[playerID] = ABLT_TIMER[abilityID];
+		PlayerSelfAbilityCooldown[playerID] = ABLT_COOLDOWN[abilityID];
+		if (ABLT_ACTIVATE_SOUND[abilityID] != 0) StringBuffer.cast(ABLT_ACTIVATE_SOUND[abilityID]).Play();
+	}
+}
+
+function CastTargetAbility(playerID, targetUnit: CUnit, x, y) {	
+	const abilityID = PlayerTargetAbilityID[playerID];
+	//Screen.printf("CastTargetAbility {}", abilityID);
+	if (abilityID >= ABLT_COUNT) return;
+	const heroUnit = CUnit(PlayerHeroUnit[playerID]);
+	var abilityCasted = false;
+	switch(abilityID) {
+		case ABLT_TARGET_STUN:
+			if (targetUnit.playerID >= $P6 && targetUnit.unitID != UNIT_RESOURCE) {
+				targetUnit.lockdownTimer = ABLT_TIMER[abilityID]/8;
+				CreateOverlayUnitWithRemoveTimer(targetUnit, 361, $P8, ABLT_TIMER[abilityID]);
+				abilityCasted = true;
+			} else eprintln("\x04Invalid target. Must target enemy or neutral units.");
+			break;
+		case ABLT_TARGET_DAMAGE:
+			if (targetUnit.playerID >= $P6) {
+				DamageUnit(targetUnit, 50*256);
+				abilityCasted = true;
+				CreateImageSpriteAtUnit(281, targetUnit);
+			} else eprintln("\x04Invalid target. Must target enemy or neutral units.");
+			break;
+		case ABLT_TARGET_REGROW:
+			if (targetUnit.unitID == UNIT_RESOURCE && (targetUnit.unknown0x106 == RES_LEAVES || targetUnit.unknown0x106 == RES_WOOD)) {
+				targetUnit.resourceAmount = RES_TOTAL_AMOUNT[targetUnit.unknown0x106];
+				abilityCasted = true;
+				CreateImageSpriteAtUnit(368, targetUnit);
+			} else eprintln("\x04Invalid target. Must target a tree or bush resource node.");
+			break;
+		case ABLT_TARGET_SLOW:
+			if (targetUnit.playerID >= $P6 && targetUnit.unitID != UNIT_RESOURCE) {
+				targetUnit.ensnareTimer = ABLT_TIMER[abilityID]/8;				
+				abilityCasted = true;
+				CreateOverlayUnitWithRemoveTimer(targetUnit, 385, $P8, ABLT_TIMER[abilityID]);
+			} else eprintln("\x04Invalid target. Must target enemy or neutral units.");
+			break;
+		case ABLT_TARGET_BLINK:
+			CreateImageSpriteAtUnit(545, heroUnit);
+			setloc(LOC_FX, x, y);
+			MoveUnit(1, UNIT_HERO, playerID, LOC_ANYWHERE, LOC_FX);
+			Order(UNIT_HERO, playerID, LOC_ANYWHERE, Move, LOC_FX);
+			CreateImageSpriteAtUnit(545, heroUnit);
+			abilityCasted = true;
+			break;
+	}
+	if (abilityCasted) {
+		PlayerEnergy[playerID] -= ABLT_ENERGY_COST[abilityID];
+		PlayerTargetAbilityTimer[playerID] = ABLT_TIMER[abilityID];
+		PlayerTargetAbilityCooldown[playerID] = ABLT_COOLDOWN[abilityID];
+		if (ABLT_ACTIVATE_SOUND[abilityID] != 0) StringBuffer.cast(ABLT_ACTIVATE_SOUND[abilityID]).Play();
+	}
+}
+
+function HandleSelfAbility(playerID) {
+	if (PlayerSelfAbilityCooldown[playerID] > 0) PlayerSelfAbilityCooldown[playerID]--;
+	const unit = CUnit(PlayerHeroUnit[playerID]);
+	const abilityID = PlayerSelfAbilityID[playerID];
+	const abilityTimer = PlayerSelfAbilityTimer[playerID];
+	if (PlayerSelfAbilityTimer[playerID] == 1 && ABLT_DEACTIVATE_SOUND[abilityID] != 0) StringBuffer.cast(ABLT_DEACTIVATE_SOUND[abilityID]).Play();
+	switch(abilityID) {
+		case ABLT_SELF_SPEED:
+			if (PlayerSelfAbilityTimer[playerID] > 1) unit.topSpeed = CONST_ABLT_SELF_SPEED_FAST;
+			else if (PlayerSelfAbilityTimer[playerID] == 1) unit.topSpeed = CONST_ABLT_SELF_SPEED_DEFAULT;
+			if (PlayerSelfAbilityTimer[playerID] > 0 && unit.currentSpeed1 > 0) CreateImageSpriteAtUnit(441, unit);
+			break;
+		case ABLT_SELF_SHIELD:
+			if (PlayerSelfAbilityTimer[playerID] > 1) {
+				unit.defensiveMatrixHp = CONST_HERO_HP_MAX;
+				unit.defensiveMatrixTimer = 10;
+			}
+			else if (PlayerSelfAbilityTimer[playerID] == 1) {
+				unit.defensiveMatrixHp = 0;
+				unit.defensiveMatrixTimer = 0;
+			}
+			break;
+		case ABLT_SELF_MINESPEED:			
+			if (PlayerSelfAbilityTimer[playerID] > 1
+				&& unit.targetResourceUnit != 0
+				&& (unit.order == CONST_ORDER_MINE || unit.order == CONST_ORDER_MINE_NEARBY)
+				&& unit.orderTimer > CONST_MINESPEED_TIMER) {
+				unit.orderTimer = CONST_MINESPEED_TIMER;
+				CreateImageSpriteAtUnit(520, unit.targetResourceUnit);
+			}
+			break;
+		case ABLT_SELF_VISION:
+			// Set brighter light
+			break;
+	}
+
+	// Cleanup
+	if (abilityID != ABLT_SELF_SPEED && unit.topSpeed != CONST_ABLT_SELF_SPEED_DEFAULT) unit.topSpeed = CONST_ABLT_SELF_SPEED_DEFAULT;
+
+	if (PlayerSelfAbilityTimer[playerID] > 0) PlayerSelfAbilityTimer[playerID]--;
+}
+
+function HandleTargetAbility(playerID) {
+	if (PlayerTargetAbilityCooldown[playerID] > 0) PlayerTargetAbilityCooldown[playerID]--;
+	const unit = CUnit(PlayerHeroUnit[playerID]);
+	const abilityID = PlayerTargetAbilityID[playerID];
+	const abilityTimer = PlayerTargetAbilityTimer[playerID];
+	//if (PlayerTargetAbilityTimer[playerID] == 1 && ABLT_DEACTIVATE_SOUND[abilityID] != 0) StringBuffer.cast(ABLT_DEACTIVATE_SOUND[abilityID]).Play();
+	switch(abilityID) {
+
+	}
+	if (PlayerTargetAbilityTimer[playerID] > 0) PlayerTargetAbilityTimer[playerID]--;
+}
+
+function ProcessAbilityResearch(playerID, abilityID, buttonSet, buttonIndex) {
+	if (ValidateCost(playerID, ABLT_COST[abilityID], true)) {		
+		ProcessCost(playerID, ABLT_COST[abilityID]);
+		SetButtonIcon(buttonSet, buttonIndex, ABLT_ICON[abilityID], BTN_HIDDEN);
+		EnableAbility(playerID, abilityID, true);
+		PlayWAV("sound\\Terran\\SCV\\TScTra00.wav");
+		eprintln("\x04Research complete");
+	}
+}
+
+function ProcessStorageTransfer(insert, playerID, resourceType, amount) {
+	if (insert) {
+		if (ValidatePlayerResourceAmount(playerID, resourceType, amount)) {
+			TransferResourceAmount(playerID, PLAYER_STORAGE, resourceType, amount, false);
+			eprintf("\x04Transferred {} {:s} to storage. ({} in total)", amount, RES_NAME[resourceType], GetPlayerResourceAmount(PLAYER_STORAGE, resourceType));
+		} else {
+			eprintln("\x04Not enough resources");
+		}
+	} else {
+		if (ValidatePlayerResourceAmount(PLAYER_STORAGE, resourceType, amount)) {
+			TransferResourceAmount(PLAYER_STORAGE, playerID, resourceType, amount, false);
+			eprintf("\x04Retreived {} {:s} from storage. ({} left)", amount, RES_NAME[resourceType], GetPlayerResourceAmount(PLAYER_STORAGE, resourceType));
+		} else {
+			eprintf("\x04No {:s} left in storage", RES_NAME[resourceType]);
+		}
+	}
+	UpdatePlayerTooltips(playerID);
+}
+
+function HandleDevCommands(playerID) {
+	if (PlayerFKeyDown[playerID] && PlayerCtrlKeyPress[playerID]) {
+		PlayerScreenFollowDisabled[playerID] = !PlayerScreenFollowDisabled[playerID];
+	}
+	if (PlayerF7KeyDown[playerID]) {
+		for (var i = 0; i < RES_COUNT; i++) {
+			EUDArray.cast(PlayerResources[playerID]).iadditem(i, 100);
+			eprintln("\x04Cheat enabled");
+		}
+		if (PlayerShiftKeyPress[playerID]) {
+			for (var technologyType = 0; technologyType < TECH_COUNT; technologyType++) {
+				AddPlayerTechnology(playerID, technologyType, false);
+			}
+			if (PlayerCtrlKeyPress[playerID]) {
+				for (var abilityID = 0; abilityID < ABLT_COUNT; abilityID++) {
+					EnableAbility(playerID, abilityID, false);
+				}
+			}
+		}
+	} else if (PlayerF8KeyDown[playerID]) {
+		PlayerDebugMode[playerID] = !PlayerDebugMode[playerID];
+	} else if (PlayerF9KeyDown[playerID]) {
+		if (PlayerF9KeyDown[playerID]) {
+			if (PlayerShiftKeyPress[playerID]) {
+				MoveUnit(1, UNIT_HERO, playerID, LOC_ANYWHERE, LOC_DEV_AREA);
+			} else {
+				Time += CONST_CYCLE_LENGTH_FRAMES/24;
+			}
+		}
+	} else if (PlayerF12KeyDown[playerID]) {
+		for (var i = 0; i < SPAWNER_TIERS.length; i++) {
+			CreateUnit(4, SPAWNER_TIERS[i], $L("SpawnArea"), playerID);
+		}
+	}
+}
+
+function UpdatePlayerInterface(playerID, selectedUnit:CUnit, updateButtons) {
+	if (!IsUserCP()) return;
+
+	if (updateButtons) {		
+		const selfAbilityID = PlayerSelfAbilityID[playerID];
+		if (selfAbilityID < ABLT_COUNT) {
+			if (PlayerSelfAbilityCooldown[playerID] == 0) {
+				if (ABLT_TOOLTIP[selfAbilityID] != 0) settblf(1000, 0, "{:s}{:s}\nEnergy: {}\n{:s}", ABLT_SELF_TOOLTIP_PREFIX, ABLT_TOOLTIP[selfAbilityID], ABLT_ENERGY_COST[selfAbilityID]/256, ABLT_TOOLTIP_SUFFIX);
+				SetButtonIcon(UNIT_HERO, CONST_SELF_ABILITY_BTN_INDEX, ABLT_ICON[selfAbilityID], BTN_ENABLED);
+			} else {
+				if (ABLT_TOOLTIP[selfAbilityID] != 0) settblf(1001, 0, "{:s}{:s}\nEnergy: {}\n{:s}{}", ABLT_SELF_TOOLTIP_CD_PREFIX, ABLT_TOOLTIP[selfAbilityID], ABLT_ENERGY_COST[selfAbilityID]/256, ABLT_TOOLTIP_CD_SUFFIX, PlayerSelfAbilityCooldown[playerID]/24);
+				SetButtonIcon(UNIT_HERO, CONST_SELF_ABILITY_BTN_INDEX, ABLT_ICON[selfAbilityID], BTN_DISABLED);
+			}
+		} else {
+			SetButtonIcon(UNIT_HERO, CONST_SELF_ABILITY_BTN_INDEX, 0, BTN_HIDDEN);
+		}
+		const targetAbilityID = PlayerTargetAbilityID[playerID];
+		if (targetAbilityID < ABLT_COUNT) {
+			if (PlayerTargetAbilityCooldown[playerID] == 0) {
+				if (ABLT_TOOLTIP[targetAbilityID] != 0) settblf(1002, 0, "{:s}{:s}\nEnergy: {}\n{:s}", ABLT_TARGET_TOOLTIP_PREFIX, ABLT_TOOLTIP[targetAbilityID], ABLT_ENERGY_COST[targetAbilityID]/256, ABLT_TOOLTIP_SUFFIX);
+				SetButtonIcon(UNIT_HERO, CONST_TARGET_ABILITY_BTN_INDEX, ABLT_ICON[targetAbilityID], BTN_ENABLED);
+			} else {
+				if (ABLT_TOOLTIP[targetAbilityID] != 0) settblf(1003, 0, "{:s}{:s}\nEnergy: {}\n{:s}{}", ABLT_TARGET_TOOLTIP_CD_PREFIX, ABLT_TOOLTIP[targetAbilityID], ABLT_ENERGY_COST[targetAbilityID]/256, ABLT_TOOLTIP_CD_SUFFIX, PlayerTargetAbilityCooldown[playerID]/24);
+				SetButtonIcon(UNIT_HERO, CONST_TARGET_ABILITY_BTN_INDEX, ABLT_ICON[targetAbilityID], BTN_DISABLED);
+			}
+		} else {
+			SetButtonIcon(UNIT_HERO, CONST_TARGET_ABILITY_BTN_INDEX, 0, BTN_HIDDEN);
+		}
+	}
+
+	// Player status
+	settblf(STRING_HERO_DESCRIPTION_LABEL, 0, "{:s}", STATUS_STRINGS[PlayerStatus[playerID]]);
+
+	if (selectedUnit.unitID == UNIT_HERO && selectedUnit.playerID == playerID) {
+		const mouseX = dwread(0x6CDDC4);
+		const mouseY = dwread(0x6CDDC8);
+		const mid = PlayerScreenWidth[playerID] / 2;
+		if ((mouseX >= mid && mouseX <= mid+36) && (mouseY >= 438 && mouseY <= 438+36)) {
+			if (PlayerLMouseDown[playerID]) {
+				PlayWAV("sound\\Misc\\Button.wav");
+				if (PlayerInventoryPage[playerID] >= CONST_INV_PAGES) PlayerInventoryPage[playerID] = 0;
+				else PlayerInventoryPage[playerID]++;
+				UpdatePlayerTooltips(playerID);
+			}
+			if (PlayerRMouseDown[playerID]) {
+				PlayWAV("sound\\Misc\\Button.wav");
+				if (PlayerInventoryPage[playerID] <= 0) PlayerInventoryPage[playerID] = CONST_INV_PAGES-1;
+				else PlayerInventoryPage[playerID]--;
+				UpdatePlayerTooltips(playerID);
+			}
+		}
+	} else if (selectedUnit.unitID == STRU_STORAGE && selectedUnit.playerID == playerID) {
+		const mouseX = dwread(0x6CDDC4);
+		const mouseY = dwread(0x6CDDC8);
+		const mid = PlayerScreenWidth[playerID] / 2;
+		if ((mouseX >= mid-36 && mouseX <= mid) && (mouseY >= 438 && mouseY <= 438+36)) {
+			if (PlayerLMouseDown[playerID]) {
+				PlayWAV("sound\\Misc\\Button.wav");
+				if (PlayerStoragePage[playerID] >= CONST_INV_PAGES) PlayerStoragePage[playerID] = 0;
+				else PlayerStoragePage[playerID]++;
+				UpdatePlayerTooltips(playerID);
+			}
+			if (PlayerRMouseDown[playerID]) {
+				PlayWAV("sound\\Misc\\Button.wav");
+				if (PlayerStoragePage[playerID] <= 0) PlayerStoragePage[playerID] = CONST_INV_PAGES-1;
+				else PlayerStoragePage[playerID]--;
+				UpdatePlayerTooltips(playerID);
+			}
+		}		
+	}	
+}
+
+function SelectUnit(unit: CUnit, playerID) {
+	if (unit.ptr == 0) return;
+	if (IsUserCP()) {
+		dwwrite(0x6284B8, unit.ptr);
+		dwwrite(0x597208, unit.ptr);
+		bwrite(0x59723C, 1);
+	}	
+	dwwrite(SelectionAddresses[playerID], unit.ptr);
+}
+
+function ClearBringCache() {
+	RemoveUnitAt(1, 0, 0, 0);
+}
+
+function ReplaceResources() {
+	if (ReplacedInitialResources) return;
+	if (   Command($P7, Exactly, 0, UNIT_RESOURCE_PLACEHOLDER1)
+		&& Command($P8, Exactly, 0, UNIT_RESOURCE_PLACEHOLDER1)
+		&& Command($P9, Exactly, 0, UNIT_RESOURCE_PLACEHOLDER1)
+		&& Command($P10, Exactly, 0, UNIT_RESOURCE_PLACEHOLDER1)
+		&& Command($P11, Exactly, 0, UNIT_RESOURCE_PLACEHOLDER1)
+		&& Command($P12, Exactly, 0, UNIT_RESOURCE_PLACEHOLDER1)) {
+		ReplacedInitialResources = true;
+		/*
+		setcurpl($P1);
+		Screen.printf("Resource gen done: {}/{} {}/{} {}/{} {}/{} {}/{} {}/{} {}/{} {}/{} {}/{}",
+			BIOME_TYPE_SPAWN_COUNT[0], BIOME_TYPE_MIN_SPAWN_COUNT[0],
+			BIOME_TYPE_SPAWN_COUNT[1], BIOME_TYPE_MIN_SPAWN_COUNT[1],
+			BIOME_TYPE_SPAWN_COUNT[2], BIOME_TYPE_MIN_SPAWN_COUNT[2],
+			BIOME_TYPE_SPAWN_COUNT[3], BIOME_TYPE_MIN_SPAWN_COUNT[3],
+			BIOME_TYPE_SPAWN_COUNT[4], BIOME_TYPE_MIN_SPAWN_COUNT[4],
+			BIOME_TYPE_SPAWN_COUNT[5], BIOME_TYPE_MIN_SPAWN_COUNT[5],
+			BIOME_TYPE_SPAWN_COUNT[6], BIOME_TYPE_MIN_SPAWN_COUNT[6],
+			BIOME_TYPE_SPAWN_COUNT[7], BIOME_TYPE_MIN_SPAWN_COUNT[7],
+			BIOME_TYPE_SPAWN_COUNT[8], BIOME_TYPE_MIN_SPAWN_COUNT[8],
+		);
+		*/
+		return;
+	}
+	var count = 0;
+	var i = 0;
+	foreach(unit : EUDLoopCUnit()) {
+		if (unit.unitID != UNIT_RESOURCE_PLACEHOLDER1) continue;
+		if (unit.playerID < $P7) continue;
+		const index = unit.playerID - $P7;
+		var biomeID = unit.hp / 255;
+		if (biomeID >= BIOME_COUNT) biomeID = 0;
+		const biomeType = EUDArray.cast(BIOME_ID_TYPE_MAP[biomeID]);
+		const resourceType = biomeType[index];
+		unit.setloc(LOC_REPLACE);
+		unit.remove();
+		if (resourceType == RES_NULL) continue;
+		if (!RES_SPAWNABLE[resourceType]) continue;
+		const image = EUDArray.cast(RES_IMAGES[resourceType]).get(i);
+		const resourceAmount = RES_TOTAL_AMOUNT[resourceType];
+		wwrite(0x665AC0 + 1696 + 279 * 2, image); // Set image
+		bwrite(0x666778 + 23000 + image * 1, 1); // Clickable
+		const resourceUnit = CUnit.from_read(EPD(0x628438));
+		CreateUnit(1, UNIT_RESOURCE, LOC_REPLACE, PLAYER_NEUTRAL);
+		resourceUnit.unknown0x106 = resourceType;
+		resourceUnit.resourceAmount = resourceAmount;
+		if (RES_INITIALLY_BLOCKED[resourceType]) {
+			addloc(LOC_REPLACE, 0, RES_BLOCKADE_OFFSET[resourceType]);			
+			const blockade = CreateCUnit((resourceType < RES_OBSIDIAN ? UNIT_RESOURCE_BLOCKADE_SMALL : UNIT_RESOURCE_BLOCKADE_LARGE), LOC_REPLACE, PLAYER_NEUTRAL);
+			GiveUnit(blockade, PLAYER_BLOCKADE);
+			resourceUnit.connectedUnit = blockade;
+		}
+		if (i < 3) i++;
+		else i = 0;
+		count++;
+		if (count > 90) break;
+	}
+}
+
+function UpdatePlayerScreenDimensions(playerID) {
+	if (PlayerScreenFollowDisabled[playerID]) return;
+	if (IsUserCP()) {		
+		if (Multiplayer) CenterView($L("_DetectDimensions"));
+		PlayerScreenWidth[playerID] = 256*32 - dwread(0x628448);
+		PlayerScreenHeight[playerID] = 256*32 - dwread(0x628448);
+	}
+}
+
+function onPluginStart() {
+	if (CONST_CAN_EXPIRE && dwread(0x6D0F38) > CONST_EXPIRY) {
+		Expired = true;
+		return;
+	}
+	Multiplayer = dwread(0x57F0B4);
+	if (!CONST_DEV_MODE && !Multiplayer) {
+		printAllAt(4, "\x13Play in multiplayer:\n\x13 This map is only playable in Multiplayer Mode");
+		Defeat();
+		return;
+	}
+	if (!Multiplayer) StructureControlRange = CONST_STRU_CONTROL_RANGE_SP;
+
+	randomize();
+	Setup();
+	if (Multiplayer) {
+		for (var i = 0; i < 49; i++) bwrite(0x513B68+i, 0);
+	}
+	
+	EUDPlayerLoop()();
+	const playerID = getcurpl();
+	UpdatePlayerScreenDimensions(playerID);
+	Screen.printAt(0, "\x13\x04~ Welcome to Nightfall Survivors ~");
+	Screen.printfAt(1, "\x13\x04Day {}", Day);
+	EUDEndPlayerLoop();
+}
+
+
+function beforeTriggerExec() {
+	var buttonSet;
+	if (!Memory(0x68C14C, Exactly, buttonSet)) {
+		buttonSet = dwread(0x68C14C);
+		DoActions(PlayerButtonSetChanged.Set());
+	}
+	ReplaceResources();
+}
+
+function afterTriggerExec() {
+	if (CONST_CAN_EXPIRE && Expired) {
+		printAllAt(4, "\x13Map Expired:\n\x13 There is a newer version of this map with significant improvements to bugs and balance.\n\x13Please get the latest version by joining the StarEdit.net Discord\n\x13https://discord.gg/TqShZ66QnV");
+		return;
+	}
+
+	PlayerButtonSetChanged.Clear();
+	SetMemory(0x6509A0, SetTo, 0);
+	CreateUnit(1, "Zerg Zergling", LOC_OFFSCREEN, $P8);
+	RemoveUnit("Zerg Zergling", $P8);
+	const dayNightCycleDidChange = UpdateTime();
+
+	if (AggroTimer == 0) AggroTimer = CONST_AGGRO_TIMER_MAX;
+	else AggroTimer--;
+
+	EUDPlayerLoop()();
+	const playerID = getcurpl();
+	const heroUnit = CUnit(PlayerHeroUnit[playerID]);
+
+	const selectedUnit = CUnit.cast(PlayerSelectedUnit[playerID]);
+
+	if (UpdatePlayerScreenDimensionsTimer > 42*5) UpdatePlayerScreenDimensionsTimer = 0;
+	else UpdatePlayerScreenDimensionsTimer++;
+
+	if (PlayerHarvestSoundTimer[playerID] > 0) PlayerHarvestSoundTimer[playerID]--;
+	else PlayerHarvestSoundTimer[playerID] = PLAYER_HARVEST_SOUND_TIMER_MAX;
+
+	if (playerID < $P6) {
+		if (Multiplayer && UpdatePlayerScreenDimensionsTimer == 0) UpdatePlayerScreenDimensions(playerID);
+		//heroUnit.setloc(LOC_RANGE);
+		//dilateloc(LOC_RANGE, CONST_FURNACE_REGEN_RANGE, CONST_FURNACE_REGEN_RANGE);
+		
+
+		// Global updates
+		if (dayNightCycleDidChange) {
+			if (Night) {
+				Screen.printAt(0, "\x13\x04~ Nightfall ~");
+				PlayWAV("sound\\Misc\\ZRescue.wav");
+			} else {
+				Screen.printAt(0, "\x13\x04~ Daybreak ~");
+				Screen.printfAt(1, "\x13\x04Day {}", Day);
+				PlayWAV("sound\\Misc\\PRescue.wav");
+			} 
+		}
+		
+		HandleDevCommands(playerID);
+		HandleSelfAbility(playerID);
+		HandleTargetAbility(playerID);
+		UpdateSelectedUnit(playerID);
+
+		if (Command(playerID, Exactly, 0, UNIT_HERO)) PlayerScreenFollowDisabled[playerID] = true;
+
+		// HP, Energy Vitals and Status	
+
+		heroUnit.setloc(LOC_RANGE);
+		dilateloc(LOC_RANGE, CONST_FURNACE_REGEN_RANGE, CONST_FURNACE_REGEN_RANGE);
+		heroUnit.setloc(PlayerRangeLocations[playerID]);
+		dilateloc(PlayerRangeLocations[playerID], MobAggroRange, MobAggroRange);
+		heroUnit.setloc(PlayerSpecificLocations[playerID]);
+		dilateloc(PlayerSpecificLocations[playerID], CONST_FURNACE_REGEN_RANGE, CONST_FURNACE_REGEN_RANGE);
+		if (Multiplayer && PlayerScreenFollowDisabled[playerID] == 0 && IsUserCP()) CenterView(LOC_RANGE);
+		ClearBringCache();
+		var nearbyFurnace = Bring(AllPlayers, AtLeast, 1, STRU_FURNACE, PlayerSpecificLocations[playerID]) && Bring(AllPlayers, AtLeast, 1, UNIT_LIGHT_OVERLAY, PlayerSpecificLocations[playerID]) ? true : false;
+		var nearbyLightPost = Bring(AllPlayers, AtLeast, 1, STRU_LIGHTPOST, PlayerSpecificLocations[playerID]) && Bring(AllPlayers, AtLeast, 1, UNIT_LIGHT_OVERLAY, PlayerSpecificLocations[playerID]) ? true : false;
+		if (PlayerEnergy[playerID] >= CONST_HERO_ENERGY_RESTED_LEVEL) PlayerStatus[playerID] = STATUS_RESTED;
+		else if (PlayerEnergy[playerID] == 0) PlayerStatus[playerID] = STATUS_STARVING;
+		else if (PlayerEnergy[playerID] < CONST_STATUS_HUNGRY_LEVEL) PlayerStatus[playerID] = STATUS_HUNGRY;
+		else PlayerStatus[playerID] = STATUS_NORMAL;
+
+		if (AggroTimer == 0) {
+			heroUnit.setloc(PlayerRangeLocations[playerID]);
+			dilateloc(PlayerRangeLocations[playerID], MobAggroRange, MobAggroRange);
+			ClearBringCache();			
+			GiveUnits(100, $U("Men"), $P7, PlayerRangeLocations[playerID], $P6);
+			setcurpl($P6);
+			RunAIScriptAt("Send All Units on Random Suicide Missions", PlayerRangeLocations[playerID]);
+			setcurpl(playerID);
+		}
+		
+		if (heroUnit.cycleCounter == 0) {
+			if (nearbyFurnace) {
+				if (PlayerEnergy[playerID] + CONST_HERO_ENERGY_REGEN_FURNACE >= CONST_HERO_ENERGY_MAX) PlayerEnergy[playerID] = CONST_HERO_ENERGY_MAX;
+				else PlayerEnergy[playerID] += CONST_HERO_ENERGY_REGEN_FURNACE;
+			} else {
+				if (!nearbyLightPost) {
+					if (PlayerEnergy[playerID] >= CONST_HERO_ENERGY_DRAIN) PlayerEnergy[playerID] -= CONST_HERO_ENERGY_DRAIN;
+					else PlayerEnergy[playerID] = 0;
+				}
+			}
+			if (PlayerStatus[playerID] == STATUS_RESTED) {
+				HealUnit(heroUnit, CONST_HERO_HP_REGEN_HIGH_ENERGY, CONST_HERO_HP_MAX);
+			} else if (PlayerStatus[playerID] == STATUS_STARVING) {
+				DamageUnit(heroUnit, CONST_HERO_HP_DRAIN_EMPTY_ENERGY);
+			}
+		}
+		heroUnit.energy = PlayerEnergy[playerID];
+
+		//Debug selection
+		if (PlayerDebugMode[playerID] && selectedUnit != 0) {
+			Screen.printfAt(0, "Time {} AM {} Night {} SA {} TA {} light {} pbs {} PlayerEnergy {}",
+				Time,
+				AM,
+				Night,
+				PlayerSelfAbilityID[playerID],
+				PlayerTargetAbilityID[playerID],
+				PlayerLight[playerID],
+				PlayerButtonSet[playerID],
+				PlayerEnergy[playerID]
+			);
+			Screen.printfAt(1, "u {} playerID {} order {} orderState {} orderSignal {} secondaryOrder {} secondaryOrderState {} movementState {} orderTargetUnit {} moveTargetUnit {}",
+				selectedUnit,
+				selectedUnit.playerID,
+				selectedUnit.order,
+				selectedUnit.orderState,
+				selectedUnit.orderSignal,
+				selectedUnit.secondaryOrder,
+				selectedUnit.secondaryOrderState,
+				selectedUnit.movementState,
+				selectedUnit.orderTargetUnit,
+				selectedUnit.moveTargetUnit,
+			);
+			Screen.printfAt(2, "uid {} hp {} energy {} cu {} - u106 {} - u26 {} - killCount {} - rankIncrease {} - lastAttackingPlayer {} - unusedTimer {} - orderTimer {}",
+				selectedUnit.unitID,
+				selectedUnit.hp,
+				selectedUnit.energy,
+				selectedUnit.connectedUnit,
+				selectedUnit.unknown0x106,
+				selectedUnit.unknown0x26,
+				selectedUnit.killCount,
+				selectedUnit.rankIncrease,
+				selectedUnit.lastAttackingPlayer,
+				selectedUnit.unusedTimer,
+				selectedUnit.orderTimer,
+			);
+		}
+
+		UpdateBrightness(playerID);
+
+		switch(heroUnit.order) {
+			case 30:
+				const structureType = heroUnit.buildQueue1;
+				if (structureType != 228) {
+					var valid = true;
+					for (var resourceType = 0; resourceType < RES_COUNT; resourceType++) {
+						if (!ValidatePlayerResourceAmount(playerID, resourceType, GetStructureResourceCost(structureType, resourceType))) {
+							valid = false;
+						}
+					}
+					if (valid) {
+						if (PlayerHasResourcesToConsume[playerID] == false) {
+							AddResourceToConsume(playerID, structureType);
+							PlayerHasResourcesToConsume[playerID] = true;
+						}
+					} else {
+						heroUnit.order = 1;
+						PlayerHasResourcesToConsume[playerID] = false;
+						eprintln("\x04Not enough resources");
+					}
+				}
+			break;
+			case 33:
+				if (PlayerHasResourcesToConsume[playerID]) {
+					SettleResourceToConsume(playerID);
+					PlayerHasResourcesToConsume[playerID] = false;
+				}
+			break;
+			case 87:
+				if (heroUnit.targetResourceUnit != 0) {
+					if (heroUnit.targetResourceUnit.connectedUnit == 0) {
+						const resourceType = heroUnit.targetResourceUnit.unknown0x106;
+						const orderTimeReduction = (RES_HARVESTING_TIMER[resourceType]*GetUpgrade(playerID, UPGR_MINING)/8);
+						if (PlayerHarvestSoundTimer[playerID] == 0) PlaySound(RES_HARVEST_SOUND[resourceType], playerID);
+						if (heroUnit.orderTimer > RES_HARVESTING_TIMER[resourceType]) {
+							heroUnit.orderTimer = RES_HARVESTING_TIMER[resourceType] - orderTimeReduction;
+						} else if (heroUnit.orderTimer > 0 && heroUnit.orderTimer <= 3) {
+							heroUnit.orderTimer = RES_HARVESTING_TIMER[resourceType] - orderTimeReduction;
+							var resMiningAmount = RES_HARVESTING_QUANTITY[resourceType];
+							if (resMiningAmount > heroUnit.targetResourceUnit.resourceAmount) resMiningAmount = heroUnit.targetResourceUnit.resourceAmount;
+							if (heroUnit.targetResourceUnit.resourceAmount >= resMiningAmount) {
+								heroUnit.targetResourceUnit.resourceAmount -= resMiningAmount;
+								PlayerHarvestingItemCount[playerID]++;
+								if (RES_SECONDARY_RES[resourceType] < RES_COUNT && RES_SECONDARY_RES_FREQUENCY[resourceType] <= PlayerHarvestingItemCount[playerID]) {
+									PlayerHarvestingItemCount[playerID] = 0;
+									AddPlayerResourceAmountMulti(playerID, resourceType, resMiningAmount, RES_SECONDARY_RES[resourceType], 1, true);
+								} else {
+									AddPlayerResourceAmount(playerID, resourceType, resMiningAmount, true);
+								}
+							}
+							if (heroUnit.targetResourceUnit.resourceAmount < 1) {
+								heroUnit.targetResourceUnit.setloc(LOC_REPLACE);
+								heroUnit.targetResourceUnit.remove();
+								heroUnit.order = CONST_ORDER_MINE_NEARBY;
+								//heroUnit.order = 151;
+							}
+						}
+					} else {
+						heroUnit.order = 3;
+						eprintln("\x04Resource is blocked");
+					}
+				}
+			break;
+		}
+		// Reset harvesting order when not harvesting
+		if (heroUnit.order != CONST_ORDER_MINE && PlayerHarvestingItemCount[playerID] != 0) PlayerHarvestingItemCount[playerID] = 0;
+		
+		heroUnit.setloc(PlayerSpecificLocations[playerID]);
+		dilateloc(PlayerSpecificLocations[playerID], CONST_TECH_ACQUISITION_RANGE, CONST_TECH_ACQUISITION_RANGE);
+		ClearBringCache();
+		const nearbyTech = Bring(AllPlayers, AtLeast, 1, UNIT_TECH, PlayerSpecificLocations[playerID]) ? true : false;
+		if (nearbyTech && heroUnit.moveTargetUnit != 0 && heroUnit.movementState == 10 && heroUnit.moveTargetUnit.unitID == UNIT_TECH) {
+			const technologyType = heroUnit.moveTargetUnit.unknown0x106;
+			if (!PlayerHasTechnology(playerID, technologyType)) {
+				heroUnit.moveTargetUnit.setloc(LOC_REPLACE);
+				RemoveUnitAt(1, UNIT_TECH, PlayerSpecificLocations[playerID], AllPlayers);
+				heroUnit.moveTargetUnit = 0;
+				AddPlayerTechnology(playerID, technologyType, true);
+			} else {
+				heroUnit.moveTargetUnit = 0;
+				Screen.printf("You already have blueprint for: \x03{:s}", TECH_STRING[technologyType]);
+			}
+		}
+
+		// Primary self cast ability 
+		if (heroUnit.check_buildq(OPT_1)) {
+			if (PlayerAltKeyPress[playerID] && PlayerSelfAbilityID[playerID] != ABLT_COUNT) {
+				var found = false;
+				var abilityID = PlayerSelfAbilityID[playerID] + 1;
+				while(true) {
+					if (EUDArray.cast(PlayerSelfAbilitiesAvailable[playerID]).get(abilityID) == 1) {
+						SelectAbility(playerID, abilityID);
+						break;
+					}
+					abilityID++;
+					if (abilityID >= ABLT_COUNT) abilityID = 0;
+				}
+			} else {
+				if (ValidateAbilityEnergy(playerID, PlayerSelfAbilityID[playerID])) {
+					CastSelfAbility(playerID);
+				}
+			}
+		}
+
+		// Restore energy ability
+		if (heroUnit.check_buildq(OPT_2)) {
+			if (PlayerEnergy[playerID] < CONST_HERO_ENERGY_MAX) {
+				var energy = 0;
+				if (ValidatePlayerResourceAmount(playerID, RES_BERRIES, 1)) {
+					SubtractPlayerResourceAmount(playerID, RES_BERRIES, 1);
+					energy = RES_ENERGY_REGEN[RES_BERRIES] + RES_ENERGY_REGEN[RES_BERRIES] * GetUpgrade(playerID, UPGR_ENERGY);
+					eprintln("\x04Energy restored");
+				}
+
+				if (energy != 0) {
+					if (PlayerEnergy[playerID] + energy > CONST_HERO_ENERGY_MAX) PlayerEnergy[playerID] = CONST_HERO_ENERGY_MAX;
+					else PlayerEnergy[playerID] += energy;
+					CreateImageSpriteAtUnit(368, heroUnit);
+					PlaySound(SOUND_EAT, playerID);
+				} else {
+					eprintln("\x04No consumable items available");
+				}
+			} else {
+				eprintln("\x04You are already at maxmium energy");				
+			}
+		}
+
+		// Switch portrait
+		if (heroUnit.check_buildq(OPT_3)) {
+			SwitchToNextHeroPortrait(playerID);
+		}
+
+
+		if (heroUnit.check_buildq(OPT_1) || heroUnit.check_buildq(OPT_2) || heroUnit.check_buildq(OPT_3)) {
+			heroUnit.reset_buildq();
+			heroUnit.currentBuildUnit.remove();
+			heroUnit.currentBuildUnit = 0;
+			heroUnit.orderSignal = 10;
+			// TODO: Revisit if needed?
+			// Only decollide in certain situations.
+			//if (heroUnit.order != CONST_ORDER_MINE_NEARBY && heroUnit.order != CONST_ORDER_MINE) heroUnit.order = CONST_ORDER_DECOLLIDE;
+			heroUnit.secondaryOrder = 23;
+		}
+		// Target Ability		
+		if (heroUnit.order == CONST_ORDER_TARGET_ABILITY) {
+			heroUnit.order = 1;
+			heroUnit.secondaryOrder = 1;
+			if (ValidateAbilityEnergy(playerID, PlayerTargetAbilityID[playerID])) {
+				CastTargetAbility(playerID, heroUnit.orderTargetUnit, heroUnit.orderTargetX, heroUnit.orderTargetY);
+			}
+		}
+		if (selectedUnit == heroUnit
+			&&PlayerButtonSet[playerID] == 229
+			&& selectedUnit.lockdownTimer == 0
+			&& PlayerAltKeyPress[playerID]
+			&& PlayerTargetAbilityID[playerID] != ABLT_COUNT) {
+			selectedUnit.lockdownTimer = 1;
+			var found = false;
+			var abilityID = PlayerTargetAbilityID[playerID] + 1;
+			while(true) {
+				if (EUDArray.cast(PlayerTargetAbilitiesAvailable[playerID]).get(abilityID) == 1) {
+					SelectAbility(playerID, abilityID);
+					break;
+				}
+				abilityID++;
+				if (abilityID >= ABLT_COUNT) abilityID = 0;
+			}
+		}
+
+		// Finally update interface
+		UpdatePlayerInterface(playerID, selectedUnit, true);	
+
+		// Buildings
+		foreach(unit : EUDLoopPlayerCUnit(playerID)) {
+
+			// All buildings that can build a marine = destruct
+			if (unit.check_buildq(OPT_DESTROY)) {
+				// Refund?
+				if (PlayerAltKeyPress[playerID]) {					
+					unit.setloc(LOC_REPLACE);
+					CreateImageSpriteAtLocation(332, LOC_REPLACE);
+					unit.remove();
+				}
+			}
+
+			switch(unit.unitID) {
+				case STRU_WALL:
+				case STRU_OWALL:				
+					// Is being repaired
+					if (unit.defensiveMatrixHp > CONST_WALL_REPAIR_REGEN) {
+						unit.hp += CONST_WALL_REPAIR_REGEN;
+						unit.defensiveMatrixHp -= CONST_WALL_REPAIR_REGEN;
+						if (unit.cycleCounter == 0) CreateImageSpriteAtUnit(368, unit);
+						if (unit.hp >= CONST_WALL_HP) {
+							unit.hp = CONST_WALL_HP;
+							unit.defensiveMatrixHp = 0;
+						}
+					}
+					// Lower & Raise
+					if (unit.check_buildq(OPT_1)) {
+						unit.setloc(LOC_REPLACE);
+						dilateloc(LOC_REPLACE, 16,16);
+						ClearBringCache();
+						if (Bring(AllPlayers, AtLeast, 1, $U("Men"), LOC_REPLACE)) {
+							eprintln("\x04Structure blocked");
+							PlayWAV("sound\\Misc\\Buzz.wav");
+						} else {
+							if (unit.unitID == STRU_WALL) {
+								PlayWAV("sound\\Misc\\Door\\Door2Opn.wav");
+								CreateImageSpriteAtUnit(423, unit);
+							} else {
+								PlayWAV("sound\\Misc\\Door\\Door2Cls.wav");
+								CreateImageSpriteAtUnit(499, unit);
+							}
+							const replacedUnit = ReplaceUnit(unit, unit.unitID == STRU_WALL ? STRU_OWALL : STRU_WALL);
+							if (unit.unitID == STRU_WALL) replacedUnit.remove_collision();
+							replacedUnit.hp = unit.hp;
+							replacedUnit.defensiveMatrixHp = unit.defensiveMatrixHp;
+							SelectUnit(replacedUnit, playerID);
+						}
+					} else if (unit.check_buildq(OPT_2)) {
+						if (unit.hp < CONST_WALL_HP) {
+							if (ValidatePlayerResourceAmount(playerID, RES_STONE, CONST_WALL_REPAIR_COST)) {
+								unit.defensiveMatrixHp = CONST_WALL_HP;
+								SubtractPlayerResourceAmount(playerID, RES_STONE, CONST_WALL_REPAIR_COST);
+								eprintln("\x04Repairing wall");
+							} else {
+								eprintln("\x04Not enough resources");
+							}
+						} else {
+							eprintln("\x04Wall already at maximum HP");
+						}
+					}
+					break;					
+				case STRU_FURNACE:
+				case STRU_LIGHTPOST:
+					if (unit.is_dying() && unit.connectedUnit != 0) unit.connectedUnit.remove();
+					if (unit.is_completed()) {
+						if (unit.hp > 256*10 && unit.cycleCounter == 0) {
+							var drainUpg = GetUpgrade(playerID, UPGR_LIGHT);
+							var drain = drainUpg > CONST_LIGHT_SOURCE_HP_DRAIN ? 1 : CONST_LIGHT_SOURCE_HP_DRAIN - drainUpg;
+							unit.hp -= unit.hp < drain ? unit.hp : drain;
+						}
+						// Add fuel
+						if (unit.check_buildq(OPT_1)) {
+							if (ValidatePlayerResourceAmount(playerID, RES_LEAVES, CONST_LIGHT_SOURCE_RESTORE_COST)) {
+								if (unit.unitID == STRU_FURNACE) unit.hp = CONST_FURNACE_HP;
+								else unit.hp = CONST_LIGHTPOST_HP;
+								SubtractPlayerResourceAmount(playerID, RES_LEAVES, CONST_LIGHT_SOURCE_RESTORE_COST);
+								PlayWAV("sound\\Misc\\OnFirSml.wav");
+							} else {
+								eprintln("\x04Not enough resources");
+							}
+						}
+						// Extinguish
+						if (unit.check_buildq(OPT_2)) {
+							PlayWAV("sound\\Misc\\OutOfGas.wav");
+							unit.hp = CONST_LIGHT_SOURCE_HP_MIN;
+						}
+						if (unit.unitID == STRU_FURNACE) {					
+							if (unit.hp == CONST_LIGHT_SOURCE_HP_MIN && unit.connectedUnit != 0) {
+								unit.connectedUnit.remove();
+								unit.setloc(LOC_REPLACE);
+								CreateImageSpriteAtLocation(497, LOC_REPLACE);
+							} else if (unit.hp > CONST_LIGHT_SOURCE_HP_MIN && unit.connectedUnit == 0) {
+								unit.setloc(LOC_REPLACE);
+								wwrite(0x665AC0 + 1696 + SPRITE_OVERLAY * 2, 452);
+								const overlayUnit = CreateCUnit(UNIT_LIGHT_OVERLAY, playerID, LOC_REPLACE);
+								overlayUnit.playerID = playerID;
+								overlayUnit.remove_collision();
+								overlayUnit.set_noclip();
+								overlayUnit.connectedUnit = unit;
+								unit.connectedUnit = overlayUnit;
+							}
+						} else if (unit.unitID == STRU_LIGHTPOST) {
+							if (unit.hp == CONST_LIGHT_SOURCE_HP_MIN && unit.connectedUnit != 0) {
+								unit.connectedUnit.setloc(LOC_REPLACE);
+								unit.connectedUnit.remove();
+								CreateImageSpriteAtLocation(497, LOC_REPLACE);
+							} else if (unit.hp > CONST_LIGHT_SOURCE_HP_MIN && unit.connectedUnit == 0) {
+								unit.setloc(LOC_REPLACE);
+								wwrite(0x665AC0 + 1696 + SPRITE_OVERLAY * 2, 982);
+								addloc(LOC_REPLACE,0,-54);
+								const overlayUnit = CreateCUnit(UNIT_LIGHT_OVERLAY, playerID, LOC_REPLACE);
+								overlayUnit.playerID = playerID;
+								overlayUnit.remove_collision();
+								overlayUnit.set_noclip();
+								overlayUnit.connectedUnit = unit;								
+								unit.connectedUnit = overlayUnit;
+							}
+						}
+					}
+					break;
+				case STRU_WORKSTATION:
+					// Upgrade
+					if (unit.check_buildq(OPT_1)) ProcessUpgrade(playerID, UPGR_ARMOR, STRU_WORKSTATION, 0);
+					else if (unit.check_buildq(OPT_2)) ProcessUpgrade(playerID, UPGR_WEAPON, STRU_WORKSTATION, 1);
+					else if (unit.check_buildq(OPT_3)) ProcessUpgrade(playerID, UPGR_MINING, STRU_WORKSTATION, 3);
+					else if (unit.check_buildq(OPT_4)) ProcessUpgrade(playerID, UPGR_LIGHT, STRU_WORKSTATION, 4);
+					else if (unit.check_buildq(OPT_5)) ProcessUpgrade(playerID, UPGR_STRU_ARMOR, STRU_WORKSTATION, 6);
+					else if (unit.check_buildq(OPT_6)) ProcessUpgrade(playerID, UPGR_ENERGY, STRU_WORKSTATION, 7);
+					break;
+				case STRU_LAB:
+					// Research
+					if (unit.check_buildq(OPT_1)) ProcessAbilityResearch(playerID, ABLT_SELF_HEAL, STRU_LAB, 0);
+					else if (unit.check_buildq(OPT_2)) ProcessAbilityResearch(playerID, ABLT_SELF_SPEED, STRU_LAB, 1);
+					else if (unit.check_buildq(OPT_3)) ProcessAbilityResearch(playerID, ABLT_SELF_SHIELD, STRU_LAB, 3);
+					else if (unit.check_buildq(OPT_4)) ProcessAbilityResearch(playerID, ABLT_SELF_MINESPEED, STRU_LAB, 4);
+					else if (unit.check_buildq(OPT_5)) ProcessAbilityResearch(playerID, ABLT_SELF_VISION, STRU_LAB, 6);
+					else if (unit.check_buildq(OPT_6)) ProcessAbilityResearch(playerID, ABLT_SELF_RECALL, STRU_LAB, 7);
+					else if (unit.check_buildq(OPT_7)) ProcessAbilityResearch(playerID, ABLT_SELF_DROIDS, 220, 0);
+					else if (unit.check_buildq(OPT_8)) ProcessAbilityResearch(playerID, ABLT_TARGET_STUN, 220, 1);
+					else if (unit.check_buildq(OPT_9)) ProcessAbilityResearch(playerID, ABLT_TARGET_DAMAGE, 220, 3);
+					else if (unit.check_buildq(OPT_10)) ProcessAbilityResearch(playerID, ABLT_TARGET_REGROW, 220, 4);
+					else if (unit.check_buildq(OPT_11)) ProcessAbilityResearch(playerID, ABLT_TARGET_SLOW, 220, 6);
+					else if (unit.check_buildq(OPT_12)) ProcessAbilityResearch(playerID, ABLT_TARGET_BLINK, 220, 7);
+					break;
+				case STRU_CONVERTER:
+					// Conversion
+					if (unit.check_buildq(OPT_1)) ProcessResourceConversion(playerID, CONV_LIMESTONE_LIMENITE);
+					else if (unit.check_buildq(OPT_2)) ProcessResourceConversion(playerID, CONV_WOOD_BOARDS);
+					else if (unit.check_buildq(OPT_3)) ProcessResourceConversion(playerID, CONV_2);
+					else if (unit.check_buildq(OPT_4)) ProcessResourceConversion(playerID, CONV_3);
+					else if (unit.check_buildq(OPT_5)) ProcessResourceConversion(playerID, CONV_4);
+					else if (unit.check_buildq(OPT_6)) ProcessResourceConversion(playerID, CONV_5);
+					else if (unit.check_buildq(OPT_7)) ProcessResourceConversion(playerID, CONV_6);
+					else if (unit.check_buildq(OPT_8)) ProcessResourceConversion(playerID, CONV_7);
+					break;
+				case STRU_TOWER:
+					// Enable Tower
+					unit.setloc(LOC_REPLACE);
+					ClearBringCache();
+					if (Bring(playerID, AtLeast, 1, UNIT_HERO, LOC_REPLACE)) {				
+						unit.blindFlags = 0;
+					} else {
+						unit.blindFlags = 1;
+					}
+					break;
+				case STRU_GROWBED:
+					// Plant Bush
+					if (unit.check_buildq(OPT_1)) {
+						const resourceType = RES_LEAVES;
+						const image = EUDArray.cast(RES_IMAGES[resourceType]).get(0);
+						const resourceAmount = RES_TOTAL_AMOUNT[resourceType];
+						wwrite(0x665AC0 + 1696 + 279 * 2, image); // Set image
+						const resourceUnit = ReplaceUnitWithOffset(unit, UNIT_RESOURCE, 16);
+						resourceUnit.playerID = $P12;
+						resourceUnit.unknown0x106 = resourceType;
+						resourceUnit.resourceAmount = resourceAmount;
+					} else if (unit.check_buildq(OPT_2)) {
+						const resourceType = RES_WOOD;
+						const image = EUDArray.cast(RES_IMAGES[resourceType]).get(0);
+						const resourceAmount = RES_TOTAL_AMOUNT[resourceType];
+						wwrite(0x665AC0 + 1696 + 279 * 2, image); // Set image
+						const resourceUnit = ReplaceUnitWithOffset(unit, UNIT_RESOURCE, 16);
+						resourceUnit.playerID = $P12;
+						resourceUnit.unknown0x106 = resourceType;
+						resourceUnit.resourceAmount = resourceAmount;
+					}	
+					break;
+				case STRU_INCUBATOR:
+					// Incubator
+					if (!unit.are_buildq_empty()) {
+						unit.remove_collision();
+						unit.setloc(LOC_REPLACE);
+						unit.die();
+						if (unit.check_buildq(OPT_1)) CreateUnit(1, MOB_GRAZER, LOC_REPLACE, PLAYER_NEUTRAL);
+						else if (unit.check_buildq(OPT_2)) CreateUnit(1, MOB_STALKER, LOC_REPLACE, PLAYER_NEUTRAL);
+						else if (unit.check_buildq(OPT_3)) CreateUnit(1, MOB_CRAWLER, LOC_REPLACE, PLAYER_NEUTRAL);
+						else if (unit.check_buildq(OPT_4)) CreateUnit(1, MOB_STINGER, LOC_REPLACE, PLAYER_NEUTRAL);
+					}
+					break;
+				case STRU_STORAGE:
+					const amount = PlayerShiftKeyPress[playerID] ? 10 : 1;
+					if (unit.check_buildq(OPT_1)) ProcessStorageTransfer(true, playerID, RES_BERRIES, amount);
+					else if (unit.check_buildq(OPT_2)) ProcessStorageTransfer(false, playerID, RES_BERRIES, amount);
+					break;
+				case UNIT_OVERLAY:
+					if (unit.connectedUnit != 0) unit.pos = unit.connectedUnit.pos;
+					else unit.remove();
+				case UNIT_LIGHT_OVERLAY:
+					if (unit.connectedUnit == 0) unit.remove();
+					break;
+				case UNIT_DROID:
+					// TODO finish implementing order loop
+					if (unit.order == 3) unit.order = CONST_ORDER_MINE_NEARBY;
+					if (unit.order == CONST_ORDER_MINE) {
+						unit.orderTargetUnit = heroUnit;
+						unit.order = 49;
+					}
+					break;
+			}
+			if (unit.unitID != UNIT_HERO) {
+				if (!unit.are_buildq_empty() || unit.currentBuildUnit != 0)  {
+					unit.reset_buildq();
+					unit.currentBuildUnit.remove();
+					unit.currentBuildUnit = 0;
+				}
+
+			}
+			if (UnitIsStructure(unit.unitID)) {
+				const heroUnit = CUnit(PlayerHeroUnit[playerID]);
+				if (abs(unit.posX - heroUnit.posX) > StructureControlRange || abs(unit.posY - heroUnit.posY) > StructureControlRange) {
+					GiveUnit(unit, PLAYER_SHARED_STRUCTURE);
+				}
+			}
+		}	
+	}
+
+	EUDEndPlayerLoop();
+
+	var shouldFixMobAggro = false;
+	foreach(unit : EUDLoopPlayerCUnit($P6)) {
+		if (unit.order == 10 && unit.movementState == 26) {
+			shouldFixMobAggro = true;
+			unit.orderTargetUnit = 0;
+			unit.moveTargetUnit = 0;
+			unit.order = 3;			
+		}
+	}
+	if (shouldFixMobAggro) {
+		setcurpl($P6);
+		RunAIScriptAt("Send All Units on Random Suicide Missions", LOC_ANYWHERE);
+		setcurpl(playerID);
+	}
+
+	for (var enemyPlayerID = $P6; enemyPlayerID < $P8; enemyPlayerID++) {		
+		foreach(unit : EUDLoopPlayerCUnit(enemyPlayerID)) {
+			if (unit.unitID == UNIT_RESOURCE_PLACEHOLDER1) continue;
+			switch(unit.unitID) {
+				case MOB_T8_SCOURGE:
+					if (unit.order == 10 && unit.movementState == 9) {
+						CreateImageSpriteAtUnit(4, unit);
+						unit.orderTargetUnit.hp -= 1*256;
+						unit.unitID = 227;
+						RemoveUnitAt(1, unit.unitID, LOC_ANYWHERE, unit.playerID);
+					}
+					break;
+				case UNIT_MOB_SPAWNER:
+					if (!Night) {
+						// No spawns allowed at day
+						unit.unknown0x106 = 0;
+					} else {					
+						if (unit.killCount >= CONST_SPAWNER_TIER_LEVELUP && unit.rankIncrease < SPAWNER_TIERS.length-1) {
+							unit.killCount = 0;
+							unit.rankIncrease++;
+						} 
+						if (unit.hp > 0) unit.hp -= (unit.hp < CONST_DEFAULT_MOB_SPAWN_SPEED ? unit.hp : CONST_DEFAULT_MOB_SPAWN_SPEED);
+						if (unit.hp == 0 && unit.unknown0x106 < MobSpawnLimit) {
+							unit.setloc(LOC_REPLACE);
+							dilateloc(LOC_REPLACE, CONST_SPAWNER_RANGE_CHECK, CONST_SPAWNER_RANGE_CHECK);
+							if (Bring(AllPlayers, Exactly, 0, $U("Men"), LOC_REPLACE)) {
+								unit.unknown0x106++;
+								unit.setloc(LOC_REPLACE);
+								const spawnedUnit = CreateCUnit(SPAWNER_TIERS[unit.rankIncrease], unit.playerID, LOC_REPLACE);
+								spawnedUnit.order = CONST_ORDER_ROAM;
+								spawnedUnit.unknown0x26 = 0;
+								unit.hp = CONST_DEFAULT_SPAWNER_MAX_HP;
+								spawnedUnit.connectedUnit = unit;
+								CreateImageSpriteAtUnit(559, unit);
+							}
+						}
+					}
+					break;
+				case UNIT_OVERLAY:
+					if (unit.connectedUnit != 0) unit.pos = unit.connectedUnit.pos;
+					else unit.remove();
+					break;
+			}
+
+			// Unit roam
+			if (unit.order == 2) unit.order = CONST_ORDER_ROAM;
+
+			// Unit despawn
+			if (!Night && unit.unitID != UNIT_MOB_SPAWNER) {
+				unit.connectedUnit = 0;
+				unit.setloc(LOC_REPLACE);
+				CreateImageSpriteAtUnit(559, unit);
+				RemoveUnitAt(1, unit.unitType, LOC_REPLACE, unit.playerID);
+			}
+
+			// Unit deaths
+			if (unit.is_dying()) {
+				// Manage spawner count 
+				if (unit.connectedUnit != 0 && unit.connectedUnit.unitID == UNIT_MOB_SPAWNER) {
+					if (unit.connectedUnit.unknown0x106 > 0) unit.connectedUnit.unknown0x106--;
+					unit.connectedUnit.killCount++;
+					unit.connectedUnit = 0;
+				}
+				// Reward kills
+				if (unit.unknown0x26 == 0) {
+					unit.unknown0x26 = 1;
+					if (unit.lastAttackingPlayer < 8) {
+						unit.setloc(LOC_REPLACE);
+						dilateloc(LOC_REPLACE, 5*TILE, 5*TILE);
+						if (Bring(unit.lastAttackingPlayer, AtLeast, 1, UNIT_HERO, LOC_REPLACE)) AddPlayerMobLoot(unit.lastAttackingPlayer, unit.unitID);
+					}					
+				}
+			}
+		}
+	}
+
+	foreach (unit: EUDLoopPlayerCUnit(PLAYER_SHARED_STRUCTURE)) {
+		if (unit.unitID == UNIT_RESOURCE_PLACEHOLDER1) continue;
+		switch(unit.unitID) {
+			case UNIT_CRITTER_SPAWNER:				
+				if (unit.hp > 0) unit.hp -= (unit.hp < CONST_DEFAULT_CRITTER_SPAWN_SPEED ? unit.hp : CONST_DEFAULT_CRITTER_SPAWN_SPEED);
+				if (!Night && unit.hp == 0 && unit.unknown0x106 < CONST_DEFAULT_CRITTER_SPAWN_LIMIT && unit.unknown0x26 < MOB_CRITTER_TYPES.length) {
+					unit.setloc(LOC_REPLACE);
+					dilateloc(LOC_REPLACE, CONST_SPAWNER_RANGE_CHECK, CONST_SPAWNER_RANGE_CHECK);
+					if (Bring(AllPlayers, Exactly, 0, $U("Men"), LOC_REPLACE)) {
+						unit.unknown0x106++;
+						unit.setloc(LOC_REPLACE);
+						const spawnedUnit = CreateCUnit(MOB_CRITTER_TYPES[unit.unknown0x26], unit.playerID, LOC_REPLACE);
+						spawnedUnit.order = CONST_ORDER_ROAM;
+						spawnedUnit.unknown0x26 = 0;
+						spawnedUnit.ensnareTimer = 100;
+						unit.hp = CONST_DEFAULT_SPAWNER_MAX_HP;
+						spawnedUnit.connectedUnit = unit;							
+					}
+				}
+				break;
+			case MOB_GRAZER:
+			case MOB_STALKER:
+			case MOB_STINGER:
+			case MOB_CHIRPER:
+			case MOB_CRAWLER:
+			case MOB_ROAMER:
+				GiveUnit(unit, PLAYER_CRITTERS);
+				break;
+			case UNIT_OVERLAY:
+				if (unit.connectedUnit != 0) unit.pos = unit.connectedUnit.pos;
+					else unit.remove();
+					break;
+		}
+		if (UnitIsStructure(unit.unitID)) {
+			var nearbyPlayerID = PLAYER_SHARED_STRUCTURE;
+			for (var i = $P1; i < $P6; i++) {
+				const heroUnit = CUnit(PlayerHeroUnit[i]);
+				if (heroUnit && abs(unit.posX - heroUnit.posX) < StructureControlRange && abs(unit.posY - heroUnit.posY) < StructureControlRange) {				
+					nearbyPlayerID = heroUnit.playerID;
+				}
+			}
+			if (nearbyPlayerID != PLAYER_SHARED_STRUCTURE) {
+				GiveUnit(unit, nearbyPlayerID);
+				if (Multiplayer) CreateImageSpriteAtUnitLocalPlayer(974, unit, nearbyPlayerID);
+			}
+		}
+	}
+
+	foreach (unit: EUDLoopPlayerCUnit(PLAYER_CRITTERS)) {
+		if (unit.unitID == UNIT_RESOURCE_PLACEHOLDER1) continue;
+		switch(unit.unitID) {
+			case MOB_GRAZER:
+			case MOB_STALKER:
+			case MOB_STINGER:
+			case MOB_CHIRPER:
+			case MOB_CRAWLER:
+			case MOB_ROAMER:
+				if (unit.lastAttackingPlayer != 8) unit.ensnareTimer = 0;
+				else unit.ensnareTimer = 24;
+				break;
+		}
+
+		// Unit deaths
+		if (unit.is_dying()) {
+			// Manage spawner count 
+			if (unit.connectedUnit != 0 && unit.connectedUnit.unitID == UNIT_CRITTER_SPAWNER) {
+				if (unit.connectedUnit.unknown0x106 > 0) unit.connectedUnit.unknown0x106--;
+				unit.connectedUnit = 0;
+			}
+			// Reward kills
+			if (unit.unknown0x26 == 0) {
+				unit.unknown0x26 = 1;
+				AddPlayerMobLoot(unit.lastAttackingPlayer, unit.unitID);
+			}
+		}
+	}
+}

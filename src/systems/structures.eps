@@ -2,7 +2,6 @@
 
 import core.constants;
 import core.utils;
-import systems.lights;
 import systems.resources;
 import systems.players;
 import systems.mobs;
@@ -14,6 +13,10 @@ const MAELSTROM_STUN_TICKS = 2 * constants.FRAMES_PER_GAME_SECOND;
 // (see docs/dat-allocation-notes.md). Behavior/stats are driven by our own
 // state arrays below, not by this unit's real DAT stats.
 const STRUCTURE_PLACEHOLDER_UNIT = $U("Terran Missile Turret");
+
+// Light structures use a distinct real unit so systems.lights can find them
+// with Bring() (screen-location scan) instead of a separate registry array.
+const UNIT_LIGHT_STRUCTURE = $U("Terran Supply Depot");
 
 const STRUCTURE_LIGHT = 0;
 const STRUCTURE_WALL = 1;
@@ -100,12 +103,10 @@ function buildStructure(player, structureType) {
     StructureHp[slot] = StructureMaxHp[slot];
     StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
 
+    const structureUnitType = structureType == STRUCTURE_LIGHT ? UNIT_LIGHT_STRUCTURE : STRUCTURE_PLACEHOLDER_UNIT;
     setloc($L("_Place"), x, y);
-    StructureUnit[slot] = utils.createUnitAndGetEpd(1, STRUCTURE_PLACEHOLDER_UNIT, $L("_Place"), player);
+    StructureUnit[slot] = utils.createUnitAndGetEpd(1, structureUnitType, $L("_Place"), player);
 
-    if (structureType == STRUCTURE_LIGHT) {
-        lights.registerLightForStructure(slot, player, x, y, lights.DEFAULT_LIGHT_RADIUS, lights.DEFAULT_NO_SPAWN_RADIUS);
-    }
     return slot;
 }
 
@@ -114,7 +115,6 @@ function deconstructStructure(player, structureIndex) {
         resources.addMinerals(player, StructureRefund[structureIndex]);
         StructureAlive[structureIndex] = 0;
         StructureHp[structureIndex] = 0;
-        lights.unregisterLightByStructure(structureIndex);
         utils.removeCUnit(CUnit(StructureUnit[structureIndex]));
         StructureUnit[structureIndex] = 0;
     }
@@ -125,7 +125,6 @@ function destroyPlayerStructures(player) {
         if (StructureOwner[i] == player && StructureAlive[i]) {
             StructureAlive[i] = 0;
             StructureHp[i] = 0;
-            lights.unregisterLightByStructure(i);
             utils.removeCUnit(CUnit(StructureUnit[i]));
             StructureUnit[i] = 0;
         }

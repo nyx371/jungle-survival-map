@@ -1,14 +1,17 @@
 // Light System
-// Light sources brighten each player's local screen and suppress mob spawning.
-// Adopted from the earlier map.eps pattern: count nearby light sources, ease brightness
-// toward a target level, and keep local brightness separate from synchronized gameplay state.
+// Structures of type STRUCTURE_LIGHT (systems.structures.UNIT_LIGHT_STRUCTURE,
+// a Terran Supply Depot placeholder) are the only light sources. Mob spawn
+// suppression checks distance to those live structure units directly. Each
+// player's local screen brightness is read the way it always has been for
+// this mechanic: move a location onto the hero and Bring() count light
+// structures inside it.
 
 import core.constants;
 import systems.day_night;
 import systems.mobs;
+import systems.structures;
 import systems.players;
 
-const MAX_LIGHTS = 64;
 const DEFAULT_LIGHT_RADIUS = 9 * 32;
 const DEFAULT_NO_SPAWN_RADIUS = 12 * 32;
 const LIGHT_AREA_TILE_SIZE = 16;
@@ -23,26 +26,9 @@ const NIGHT_BRIGHTNESS_L2 = 26;
 const NIGHT_BRIGHTNESS_L3 = 29;
 const NIGHT_BRIGHTNESS_L4 = 31;
 
-const LightActive = EUDArray(MAX_LIGHTS);
-const LightOwner = EUDArray(MAX_LIGHTS);
-const LightStructureIndex = EUDArray(MAX_LIGHTS);
-const LightX = EUDArray(MAX_LIGHTS);
-const LightY = EUDArray(MAX_LIGHTS);
-const LightRadius = EUDArray(MAX_LIGHTS);
-const LightNoSpawnRadius = EUDArray(MAX_LIGHTS);
 const PlayerBrightness = EUDArray(constants.MAX_PLAYERS);
 
 function initLights() {
-    foreach (i : py_range(MAX_LIGHTS)) {
-        LightActive[i] = 0;
-        LightOwner[i] = -1;
-        LightStructureIndex[i] = -1;
-        LightX[i] = 0;
-        LightY[i] = 0;
-        LightRadius[i] = DEFAULT_LIGHT_RADIUS;
-        LightNoSpawnRadius[i] = DEFAULT_NO_SPAWN_RADIUS;
-    }
-
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         PlayerBrightness[p] = DAY_BRIGHTNESS;
     }
@@ -59,63 +45,11 @@ function isWithinRadius(ax, ay, bx, by, radius) {
     return 0;
 }
 
-function findFreeLightSlot() {
-    foreach (i : py_range(MAX_LIGHTS)) {
-        if (!LightActive[i]) return i;
-    }
-    return -1;
-}
-
-function registerLightForStructure(structureIndex, owner, x, y, radius, noSpawnRadius) {
-    const slot = findFreeLightSlot();
-    if (slot < 0) return -1;
-
-    LightActive[slot] = 1;
-    LightOwner[slot] = owner;
-    LightStructureIndex[slot] = structureIndex;
-    LightX[slot] = x;
-    LightY[slot] = y;
-    LightRadius[slot] = radius > 0 ? radius : DEFAULT_LIGHT_RADIUS;
-    LightNoSpawnRadius[slot] = noSpawnRadius > 0 ? noSpawnRadius : DEFAULT_NO_SPAWN_RADIUS;
-    return slot;
-}
-
-function registerLight(owner, x, y, radius, noSpawnRadius) {
-    return registerLightForStructure(-1, owner, x, y, radius, noSpawnRadius);
-}
-
-function clearLightSlot(slot) {
-    LightActive[slot] = 0;
-    LightOwner[slot] = -1;
-    LightStructureIndex[slot] = -1;
-    LightX[slot] = 0;
-    LightY[slot] = 0;
-    LightRadius[slot] = DEFAULT_LIGHT_RADIUS;
-    LightNoSpawnRadius[slot] = DEFAULT_NO_SPAWN_RADIUS;
-}
-
-function unregisterLightByStructure(structureIndex) {
-    foreach (i : py_range(MAX_LIGHTS)) {
-        if (LightActive[i] && LightStructureIndex[i] == structureIndex) {
-            clearLightSlot(i);
-        }
-    }
-}
-
-function countLightsNear(x, y) {
-    var count = 0;
-    foreach (i : py_range(MAX_LIGHTS)) {
-        if (LightActive[i] && isWithinRadius(x, y, LightX[i], LightY[i], LightRadius[i])) {
-            count += 1;
-        }
-    }
-    return count;
-}
-
 function isSpawnBlockedAt(x, y) {
-    foreach (i : py_range(MAX_LIGHTS)) {
-        if (LightActive[i] && isWithinRadius(x, y, LightX[i], LightY[i], LightNoSpawnRadius[i])) {
-            return 1;
+    foreach (i : py_range(structures.MAX_STRUCTURES)) {
+        if (structures.StructureAlive[i] && structures.StructureType[i] == structures.STRUCTURE_LIGHT) {
+            const light = CUnit(structures.StructureUnit[i]);
+            if (isWithinRadius(x, y, light.posX, light.posY, DEFAULT_NO_SPAWN_RADIUS)) return 1;
         }
     }
     return 0;
@@ -128,27 +62,19 @@ function getAreaSpawnBlockLightLevel(area) {
     const centerY = (areaY * LIGHT_AREA_TILE_SIZE + LIGHT_AREA_TILE_SIZE / 2) * LIGHT_TILE_SIZE;
 
     var strongest = 0;
-    foreach (i : py_range(MAX_LIGHTS)) {
-        if (LightActive[i]) {
-            if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightNoSpawnRadius[i])) {
+    foreach (i : py_range(structures.MAX_STRUCTURES)) {
+        if (structures.StructureAlive[i] && structures.StructureType[i] == structures.STRUCTURE_LIGHT) {
+            const light = CUnit(structures.StructureUnit[i]);
+            if (isWithinRadius(centerX, centerY, light.posX, light.posY, DEFAULT_NO_SPAWN_RADIUS)) {
                 return 100;
             }
-            if (isWithinRadius(centerX, centerY, LightX[i], LightY[i], LightRadius[i])) {
+            if (isWithinRadius(centerX, centerY, light.posX, light.posY, DEFAULT_LIGHT_RADIUS)) {
                 strongest = 60;
             }
         }
     }
 
     return strongest;
-}
-
-function brightnessForLightCount(lightCount) {
-    if (!day_night.IsNight) return DAY_BRIGHTNESS;
-    if (lightCount >= 4) return NIGHT_BRIGHTNESS_L4;
-    if (lightCount >= 3) return NIGHT_BRIGHTNESS_L3;
-    if (lightCount >= 2) return NIGHT_BRIGHTNESS_L2;
-    if (lightCount >= 1) return NIGHT_BRIGHTNESS_L1;
-    return NIGHT_BRIGHTNESS_MIN;
 }
 
 function easePlayerBrightness(player, targetBrightness) {
@@ -166,8 +92,16 @@ function updateLocalBrightness(player) {
     if (!players.HeroAlive[player]) return;
 
     const hero = players.getPlayerHeroUnit(player);
-    const lightCount = countLightsNear(hero.posX, hero.posY);
-    const targetBrightness = brightnessForLightCount(lightCount);
+    setloc($L("_Screen"), hero.posX, hero.posY);
+
+    var targetBrightness = DAY_BRIGHTNESS;
+    if (day_night.IsNight) {
+        if (Bring(AllPlayers, AtLeast, 4, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L4;
+        else if (Bring(AllPlayers, AtLeast, 3, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L3;
+        else if (Bring(AllPlayers, AtLeast, 2, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L2;
+        else if (Bring(AllPlayers, AtLeast, 1, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L1;
+        else targetBrightness = NIGHT_BRIGHTNESS_MIN;
+    }
 
     easePlayerBrightness(player, targetBrightness);
     applyLocalBrightness(player);
