@@ -9,6 +9,8 @@ const TERRAN_COMSAT_STATION = $U("Terran Comsat Station"); // resource node plac
 const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base unit; likely to be swapped later
 const MINERAL_FIELD_UNIT_TYPE = 176;                          // Mineral Field (Type 1)
 const MAX_RESOURCE_NODE_MARKERS = 64;
+const RESOURCE_NODE_ACTIVATION_PERCENT = 75; // basic run-to-run variance
+const MINERAL_FIELD_STARTING_AMOUNT = 500;
 
 const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
@@ -86,15 +88,21 @@ function initResourceNodes() {
         }
     }
 
+    // Only a percentage of candidates actually become nodes, for run-to-run
+    // variance. True weighting between resource types needs more marker/node
+    // variety than exists today (see getHarvestTargetResourceType).
     while (!found.empty()) {
         const marker = CUnit(found.popleft());
         const x = marker.posX;
         const y = marker.posY;
         utils.removeCUnit(marker);
 
-        setloc($L("_Place"), x, y);
-        const node = CUnit(utils.createUnitAndGetEpd(1, TERRAN_COVERT_OPS, $L("_Place"), P7));
-        node.unitType = MINERAL_FIELD_UNIT_TYPE;
+        if (f_rand() % 100 < RESOURCE_NODE_ACTIVATION_PERCENT) {
+            setloc($L("_Place"), x, y);
+            const node = CUnit(utils.createUnitAndGetEpd(1, TERRAN_COVERT_OPS, $L("_Place"), P7));
+            node.unitType = MINERAL_FIELD_UNIT_TYPE;
+            node.resourceAmount = MINERAL_FIELD_STARTING_AMOUNT;
+        }
     }
 }
 
@@ -103,7 +111,6 @@ function initResources() {
         clearHarvestState(p);
     }
     initResourceNodes();
-    // TODO: weighted/randomized candidate selection; this replaces every marker found.
 }
 
 function startHarvest(player, target) {
@@ -145,8 +152,16 @@ function finishHarvestTick(player) {
     const minerals = getHarvestMineralsPerTick(resourceType);
     const gas = getHarvestGasPerTick(resourceType);
     addHarvestResources(player, minerals, gas);
-    // TODO: reduce remaining node value by minerals + gas, deplete/remove at zero
-    // once resource nodes track their own remaining value.
+
+    // Deplete the node's own real resourceAmount; remove it once exhausted.
+    const node = CUnit(HarvestTarget[player]);
+    const drained = minerals + gas;
+    if (node.resourceAmount <= drained) {
+        utils.removeCUnit(node);
+        clearHarvestState(player);
+    } else {
+        node.resourceAmount -= drained;
+    }
 }
 
 function updateHarvesting(player) {
