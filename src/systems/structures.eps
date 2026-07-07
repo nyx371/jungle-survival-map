@@ -4,10 +4,6 @@ import core.constants;
 import core.utils;
 import systems.resources;
 import systems.players;
-import systems.mobs;
-
-const MAELSTROM_COOLDOWN_FRAMES = 8 * constants.FRAMES_PER_GAME_SECOND;
-const MAELSTROM_STUN_TICKS = 2 * constants.FRAMES_PER_GAME_SECOND;
 
 // The maelstrom mine is built for real by a hero (Ghost) construction order,
 // as a Terran Academy; once that finishes, it's morphed in place into the
@@ -36,11 +32,6 @@ const StructureOwner = EUDArray(MAX_STRUCTURES);
 const StructureType = EUDArray(MAX_STRUCTURES);
 const StructureAlive = EUDArray(MAX_STRUCTURES);
 const StructureRefund = EUDArray(MAX_STRUCTURES);
-const StructureArmed = EUDArray(MAX_STRUCTURES);
-const StructureCooldown = EUDArray(MAX_STRUCTURES);
-const StructureTriggerRadius = EUDArray(MAX_STRUCTURES);
-const StructureEffectRadius = EUDArray(MAX_STRUCTURES);
-const StructureEffectTimer = EUDArray(MAX_STRUCTURES);
 const StructureHp = EUDArray(MAX_STRUCTURES);
 const StructureMaxHp = EUDArray(MAX_STRUCTURES);
 const StructureRepairTimer = EUDArray(MAX_STRUCTURES);
@@ -60,11 +51,6 @@ function initStructures() {
         StructureType[i] = 0;
         StructureAlive[i] = 0;
         StructureRefund[i] = 0;
-        StructureArmed[i] = 0;
-        StructureCooldown[i] = 0;
-        StructureTriggerRadius[i] = 0;
-        StructureEffectRadius[i] = 0;
-        StructureEffectTimer[i] = 0;
         StructureHp[i] = 0;
         StructureMaxHp[i] = 0;
         StructureRepairTimer[i] = 0;
@@ -100,11 +86,6 @@ function buildStructure(player, structureType) {
     StructureType[slot] = structureType;
     StructureAlive[slot] = 1;
     StructureRefund[slot] = 0;
-    StructureArmed[slot] = structureType == STRUCTURE_MAELSTROM_MINE ? 0 : 1;
-    StructureCooldown[slot] = 0;
-    StructureTriggerRadius[slot] = structureType == STRUCTURE_MAELSTROM_MINE ? 3 * 32 : 0;
-    StructureEffectRadius[slot] = structureType == STRUCTURE_MAELSTROM_MINE ? 4 * 32 : 0;
-    StructureEffectTimer[slot] = 0;
     StructureMaxHp[slot] = getStructureBaseHp(structureType);
     StructureHp[slot] = StructureMaxHp[slot];
     StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
@@ -172,11 +153,6 @@ function updateMaelstromMineConstruction() {
                 StructureType[slot] = STRUCTURE_MAELSTROM_MINE;
                 StructureAlive[slot] = 1;
                 StructureRefund[slot] = 0;
-                StructureArmed[slot] = 0;
-                StructureCooldown[slot] = 0;
-                StructureTriggerRadius[slot] = 3 * 32;
-                StructureEffectRadius[slot] = 4 * 32;
-                StructureEffectTimer[slot] = 0;
                 StructureMaxHp[slot] = MINE_BASE_HP;
                 StructureHp[slot] = MINE_BASE_HP;
                 StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
@@ -186,48 +162,8 @@ function updateMaelstromMineConstruction() {
     }
 }
 
-function updateMaelstromMines() {
-    foreach (i : py_range(MAX_STRUCTURES)) {
-        if (StructureAlive[i] && StructureType[i] == STRUCTURE_MAELSTROM_MINE) {
-            if (!StructureArmed[i]) {
-                if (StructureCooldown[i] > 0) {
-                    StructureCooldown[i] -= 1;
-                } else {
-                    StructureArmed[i] = 1;
-                }
-            } else {
-                const mine = CUnit(StructureUnit[i]);
-                var triggered = 0;
-                foreach (enemy : EUDLoopPlayerCUnit(mobs.MOB_OWNER_PLAYER)) {
-                    const dx = enemy.posX > mine.posX ? enemy.posX - mine.posX : mine.posX - enemy.posX;
-                    const dy = enemy.posY > mine.posY ? enemy.posY - mine.posY : mine.posY - enemy.posY;
-                    if (dx <= StructureTriggerRadius[i] && dy <= StructureTriggerRadius[i]) {
-                        triggered = 1;
-                        break;
-                    }
-                }
-
-                if (triggered) {
-                    // Apply a stun (order-freeze) to every enemy within the wider effect radius.
-                    foreach (enemy : EUDLoopPlayerCUnit(mobs.MOB_OWNER_PLAYER)) {
-                        const dx = enemy.posX > mine.posX ? enemy.posX - mine.posX : mine.posX - enemy.posX;
-                        const dy = enemy.posY > mine.posY ? enemy.posY - mine.posY : mine.posY - enemy.posY;
-                        if (dx <= StructureEffectRadius[i] && dy <= StructureEffectRadius[i]) {
-                            enemy.orderID = players.ORDER_HOLD_POSITION;
-                            enemy.orderTimer = MAELSTROM_STUN_TICKS;
-                        }
-                    }
-                    StructureArmed[i] = 0;
-                    StructureCooldown[i] = MAELSTROM_COOLDOWN_FRAMES;
-                }
-            }
-        }
-    }
-}
-
 function updateStructures() {
     // Build/deconstruct is mostly menu/event driven.
     updateStructureRepairs();
     updateMaelstromMineConstruction();
-    updateMaelstromMines();
 }
