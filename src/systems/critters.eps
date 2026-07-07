@@ -56,8 +56,12 @@ function spawnNeuralCritter(x, y, reward) {
     const slot = findFreeCritterSlot();
     if (slot < 0) return -1;
 
+    // Create in the always-clear _SafeCreate spot, then move the finished
+    // unit to its real target -- creating directly on top of terrain/units
+    // at the target can fail or get shoved around by collision.
+    const unit = CUnit(utils.createUnitAndGetEpd(1, NEURAL_CRITTER_UNIT, $L("_SafeCreate"), P7));
     setloc($L("_Place"), x, y);
-    const unit = utils.createUnitAndGetEpd(1, NEURAL_CRITTER_UNIT, $L("_Place"), P7);
+    unit.setloc($L("_Place"));
 
     CritterActive[slot] = 1;
     CritterState[slot] = CRITTER_STATE_IDLE;

@@ -230,8 +230,12 @@ function spawnMobInArea(area) {
     if (slot < 0) return;
 
     const family = chooseMobFamily(area);
+    // Create in the always-clear _SafeCreate spot, then move the finished
+    // unit to its real target -- creating directly on top of terrain/units
+    // at the target can fail or get shoved around by collision.
+    const unit = CUnit(utils.createUnitAndGetEpd(1, family, $L("_SafeCreate"), MOB_OWNER_PLAYER));
     setloc($L("_Place"), x, y);
-    const unit = utils.createUnitAndGetEpd(1, family, $L("_Place"), MOB_OWNER_PLAYER);
+    unit.setloc($L("_Place"));
 
     MobUnit[slot] = unit;
     MobArea[slot] = area;
