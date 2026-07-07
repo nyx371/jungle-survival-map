@@ -34,15 +34,19 @@ const RESOURCE_GAS_PER_TICK      = list(1, 2, 1, 5, 3);
 const RESOURCE_STARTING_AMOUNT   = list(500, 500, 500, 500, 500);
 
 // Three images.dat variants per spawnable resource type, randomized on node
-// creation (see chooseResourceNodeImage). A nested list-of-lists here trips
-// up the compiler (list(list(...), ...) does not nest cleanly), so this is
-// a flat list addressed as RESOURCE_IMAGES[resourceType * RESOURCE_IMAGE_VARIANTS + variant].
-const RESOURCE_IMAGE_VARIANTS = 3;
-const RESOURCE_IMAGES = list(
-    632, 634, 636, // RESOURCE_TREE
-    618, 620, 622, // RESOURCE_BUSH
-    610, 612, 616  // RESOURCE_ROCK
-);
+// creation (see chooseResourceNodeImage). list(list(...), list(...)) auto-
+// flattens instead of nesting, so build this one with py_list and assign
+// each resource type's own list into its slot afterward instead.
+const RESOURCE_IMAGES = py_list();
+RESOURCE_IMAGES.append(0);
+RESOURCE_IMAGES.append(0);
+RESOURCE_IMAGES.append(0);
+
+function buildResourceImages() {
+    RESOURCE_IMAGES[RESOURCE_TREE] = list(632, 634, 636);
+    RESOURCE_IMAGES[RESOURCE_BUSH] = list(618, 620, 622);
+    RESOURCE_IMAGES[RESOURCE_ROCK] = list(610, 612, 616);
+}
 
 // Terran Covert Ops sprite. Its image field is mutated right before each
 // CreateUnit call so the freshly created node sprite bakes in a random
@@ -105,9 +109,10 @@ function clearHarvestState(player) {
 // a compile-time-unrolled py_range loop, so it is a literal at each unrolled
 // step and can index straight into RESOURCE_IMAGES.
 function initResourceNodeImages() {
+    buildResourceImages();
     foreach (resourceType : py_range(SPAWNABLE_RESOURCE_TYPE_COUNT)) {
-        foreach (variant : py_range(RESOURCE_IMAGE_VARIANTS)) {
-            Image(RESOURCE_IMAGES[resourceType * RESOURCE_IMAGE_VARIANTS + variant]).isClickable = 1;
+        foreach (image : RESOURCE_IMAGES[resourceType]) {
+            Image(image).isClickable = 1;
         }
     }
 }
@@ -122,20 +127,20 @@ function chooseResourceNodeType() {
 function chooseResourceNodeImage(resourceType) {
     // resourceType is a runtime value here, so it (and the roll below) must
     // be narrowed to a literal via if/else before indexing RESOURCE_IMAGES.
-    const roll = f_rand() % RESOURCE_IMAGE_VARIANTS;
+    const roll = f_rand() % 3;
     if (resourceType == RESOURCE_TREE) {
-        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_TREE * RESOURCE_IMAGE_VARIANTS + 0];
-        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_TREE * RESOURCE_IMAGE_VARIANTS + 1];
-        return RESOURCE_IMAGES[RESOURCE_TREE * RESOURCE_IMAGE_VARIANTS + 2];
+        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_TREE][0];
+        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_TREE][1];
+        return RESOURCE_IMAGES[RESOURCE_TREE][2];
     }
     if (resourceType == RESOURCE_BUSH) {
-        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_BUSH * RESOURCE_IMAGE_VARIANTS + 0];
-        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_BUSH * RESOURCE_IMAGE_VARIANTS + 1];
-        return RESOURCE_IMAGES[RESOURCE_BUSH * RESOURCE_IMAGE_VARIANTS + 2];
+        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_BUSH][0];
+        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_BUSH][1];
+        return RESOURCE_IMAGES[RESOURCE_BUSH][2];
     }
-    if (roll == 0) return RESOURCE_IMAGES[RESOURCE_ROCK * RESOURCE_IMAGE_VARIANTS + 0];
-    if (roll == 1) return RESOURCE_IMAGES[RESOURCE_ROCK * RESOURCE_IMAGE_VARIANTS + 1];
-    return RESOURCE_IMAGES[RESOURCE_ROCK * RESOURCE_IMAGE_VARIANTS + 2];
+    if (roll == 0) return RESOURCE_IMAGES[RESOURCE_ROCK][0];
+    if (roll == 1) return RESOURCE_IMAGES[RESOURCE_ROCK][1];
+    return RESOURCE_IMAGES[RESOURCE_ROCK][2];
 }
 
 // resourceType is a runtime value, so (as in chooseResourceNodeImage above)
