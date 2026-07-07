@@ -12,7 +12,7 @@ import systems.upgrades;
 import systems.weapons;
 import systems.mobs;
 
-const RESPAWN_DELAY_FRAMES = 12 * constants.FRAMES_PER_GAME_SECOND;
+const RESPAWN_DELAY_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
 const DEATH_RESOURCE_KEEP_PERCENT = 20;
 const RESPAWN_SEARCH_RADIUS = 15 * 32;
 const RESPAWN_MIN_MOB_DISTANCE = 8 * 32;
@@ -289,12 +289,21 @@ const ORDER_HOLD_POSITION = 107;
 const MINING_ORDER_TIMER = 35;
 
 function updatePlayerHeroBehavior(player) {
+    const savedCp = getcurpl();
+    setcurpl(player);    
     if (!HeroAlive[player]) return;
     const hero = getPlayerHeroUnit(player);
 
     if (hero.orderID == ORDER_PLAYER_GUARD) {
         hero.orderID = ORDER_HOLD_POSITION; // always hold position when idle
     }
+
+    if (hero.orderID == 10) {
+        if (hero.groundWeaponCooldown == 1) {
+            PlayWAV("sound\\bullet\\shockbmb.wav");
+        }
+    }
+
 
     if (hero.orderID == ORDER_HARVEST_MINERALS && hero.orderState == 5) {
         // Prevents the mining-order crash: keep the order timer from running
@@ -308,6 +317,7 @@ function updatePlayerHeroBehavior(player) {
             utils.createImageSpriteOnUnit(364, hero.orderTarget);
         }
     }
+    setcurpl(savedCp);
 }
 
 function updatePlayerDebugInfo(player, localPlayer) {
@@ -319,7 +329,7 @@ function updatePlayerDebugInfo(player, localPlayer) {
         Screen.printfAt(0, "{}", RespawnTimer[player]);
     }
     const hero = getPlayerHeroUnit(player);
-    Screen.printfAt(1, "{}", hero.orderID);
+    Screen.printfAt(1, "{} {} {}", hero.orderID, hero.orderTimer,  hero.groundWeaponCooldown);
     setcurpl(savedCp);
 }
 
