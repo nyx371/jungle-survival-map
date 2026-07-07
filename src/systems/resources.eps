@@ -22,22 +22,28 @@ const RESOURCE_TYPE_COUNT = 5;
 const SPAWNABLE_RESOURCE_TYPE_COUNT = 3;
 
 // One config table per resource type, indexed by the RESOURCE_* constants
-// above -- add a new resource type by adding one entry to RESOURCE_CONFIG,
-// not by inventing a new set of named constants. RESOURCE_CONFIG[type] is
-// itself a [minerals, gas, startingAmount] list (see RES_CFG_* below for the
-// column indices) so everything about one resource type lives in one place.
-// These are compile-time python lists, not EUDArrays: indexing them costs
-// nothing at runtime, but (unlike an EUDArray) the index has to be a
-// compile-time literal, never a plain runtime variable -- see
-// getHarvestRates/getResourceStartingAmount/chooseResourceNodeImage below
-// for the dispatch-on-literal pattern used to work around that.
+// above -- add a new resource type by adding one clustered block to
+// buildResourceConfig, not by inventing a new set of named constants.
+// RESOURCE_CONFIG[type] is itself a [minerals, gas, startingAmount] list
+// (see RES_CFG_* below for the column indices) and RESOURCE_IMAGES[type] is
+// a list of images.dat variants, so everything about one resource type
+// lives in one clustered block. These are compile-time python lists, not
+// EUDArrays: indexing them costs nothing at runtime, but (unlike an
+// EUDArray) the index has to be a compile-time literal, never a plain
+// runtime variable -- see getHarvestRates/getResourceStartingAmount/
+// chooseResourceNodeImage below for the dispatch-on-literal pattern used to
+// work around that.
 const RES_CFG_MINERALS = 0;
 const RES_CFG_GAS = 1;
 const RES_CFG_STARTING_AMOUNT = 2;
 
-// list(list(...), ...) auto-flattens instead of nesting, so build this one
-// with py_list and assign each resource type's own [minerals, gas, amount]
-// list into its slot afterward instead (see buildResourceConfig).
+// Placeholder images.dat entry used for resource types with no real art yet
+// (e.g. crystal, organic growth).
+const RESOURCE_IMAGE_NONE = 228;
+
+// list(list(...), ...) auto-flattens instead of nesting, so both tables are
+// built with py_list and assigned into per-type slots afterward instead
+// (see buildResourceConfig).
 const RESOURCE_CONFIG = py_list();
 RESOURCE_CONFIG.append(0);
 RESOURCE_CONFIG.append(0);
@@ -45,27 +51,28 @@ RESOURCE_CONFIG.append(0);
 RESOURCE_CONFIG.append(0);
 RESOURCE_CONFIG.append(0);
 
-function buildResourceConfig() {
-    RESOURCE_CONFIG[RESOURCE_TREE]           = list(4, 1, 500);
-    RESOURCE_CONFIG[RESOURCE_BUSH]           = list(2, 2, 500);
-    RESOURCE_CONFIG[RESOURCE_ROCK]           = list(6, 1, 500);
-    RESOURCE_CONFIG[RESOURCE_CRYSTAL]        = list(2, 5, 500);
-    RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH] = list(3, 3, 500);
-}
-
-// Three images.dat variants per spawnable resource type, randomized on node
-// creation (see chooseResourceNodeImage). list(list(...), list(...)) auto-
-// flattens instead of nesting, so build this one with py_list and assign
-// each resource type's own list into its slot afterward instead.
 const RESOURCE_IMAGES = py_list();
 RESOURCE_IMAGES.append(0);
 RESOURCE_IMAGES.append(0);
 RESOURCE_IMAGES.append(0);
+RESOURCE_IMAGES.append(0);
+RESOURCE_IMAGES.append(0);
 
-function buildResourceImages() {
+function buildResourceConfig() {
+    RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500);
     RESOURCE_IMAGES[RESOURCE_TREE] = list(632, 634, 636);
+
+    RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500);
     RESOURCE_IMAGES[RESOURCE_BUSH] = list(618, 620, 622);
+
+    RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500);
     RESOURCE_IMAGES[RESOURCE_ROCK] = list(610, 612, 616);
+
+    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500);
+    RESOURCE_IMAGES[RESOURCE_CRYSTAL] = list(RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE);
+
+    RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH] = list(3, 3, 500);
+    RESOURCE_IMAGES[RESOURCE_ORGANIC_GROWTH] = list(RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE);
 }
 
 // Terran Covert Ops sprite. Its image field is mutated right before each
@@ -126,7 +133,6 @@ function clearHarvestState(player) {
 // Builds the compile-time RESOURCE_IMAGES/RESOURCE_CONFIG tables. Must run
 // before anything reads them -- called first thing from initResources().
 function initResourceConfig() {
-    buildResourceImages();
     buildResourceConfig();
 }
 
