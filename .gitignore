@@ -3,7 +3,6 @@ __pycache__/
 __epspy__/
 *.tmp
 
-# Audacity project + journals (editing sources, large/transient)
-*.aup3
+# Audacity journals (transient SQLite WAL/shm; regenerated, never version)
 *.aup3-shm
 *.aup3-wal
