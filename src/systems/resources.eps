@@ -16,15 +16,15 @@ const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
 const RESOURCE_MAGMA = 4;
 const RESOURCE_TYPE_COUNT = 5;
-// How many of the RESOURCE_TYPE_COUNT types have art wired up (RESOURCE_IMAGES
-// below) and can currently spawn as a node. Extend as more images get added.
-const SPAWNABLE_RESOURCE_TYPE_COUNT = 3;
+// How many of the RESOURCE_TYPE_COUNT types can spawn as a node. All types
+// now have images/config wired up, so all of them are spawnable.
+const SPAWNABLE_RESOURCE_TYPE_COUNT = RESOURCE_TYPE_COUNT;
 
 // One config table per resource type, indexed by the RESOURCE_* constants
 // above -- add a new resource type by adding one clustered block to
 // buildResourceConfig, not by inventing a new set of named constants.
-// RESOURCE_CONFIG[type] is itself a [minerals, gas, startingAmount] list
-// (see RES_CFG_* below for the column indices) and RESOURCE_IMAGES[type] is
+// RESOURCE_CONFIG[type] is itself a [minerals, gas, startingAmount, yieldFrames]
+// list (see RES_CFG_* below for the column indices) and RESOURCE_IMAGES[type] is
 // a list of images.dat variants, so everything about one resource type
 // lives in one clustered block. These are compile-time python lists, not
 // EUDArrays: indexing them costs nothing at runtime, but (unlike an
@@ -35,6 +35,7 @@ const SPAWNABLE_RESOURCE_TYPE_COUNT = 3;
 const RES_CFG_MINERALS = 0;
 const RES_CFG_GAS = 1;
 const RES_CFG_STARTING_AMOUNT = 2;
+const RES_CFG_YIELD_FRAMES = 3; // frames of mining between each resource payout
 
 // Placeholder images.dat entry used for resource types with no real art yet
 // (e.g. crystal, organic growth).
@@ -66,23 +67,23 @@ const MINING_SFX_PER_TYPE = 4;
 const RESOURCE_MINING_SFX = EUDArray(RESOURCE_TYPE_COUNT);
 
 function buildResourceConfig() {
-    RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500);
+    RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500, 48);    // 3.0s per yield
     RESOURCE_IMAGES[RESOURCE_TREE] = list(632, 634, 636);
     RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit\\wav\\wood1.ogg"), StringBuffer("staredit\\wav\\wood2.ogg"), StringBuffer("staredit\\wav\\wood3.ogg"), StringBuffer("staredit\\wav\\wood4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500);
+    RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500, 32);    // 2.0s -- quick, low yield
     RESOURCE_IMAGES[RESOURCE_BUSH] = list(618, 620, 622);
     RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit\\wav\\grass1.ogg"), StringBuffer("staredit\\wav\\grass2.ogg"), StringBuffer("staredit\\wav\\grass3.ogg"), StringBuffer("staredit\\wav\\grass4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500);
+    RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500, 64);    // 4.0s -- slow, high yield
     RESOURCE_IMAGES[RESOURCE_ROCK] = list(649,650,651);
     RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500);
+    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500, 80); // 5.0s -- slow, gas-heavy
     RESOURCE_IMAGES[RESOURCE_CRYSTAL] = list(607, 607, 607);
     RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_MAGMA] = list(3, 3, 500);
+    RESOURCE_CONFIG[RESOURCE_MAGMA] = list(3, 3, 500, 64);   // 4.0s
     RESOURCE_IMAGES[RESOURCE_MAGMA] = list(600, 600, 600);
     RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 }
@@ -139,7 +140,9 @@ function chooseResourceNodeType() {
     const roll = f_rand() % SPAWNABLE_RESOURCE_TYPE_COUNT;
     if (roll == 0) return RESOURCE_TREE;
     if (roll == 1) return RESOURCE_BUSH;
-    return RESOURCE_ROCK;
+    if (roll == 2) return RESOURCE_ROCK;
+    if (roll == 3) return RESOURCE_CRYSTAL;
+    return RESOURCE_MAGMA;
 }
 
 function chooseResourceNodeImage(resourceType) {
@@ -156,9 +159,19 @@ function chooseResourceNodeImage(resourceType) {
         if (roll == 1) return RESOURCE_IMAGES[RESOURCE_BUSH][1];
         return RESOURCE_IMAGES[RESOURCE_BUSH][2];
     }
-    if (roll == 0) return RESOURCE_IMAGES[RESOURCE_ROCK][0];
-    if (roll == 1) return RESOURCE_IMAGES[RESOURCE_ROCK][1];
-    return RESOURCE_IMAGES[RESOURCE_ROCK][2];
+    if (resourceType == RESOURCE_ROCK) {
+        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_ROCK][0];
+        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_ROCK][1];
+        return RESOURCE_IMAGES[RESOURCE_ROCK][2];
+    }
+    if (resourceType == RESOURCE_CRYSTAL) {
+        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_CRYSTAL][0];
+        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_CRYSTAL][1];
+        return RESOURCE_IMAGES[RESOURCE_CRYSTAL][2];
+    }
+    if (roll == 0) return RESOURCE_IMAGES[RESOURCE_MAGMA][0];
+    if (roll == 1) return RESOURCE_IMAGES[RESOURCE_MAGMA][1];
+    return RESOURCE_IMAGES[RESOURCE_MAGMA][2];
 }
 
 // resourceType is a runtime value, so (as in chooseResourceNodeImage above)
@@ -179,6 +192,16 @@ function getResourceStartingAmount(resourceType) {
     if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_STARTING_AMOUNT];
     if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_STARTING_AMOUNT];
     return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_STARTING_AMOUNT];
+}
+
+// Frames of mining between each resource payout, per resource type.
+function getHarvestTimer(resourceType) {
+    if (resourceType == RESOURCE_TREE) return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_YIELD_FRAMES];
+    if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_YIELD_FRAMES];
+    if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_YIELD_FRAMES];
+    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_YIELD_FRAMES];
+    if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_YIELD_FRAMES];
+    return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_YIELD_FRAMES];
 }
 
 // Plays one random entry of a runtime-indexable sound EUDArray on [player]'s

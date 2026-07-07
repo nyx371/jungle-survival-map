@@ -54,11 +54,11 @@ const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
 // Per-player mining state machine. Lives here (not resources.eps) so all
 // per-player order handling is in one file; resources.eps still owns the
 // resource-node data (yield rates, node type, sounds) that this reads.
-const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND; // full resource-yield cycle
 const HARVEST_CHOP_FRAMES = 12; // sfx + mining-swing visual sub-beat; several per cycle
 const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
 const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
-const HarvestTick = EUDArray(constants.MAX_PLAYERS);
+const HarvestTick = EUDArray(constants.MAX_PLAYERS);       // counts down to next payout
+const HarvestTimerFrames = EUDArray(constants.MAX_PLAYERS); // per-type payout period (resources.getHarvestTimer)
 const HarvestChopTick = EUDArray(constants.MAX_PLAYERS);
 
 const PlayerSpawnMarkerX = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
@@ -172,6 +172,7 @@ function clearHarvestState(player) {
     IsHarvesting[player] = 0;
     HarvestTarget[player] = 0;
     HarvestTick[player] = 0;
+    HarvestTimerFrames[player] = 0;
     HarvestChopTick[player] = 0;
 }
 
@@ -309,9 +310,11 @@ const ORDER_HOLD_POSITION = 107;
 const MINING_ORDER_TIMER = 35;
 
 function startHarvest(player, target) {
+    const resourceType = resources.getHarvestTargetResourceType(target);
     IsHarvesting[player] = 1;
     HarvestTarget[player] = target;
-    HarvestTick[player] = HARVEST_TICK_FRAMES;
+    HarvestTimerFrames[player] = resources.getHarvestTimer(resourceType);
+    HarvestTick[player] = HarvestTimerFrames[player];
     HarvestChopTick[player] = 0;
 }
 
@@ -337,7 +340,7 @@ function harvestChop(player) {
     const target = getPlayerHeroUnit(player).orderTarget;
     const resourceType = resources.getHarvestTargetResourceType(HarvestTarget[player]);
     resources.playMiningSfx(player, resourceType);
-    utils.createImageSpriteOnUnit(364, target);
+    utils.createImageSpriteOnUnit(526, target);
 }
 
 // Drives continuous right-click mining off the hero's harvest order. Owns
@@ -373,7 +376,7 @@ function updatePlayerHarvesting(player) {
     if (HarvestTick[player] > 0) {
         HarvestTick[player] -= 1;
     } else {
-        HarvestTick[player] = HARVEST_TICK_FRAMES;
+        HarvestTick[player] = HarvestTimerFrames[player];
         finishHarvestTick(player);
     }
 }
@@ -410,11 +413,7 @@ function updatePlayerHeroBehavior(player) {
         // out instead of letting the order complete/reset normally. Actual
         // resource yield is handled by resources.eps (updateHarvesting /
         // finishHarvestTick), which reads this same order/target.
-        if (hero.orderTimer >= MINING_ORDER_TIMER) {
-            hero.orderTimer = MINING_ORDER_TIMER;
-            utils.createImageSpriteOnUnit(364, hero.orderTarget);
-            
-        } else if (hero.orderTimer < 2) {
+        if (hero.orderTimer == 10) {
             hero.orderTimer = MINING_ORDER_TIMER;
         }
     }
