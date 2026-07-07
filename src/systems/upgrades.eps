@@ -18,6 +18,13 @@ const WEAPON_UPGRADE_COOLDOWN = 2;
 const WEAPON_UPGRADE_SPLASH = 3;
 const WEAPON_UPGRADE_COUNT = 4;
 
+const HERO_UPGRADE_MAX_LEVEL = 5;
+const HERO_UPGRADE_BASE_COST = 50;
+const HERO_UPGRADE_COST_SCALE = 25;
+const WEAPON_UPGRADE_MAX_LEVEL = 5;
+const WEAPON_UPGRADE_BASE_COST = 40;
+const WEAPON_UPGRADE_COST_SCALE = 20;
+
 const HeroUpgradeLevel = EUDArray(constants.MAX_PLAYERS * HERO_UPGRADE_COUNT);
 const WeaponUpgradeLevel = EUDArray(constants.MAX_PLAYERS * weapons.WEAPON_COUNT * WEAPON_UPGRADE_COUNT);
 function heroUpgradeIndex(player, upgradeId) {
@@ -98,9 +105,17 @@ function applyHeroUpgradeDat(player) {
 }
 
 function purchaseHeroUpgrade(player, upgradeId) {
-    // TODO: validate cost and max level.
+    const level = HeroUpgradeLevel[heroUpgradeIndex(player, upgradeId)];
+    if (level >= HERO_UPGRADE_MAX_LEVEL) return 0;
+
+    const cost = HERO_UPGRADE_BASE_COST + level * HERO_UPGRADE_COST_SCALE;
+    const p = TrgPlayer(player);
+    if (p.mineral < cost) return 0;
+
+    p.mineral -= cost;
     HeroUpgradeLevel[heroUpgradeIndex(player, upgradeId)] += 1;
     applyHeroUpgradeDat(player);
+    return 1;
 }
 
 function applyWeaponUpgradeDat(player, weaponType) {
@@ -161,9 +176,19 @@ function applyWeaponUpgradeDat(player, weaponType) {
 }
 
 function purchaseWeaponUpgrade(player, weaponType, upgradeId) {
-    // TODO: validate weapon unlocked, cost, and max level.
+    if (!weapons.isWeaponUnlocked(player, weaponType)) return 0;
+
+    const level = WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, upgradeId)];
+    if (level >= WEAPON_UPGRADE_MAX_LEVEL) return 0;
+
+    const cost = WEAPON_UPGRADE_BASE_COST + level * WEAPON_UPGRADE_COST_SCALE;
+    const p = TrgPlayer(player);
+    if (p.mineral < cost) return 0;
+
+    p.mineral -= cost;
     WeaponUpgradeLevel[weaponUpgradeIndex(player, weaponType, upgradeId)] += 1;
     applyWeaponUpgradeDat(player, weaponType);
+    return 1;
 }
 
 function updateUpgrades() {

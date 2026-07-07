@@ -1,5 +1,7 @@
 // Victory / Final Boss / Endless Mode
 
+import core.utils;
+
 const VICTORY_RUNNING = 0;
 const VICTORY_FINAL_BOSS = 1;
 const VICTORY_COMPLETE = 2;
@@ -9,6 +11,8 @@ var VictoryState = VICTORY_RUNNING;
 var FinalBossEnabled = 1;
 var FinalBossSpawned = 0;
 var EndlessModeEnabled = 0;
+var FinalBossUnit = 0;
+
 function initVictory() {
     VictoryState = VICTORY_RUNNING;
     FinalBossSpawned = 0;
@@ -18,7 +22,8 @@ function spawnFinalBoss() {
     if (!FinalBossSpawned) {
         FinalBossSpawned = 1;
         DisplayTextAll("The jungle alpha has emerged.");
-        // TODO: spawn boss and lock victory until it dies.
+        // Torrasque as a stand-in "jungle alpha"; final boss unit TBD.
+        FinalBossUnit = utils.createUnitAndGetEpd(1, $U("Torrasque"), $L("G"), P8);
     }
 }
 
@@ -42,7 +47,10 @@ function requestVictorySequence() {
 }
 
 function updateVictory() {
-    if (VictoryState == VICTORY_FINAL_BOSS) {
-        // TODO: detect final boss death, then completeVictory().
+    if (VictoryState == VICTORY_FINAL_BOSS && FinalBossSpawned) {
+        const boss = CUnit(FinalBossUnit);
+        if (boss.orderID == 0) {
+            completeVictory();
+        }
     }
 }
