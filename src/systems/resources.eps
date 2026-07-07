@@ -22,16 +22,36 @@ const RESOURCE_TYPE_COUNT = 5;
 const SPAWNABLE_RESOURCE_TYPE_COUNT = 3;
 
 // One config table per resource type, indexed by the RESOURCE_* constants
-// above -- add a new resource type by adding one entry to each list, not by
-// inventing a new set of named constants. These are compile-time python
-// lists, not EUDArrays: indexing them costs nothing at runtime, but (unlike
-// an EUDArray) the index has to be a compile-time literal, never a plain
-// runtime variable -- see getHarvestRates/getResourceStartingAmount/
-// chooseResourceNodeImage below for the dispatch-on-literal pattern used to
-// work around that.
-const RESOURCE_MINERALS_PER_TICK = list(4, 2, 6, 2, 3);   // tree, bush, rock, crystal, organic growth
-const RESOURCE_GAS_PER_TICK      = list(1, 2, 1, 5, 3);
-const RESOURCE_STARTING_AMOUNT   = list(500, 500, 500, 500, 500);
+// above -- add a new resource type by adding one entry to RESOURCE_CONFIG,
+// not by inventing a new set of named constants. RESOURCE_CONFIG[type] is
+// itself a [minerals, gas, startingAmount] list (see RES_CFG_* below for the
+// column indices) so everything about one resource type lives in one place.
+// These are compile-time python lists, not EUDArrays: indexing them costs
+// nothing at runtime, but (unlike an EUDArray) the index has to be a
+// compile-time literal, never a plain runtime variable -- see
+// getHarvestRates/getResourceStartingAmount/chooseResourceNodeImage below
+// for the dispatch-on-literal pattern used to work around that.
+const RES_CFG_MINERALS = 0;
+const RES_CFG_GAS = 1;
+const RES_CFG_STARTING_AMOUNT = 2;
+
+// list(list(...), ...) auto-flattens instead of nesting, so build this one
+// with py_list and assign each resource type's own [minerals, gas, amount]
+// list into its slot afterward instead (see buildResourceConfig).
+const RESOURCE_CONFIG = py_list();
+RESOURCE_CONFIG.append(0);
+RESOURCE_CONFIG.append(0);
+RESOURCE_CONFIG.append(0);
+RESOURCE_CONFIG.append(0);
+RESOURCE_CONFIG.append(0);
+
+function buildResourceConfig() {
+    RESOURCE_CONFIG[RESOURCE_TREE]           = list(4, 1, 500);
+    RESOURCE_CONFIG[RESOURCE_BUSH]           = list(2, 2, 500);
+    RESOURCE_CONFIG[RESOURCE_ROCK]           = list(6, 1, 500);
+    RESOURCE_CONFIG[RESOURCE_CRYSTAL]        = list(2, 5, 500);
+    RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH] = list(3, 3, 500);
+}
 
 // Three images.dat variants per spawnable resource type, randomized on node
 // creation (see chooseResourceNodeImage). list(list(...), list(...)) auto-
@@ -103,13 +123,19 @@ function clearHarvestState(player) {
     setPlayerHarvestLockout(player, 0);
 }
 
+// Builds the compile-time RESOURCE_IMAGES/RESOURCE_CONFIG tables. Must run
+// before anything reads them -- called first thing from initResources().
+function initResourceConfig() {
+    buildResourceImages();
+    buildResourceConfig();
+}
+
 // Resource node images start non-clickable; players need to be able to
 // right-click them to harvest, so flip that on once per image (not per
 // node -- it is a shared images.dat property). resourceType here comes from
 // a compile-time-unrolled py_range loop, so it is a literal at each unrolled
 // step and can index straight into RESOURCE_IMAGES.
 function initResourceNodeImages() {
-    buildResourceImages();
     foreach (resourceType : py_range(SPAWNABLE_RESOURCE_TYPE_COUNT)) {
         foreach (image : RESOURCE_IMAGES[resourceType]) {
             Image(image).isClickable = 1;
@@ -144,24 +170,23 @@ function chooseResourceNodeImage(resourceType) {
 }
 
 // resourceType is a runtime value, so (as in chooseResourceNodeImage above)
-// it must be narrowed to a literal via if/else before indexing the
-// RESOURCE_* config lists.
+// it must be narrowed to a literal via if/else before indexing RESOURCE_CONFIG.
 function getHarvestRates(resourceType) {
-    if (resourceType == RESOURCE_TREE) return RESOURCE_MINERALS_PER_TICK[RESOURCE_TREE], RESOURCE_GAS_PER_TICK[RESOURCE_TREE];
-    if (resourceType == RESOURCE_BUSH) return RESOURCE_MINERALS_PER_TICK[RESOURCE_BUSH], RESOURCE_GAS_PER_TICK[RESOURCE_BUSH];
-    if (resourceType == RESOURCE_ROCK) return RESOURCE_MINERALS_PER_TICK[RESOURCE_ROCK], RESOURCE_GAS_PER_TICK[RESOURCE_ROCK];
-    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_MINERALS_PER_TICK[RESOURCE_CRYSTAL], RESOURCE_GAS_PER_TICK[RESOURCE_CRYSTAL];
-    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_MINERALS_PER_TICK[RESOURCE_ORGANIC_GROWTH], RESOURCE_GAS_PER_TICK[RESOURCE_ORGANIC_GROWTH];
+    if (resourceType == RESOURCE_TREE) return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_GAS];
+    if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_GAS];
+    if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_GAS];
+    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_GAS];
+    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH][RES_CFG_GAS];
     return 1, 0;
 }
 
 function getResourceStartingAmount(resourceType) {
-    if (resourceType == RESOURCE_TREE) return RESOURCE_STARTING_AMOUNT[RESOURCE_TREE];
-    if (resourceType == RESOURCE_BUSH) return RESOURCE_STARTING_AMOUNT[RESOURCE_BUSH];
-    if (resourceType == RESOURCE_ROCK) return RESOURCE_STARTING_AMOUNT[RESOURCE_ROCK];
-    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_STARTING_AMOUNT[RESOURCE_CRYSTAL];
-    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_STARTING_AMOUNT[RESOURCE_ORGANIC_GROWTH];
-    return RESOURCE_STARTING_AMOUNT[RESOURCE_TREE];
+    if (resourceType == RESOURCE_TREE) return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_STARTING_AMOUNT];
+    if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_STARTING_AMOUNT];
+    if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_STARTING_AMOUNT];
+    if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_STARTING_AMOUNT];
+    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH][RES_CFG_STARTING_AMOUNT];
+    return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_STARTING_AMOUNT];
 }
 
 function initResourceNodes() {
@@ -198,6 +223,7 @@ function initResources() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         clearHarvestState(p);
     }
+    initResourceConfig();
     initResourceNodeImages();
     initResourceNodes();
 }
