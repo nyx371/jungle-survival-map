@@ -18,6 +18,13 @@ const RESPAWN_SEARCH_RADIUS = 15 * 32;
 const RESPAWN_MIN_MOB_DISTANCE = 8 * 32;
 const RESPAWN_ATTEMPTS = 5;
 
+// Map authors pre-place Terran Beacon units to mark valid random spawn
+// positions, owned neutrally on P7 (matching the resource-node/mob-spawn
+// marker convention).
+const PLAYER_SPAWN_MARKER_UNIT = $U("Terran Beacon");
+const PLAYER_SPAWN_MARKER_OWNER = P7;
+const MAX_PLAYER_SPAWN_MARKERS = 64;
+
 const HeroAlive = EUDArray(constants.MAX_PLAYERS);
 const RespawnTimer = EUDArray(constants.MAX_PLAYERS);
 const DeathsThisRun = EUDArray(constants.MAX_PLAYERS);
@@ -43,14 +50,56 @@ const PlayerEnergy = EUDArray(constants.MAX_PLAYERS);
 const PlayerEnergyMax = EUDArray(constants.MAX_PLAYERS);
 const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
 
-function pickRespawnPosition() {
-    // Random point near the map's "G" drop zone, retried a few times to
-    // avoid dropping the player directly on top of an active mob cluster.
-    const baseX, baseY = getlocTL($L("G"));
+const PlayerSpawnMarkerX = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
+const PlayerSpawnMarkerY = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
+var PlayerSpawnMarkerCount = 0;
 
+function indexPlayerSpawnMarker(markerUnit : CUnit) {
+    const markerIndex = PlayerSpawnMarkerCount;
+    if (markerIndex >= MAX_PLAYER_SPAWN_MARKERS) return;
+
+    PlayerSpawnMarkerX[markerIndex] = markerUnit.posX;
+    PlayerSpawnMarkerY[markerIndex] = markerUnit.posY;
+    PlayerSpawnMarkerCount += 1;
+
+    utils.removeCUnit(markerUnit);
+}
+
+function indexPlayerSpawnMarkers() {
+    PlayerSpawnMarkerCount = 0;
+
+    // Collect first, then index+remove afterward: removing units while
+    // iterating EUDLoopPlayerCUnit would disrupt that same iteration.
+    const found = EUDQueue(MAX_PLAYER_SPAWN_MARKERS)();
+    foreach (unit : EUDLoopPlayerCUnit(PLAYER_SPAWN_MARKER_OWNER)) {
+        if (unit.unitType == PLAYER_SPAWN_MARKER_UNIT) {
+            found.append(unit);
+        }
+    }
+
+    while (!found.empty()) {
+        indexPlayerSpawnMarker(CUnit(found.popleft()));
+    }
+}
+
+function pickRandomSpawnPoint() {
+    // Prefer a random Terran Beacon marker; fall back to a random point near
+    // the map's "G" drop zone if no markers were placed.
+    if (PlayerSpawnMarkerCount > 0) {
+        const marker = f_rand() % PlayerSpawnMarkerCount;
+        return PlayerSpawnMarkerX[marker], PlayerSpawnMarkerY[marker];
+    }
+
+    const baseX, baseY = getlocTL($L("G"));
+    return baseX + f_rand() % (RESPAWN_SEARCH_RADIUS * 2) - RESPAWN_SEARCH_RADIUS,
+           baseY + f_rand() % (RESPAWN_SEARCH_RADIUS * 2) - RESPAWN_SEARCH_RADIUS;
+}
+
+function pickRespawnPosition() {
+    // Retry a few times to avoid dropping the player directly on top of an
+    // active mob cluster.
     foreach (attempt : py_range(RESPAWN_ATTEMPTS)) {
-        const x = baseX + f_rand() % (RESPAWN_SEARCH_RADIUS * 2) - RESPAWN_SEARCH_RADIUS;
-        const y = baseY + f_rand() % (RESPAWN_SEARCH_RADIUS * 2) - RESPAWN_SEARCH_RADIUS;
+        const x, y = pickRandomSpawnPoint();
 
         var safe = 1;
         foreach (i : py_range(mobs.MAX_ACTIVE_MOBS)) {
@@ -65,7 +114,7 @@ function pickRespawnPosition() {
         }
         if (safe) return x, y;
     }
-    return baseX, baseY;
+    return pickRandomSpawnPoint();
 }
 
 function createPlayerHero(player) {
@@ -109,6 +158,7 @@ function getPlayerHeroUnit(player) : CUnit {
 }
 
 function initPlayers() {
+    indexPlayerSpawnMarkers();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         HeroAlive[p] = 1;
         RespawnTimer[p] = 0;
