@@ -9,10 +9,10 @@ const LOW_HP_PERCENT = 30;
 // Hurt: randomized between variants, rate-limited so taking damage doesn't
 // spam it (a single hit or a burst both trigger at most one per cooldown).
 const HURT_SFX = [
-    StringBuffer("staredit\wav\player_hurt_01.ogg"),
-    StringBuffer("staredit\wav\player_hurt_02.ogg"),
-    StringBuffer("staredit\wav\player_hurt_03.ogg"),
-    StringBuffer("staredit\wav\player_hurt_04.ogg"),
+    StringBuffer("staredit/wav/player_hurt_01.ogg"),
+    StringBuffer("staredit/wav/player_hurt_02.ogg"),
+    StringBuffer("staredit/wav/player_hurt_03.ogg"),
+    StringBuffer("staredit/wav/player_hurt_04.ogg"),
 ];
 const HURT_SFX_COUNT = 4;
 const HURT_SOUND_COOLDOWN = 3 * constants.FRAMES_PER_GAME_SECOND;
@@ -20,12 +20,12 @@ const HURT_SOUND_COOLDOWN = 3 * constants.FRAMES_PER_GAME_SECOND;
 // Footsteps: randomized, played on a cadence while the hero has a move or
 // attack-move order (i.e. is actually walking).
 const STEP_SFX = [
-    StringBuffer("staredit\wav\player_step_grass_01.ogg"),
-    StringBuffer("staredit\wav\player_step_grass_02.ogg"),
-    StringBuffer("staredit\wav\player_step_grass_03.ogg"),
-    StringBuffer("staredit\wav\player_step_grass_04.ogg"),
-    StringBuffer("staredit\wav\player_step_grass_05.ogg"),
-    StringBuffer("staredit\wav\player_step_grass_06.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_01.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_02.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_03.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_04.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_05.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_06.ogg"),
 ];
 const STEP_SFX_COUNT = 6;
 const STEP_SOUND_INTERVAL = 8; // frames between footsteps while moving
@@ -34,12 +34,13 @@ const ORDER_MOVE = 6;         // Move / Ignore
 const ORDER_ATTACK_MOVE = 14; // Attack Move
 
 // Low-HP heartbeat still uses a placeholder WAV (no dedicated asset yet).
-const HEARTBEAT_WAV = "sound\terran\marine\tmadth00.wav";
+const HEARTBEAT_WAV = "sound/terran/marine/tmadth00.wav";
 const HEARTBEAT_COOLDOWN = 2 * constants.FRAMES_PER_GAME_SECOND;
 
 const LastHp = EUDArray(constants.MAX_PLAYERS);
 const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
 const StepSoundTimer = EUDArray(constants.MAX_PLAYERS);
+const StepCycle = EUDArray(constants.MAX_PLAYERS); // footsteps cycle in order, not random
 const HeartbeatTimer = EUDArray(constants.MAX_PLAYERS);
 
 function initAudio() {
@@ -47,6 +48,7 @@ function initAudio() {
         LastHp[p] = 0;
         HurtSoundTimer[p] = 0;
         StepSoundTimer[p] = 0;
+        StepCycle[p] = 0;
         HeartbeatTimer[p] = 0;
     }
 }
@@ -74,7 +76,9 @@ function updateAudioForPlayer(player) {
     // Footsteps while moving (Move / Attack Move), on a step cadence.
     if (hero.orderID == ORDER_MOVE || hero.orderID == ORDER_ATTACK_MOVE) {
         if (StepSoundTimer[player] == 0) {
-            utils.playSoundArray(STEP_SFX, player, STEP_SFX_COUNT);
+            utils.playSoundArrayAt(STEP_SFX, player, StepCycle[player]);
+            StepCycle[player] += 1;
+            if (StepCycle[player] >= STEP_SFX_COUNT) StepCycle[player] = 0;
             StepSoundTimer[player] = STEP_SOUND_INTERVAL;
         }
     }
