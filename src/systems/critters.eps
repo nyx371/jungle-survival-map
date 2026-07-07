@@ -5,6 +5,11 @@ import core.constants;
 import core.utils;
 import systems.resources;
 import systems.players;
+import systems.lights;
+import systems.mobs;
+
+const CRITTER_SPAWN_INTERVAL_FRAMES = 20 * constants.FRAMES_PER_GAME_SECOND;
+var CritterSpawnTimer = CRITTER_SPAWN_INTERVAL_FRAMES;
 
 const NEURAL_CRITTER_UNIT = $U("Bengalaas");
 const ORDER_MOVE = 6;
@@ -149,7 +154,24 @@ function updateCritter(critter) {
     }
 }
 
+function updateCritterSpawning() {
+    if (CritterSpawnTimer > 0) {
+        CritterSpawnTimer -= 1;
+        return;
+    }
+    CritterSpawnTimer = CRITTER_SPAWN_INTERVAL_FRAMES;
+
+    if (findFreeCritterSlot() < 0) return;
+
+    const x = f_rand() % (mobs.MAP_TILE_WIDTH * 32);
+    const y = f_rand() % (mobs.MAP_TILE_HEIGHT * 32);
+    if (lights.isSpawnBlockedAt(x, y)) return;
+
+    spawnNeuralCritter(x, y, CRITTER_BASE_REWARD);
+}
+
 function updateCritters() {
+    updateCritterSpawning();
     foreach (i : py_range(MAX_NEURAL_CRITTERS)) {
         updateCritter(i);
     }

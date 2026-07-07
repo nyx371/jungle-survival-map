@@ -2,6 +2,12 @@
 
 import core.constants;
 import systems.players;
+import systems.weapons;
+import systems.upgrades;
+import systems.structures;
+import systems.transfers;
+
+const TRANSFER_AMOUNT = 50;
 
 const MENU_CLOSED = 0;
 const MENU_MAIN = 1;
@@ -60,8 +66,23 @@ function handleMenuInput(player) {
 
     if (MenuConfirmPressed[player]) {
         MenuConfirmPressed[player] = 0;
-        // TODO: dispatch the confirm action for MenuPage[player]/MenuCursor[player]
-        // once concrete per-page option lists exist (weapon list, upgrade list, etc.).
+        const cursor = MenuCursor[player];
+
+        if (MenuPage[player] == MENU_MAIN) {
+            // Cursor 0-5 opens Weapons/Hero Upgrades/Weapon Upgrades/Structures/Transfer/Options.
+            openMenu(player, MENU_WEAPONS + cursor);
+        } else if (MenuPage[player] == MENU_WEAPONS) {
+            weapons.craftWeapon(player, cursor);
+        } else if (MenuPage[player] == MENU_HERO_UPGRADES) {
+            upgrades.purchaseHeroUpgrade(player, cursor);
+        } else if (MenuPage[player] == MENU_WEAPON_UPGRADES) {
+            upgrades.purchaseWeaponUpgrade(player, weapons.ActiveWeapon[player], cursor);
+        } else if (MenuPage[player] == MENU_STRUCTURES) {
+            structures.buildStructure(player, cursor);
+        } else if (MenuPage[player] == MENU_TRANSFER) {
+            // Cursor selects the target player id directly.
+            transfers.sendMinerals(player, cursor, TRANSFER_AMOUNT);
+        }
     }
 }
 
