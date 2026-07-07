@@ -33,9 +33,10 @@ const STEP_SOUND_INTERVAL = 8; // frames between footsteps while moving
 const ORDER_MOVE = 6;         // Move / Ignore
 const ORDER_ATTACK_MOVE = 14; // Attack Move
 
-// Low-HP heartbeat still uses a placeholder WAV (no dedicated asset yet).
-const HEARTBEAT_WAV = "sound/terran/marine/tmadth00.wav";
-const HEARTBEAT_COOLDOWN = 2 * constants.FRAMES_PER_GAME_SECOND;
+// Low-HP heartbeat. Cooldown matches the heartbeat.ogg clip length (2.3s ~=
+// 37 frames at 16 fps) so it loops end-to-end without overlapping or cutting off.
+const HEARTBEAT_WAV = "staredit\wav\heartbeat.ogg";
+const HEARTBEAT_COOLDOWN = 37;
 
 const LastHp = EUDArray(constants.MAX_PLAYERS);
 const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
