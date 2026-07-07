@@ -51,12 +51,12 @@ RESOURCE_CONFIG.append(0);
 RESOURCE_CONFIG.append(0);
 RESOURCE_CONFIG.append(0);
 
-const RESOURCE_IMAGES = py_list();
-RESOURCE_IMAGES.append(0);
-RESOURCE_IMAGES.append(0);
-RESOURCE_IMAGES.append(0);
-RESOURCE_IMAGES.append(0);
-RESOURCE_IMAGES.append(0);
+// RESOURCE_IMAGES is a real EUDArray of bracket-literal EUDArrays (not a
+// py_list like RESOURCE_CONFIG) so a runtime resourceType/variant can index
+// it -- a py_list only takes compile-time literal indices, and list(list())
+// can't nest anyway. See chooseResourceNodeImage / initResourceNodeImages.
+const RESOURCE_IMAGE_VARIANTS = 3;
+const RESOURCE_IMAGES = EUDArray(RESOURCE_TYPE_COUNT);
 
 // Per-resource-type mining sound sets. Unlike RESOURCE_CONFIG/RESOURCE_IMAGES
 // (compile-time py_lists, literal-indexed), this is a real EUDArray so a
@@ -68,23 +68,23 @@ const RESOURCE_MINING_SFX = EUDArray(RESOURCE_TYPE_COUNT);
 
 function buildResourceConfig() {
     RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500, 48);    // 3.0s per yield
-    RESOURCE_IMAGES[RESOURCE_TREE] = list(632, 634, 636);
+    RESOURCE_IMAGES[RESOURCE_TREE] = [632, 634, 636];
     RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit\\wav\\wood1.ogg"), StringBuffer("staredit\\wav\\wood2.ogg"), StringBuffer("staredit\\wav\\wood3.ogg"), StringBuffer("staredit\\wav\\wood4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500, 32);    // 2.0s -- quick, low yield
-    RESOURCE_IMAGES[RESOURCE_BUSH] = list(618, 620, 622);
+    RESOURCE_IMAGES[RESOURCE_BUSH] = [618, 620, 622];
     RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit\\wav\\grass1.ogg"), StringBuffer("staredit\\wav\\grass2.ogg"), StringBuffer("staredit\\wav\\grass3.ogg"), StringBuffer("staredit\\wav\\grass4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500, 64);    // 4.0s -- slow, high yield
-    RESOURCE_IMAGES[RESOURCE_ROCK] = list(649,650,651);
+    RESOURCE_IMAGES[RESOURCE_ROCK] = [649, 650, 651];
     RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500, 80); // 5.0s -- slow, gas-heavy
-    RESOURCE_IMAGES[RESOURCE_CRYSTAL] = list(607, 607, 607);
+    RESOURCE_IMAGES[RESOURCE_CRYSTAL] = [607, 607, 607];
     RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 
     RESOURCE_CONFIG[RESOURCE_MAGMA] = list(3, 3, 500, 64);   // 4.0s
-    RESOURCE_IMAGES[RESOURCE_MAGMA] = list(600, 600, 600);
+    RESOURCE_IMAGES[RESOURCE_MAGMA] = [600, 600, 600];
     RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit\\wav\\stone1.ogg"), StringBuffer("staredit\\wav\\stone2.ogg"), StringBuffer("staredit\\wav\\stone3.ogg"), StringBuffer("staredit\\wav\\stone4.ogg")];
 }
 
@@ -130,7 +130,8 @@ function initResourceConfig() {
 // step and can index straight into RESOURCE_IMAGES.
 function initResourceNodeImages() {
     foreach (resourceType : py_range(SPAWNABLE_RESOURCE_TYPE_COUNT)) {
-        foreach (image : RESOURCE_IMAGES[resourceType]) {
+        foreach (variant : py_range(RESOURCE_IMAGE_VARIANTS)) {
+            const image = EUDArray.cast(RESOURCE_IMAGES[resourceType]).get(variant);
             Image(image).isClickable = 1;
         }
     }
@@ -146,32 +147,11 @@ function chooseResourceNodeType() {
 }
 
 function chooseResourceNodeImage(resourceType) {
-    // resourceType is a runtime value here, so it (and the roll below) must
-    // be narrowed to a literal via if/else before indexing RESOURCE_IMAGES.
-    const roll = f_rand() % 3;
-    if (resourceType == RESOURCE_TREE) {
-        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_TREE][0];
-        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_TREE][1];
-        return RESOURCE_IMAGES[RESOURCE_TREE][2];
-    }
-    if (resourceType == RESOURCE_BUSH) {
-        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_BUSH][0];
-        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_BUSH][1];
-        return RESOURCE_IMAGES[RESOURCE_BUSH][2];
-    }
-    if (resourceType == RESOURCE_ROCK) {
-        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_ROCK][0];
-        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_ROCK][1];
-        return RESOURCE_IMAGES[RESOURCE_ROCK][2];
-    }
-    if (resourceType == RESOURCE_CRYSTAL) {
-        if (roll == 0) return RESOURCE_IMAGES[RESOURCE_CRYSTAL][0];
-        if (roll == 1) return RESOURCE_IMAGES[RESOURCE_CRYSTAL][1];
-        return RESOURCE_IMAGES[RESOURCE_CRYSTAL][2];
-    }
-    if (roll == 0) return RESOURCE_IMAGES[RESOURCE_MAGMA][0];
-    if (roll == 1) return RESOURCE_IMAGES[RESOURCE_MAGMA][1];
-    return RESOURCE_IMAGES[RESOURCE_MAGMA][2];
+    const roll = f_rand() % RESOURCE_IMAGE_VARIANTS;
+    // RESOURCE_IMAGES[resourceType] reads out a plain value (the sub-array's
+    // pointer); EUDArray.cast reinterprets it as an EUDArray so .get(roll)
+    // can index it at runtime. (Chained [a][b] doesn't work on an EUDArray.)
+    return EUDArray.cast(RESOURCE_IMAGES[resourceType]).get(roll);
 }
 
 // resourceType is a runtime value, so (as in chooseResourceNodeImage above)
