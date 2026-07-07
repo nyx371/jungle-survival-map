@@ -1,8 +1,19 @@
 // Structures: lights, walls, regeneration stations, turrets.
 
 import core.constants;
+import core.utils;
 import systems.lights;
 import systems.resources;
+import systems.players;
+import systems.mobs;
+
+const MAELSTROM_COOLDOWN_FRAMES = 8 * constants.FRAMES_PER_GAME_SECOND;
+const MAELSTROM_STUN_TICKS = 2 * constants.FRAMES_PER_GAME_SECOND;
+
+// Placeholder unit for every structure type; final DAT allocation TBD
+// (see docs/dat-allocation-notes.md). Behavior/stats are driven by our own
+// state arrays below, not by this unit's real DAT stats.
+const STRUCTURE_PLACEHOLDER_UNIT = $U("Terran Missile Turret");
 
 const STRUCTURE_LIGHT = 0;
 const STRUCTURE_WALL = 1;
@@ -24,6 +35,7 @@ const StructureEffectTimer = EUDArray(MAX_STRUCTURES);
 const StructureHp = EUDArray(MAX_STRUCTURES);
 const StructureMaxHp = EUDArray(MAX_STRUCTURES);
 const StructureRepairTimer = EUDArray(MAX_STRUCTURES);
+const StructureUnit = EUDArray(MAX_STRUCTURES);
 
 const STRUCTURE_REPAIR_TICK_FRAMES = 2 * constants.FRAMES_PER_GAME_SECOND;
 const STRUCTURE_REPAIR_AMOUNT = 8 * 256;
@@ -47,6 +59,7 @@ function initStructures() {
         StructureHp[i] = 0;
         StructureMaxHp[i] = 0;
         StructureRepairTimer[i] = 0;
+        StructureUnit[i] = 0;
     }
 }
 
@@ -70,6 +83,10 @@ function buildStructure(player, structureType) {
     const slot = findFreeStructureSlot();
     if (slot < 0) return -1;
 
+    const hero = players.getPlayerHeroUnit(player);
+    const x = hero.posX;
+    const y = hero.posY;
+
     StructureOwner[slot] = player;
     StructureType[slot] = structureType;
     StructureAlive[slot] = 1;
@@ -83,8 +100,12 @@ function buildStructure(player, structureType) {
     StructureHp[slot] = StructureMaxHp[slot];
     StructureRepairTimer[slot] = STRUCTURE_REPAIR_TICK_FRAMES;
 
-    // TODO: create structure CUnit near player/target. If this is a light, call
-    // lights.registerLightForStructure(slot, player, x, y, lights.DEFAULT_LIGHT_RADIUS, lights.DEFAULT_NO_SPAWN_RADIUS).
+    setloc($L("_Place"), x, y);
+    StructureUnit[slot] = utils.createUnitAndGetEpd(1, STRUCTURE_PLACEHOLDER_UNIT, $L("_Place"), player);
+
+    if (structureType == STRUCTURE_LIGHT) {
+        lights.registerLightForStructure(slot, player, x, y, lights.DEFAULT_LIGHT_RADIUS, lights.DEFAULT_NO_SPAWN_RADIUS);
+    }
     return slot;
 }
 
@@ -94,7 +115,8 @@ function deconstructStructure(player, structureIndex) {
         StructureAlive[structureIndex] = 0;
         StructureHp[structureIndex] = 0;
         lights.unregisterLightByStructure(structureIndex);
-        // TODO: remove CUnit.
+        utils.removeCUnit(CUnit(StructureUnit[structureIndex]));
+        StructureUnit[structureIndex] = 0;
     }
 }
 
@@ -104,7 +126,8 @@ function destroyPlayerStructures(player) {
             StructureAlive[i] = 0;
             StructureHp[i] = 0;
             lights.unregisterLightByStructure(i);
-            // TODO: remove structure CUnit without refund.
+            utils.removeCUnit(CUnit(StructureUnit[i]));
+            StructureUnit[i] = 0;
         }
     }
 }
@@ -134,10 +157,38 @@ function updateStructureRepairs() {
 function updateMaelstromMines() {
     foreach (i : py_range(MAX_STRUCTURES)) {
         if (StructureAlive[i] && StructureType[i] == STRUCTURE_MAELSTROM_MINE) {
-            // TODO: once armed, detect nearby enemy CUnits. When triggered, apply a stun window
-            // to enemies in StructureEffectRadius[i], then consume/remove the mine or start cooldown.
-            // Prototype options: native Maelstrom-like effect, lockdown/stasis-style timers,
-            // or custom order-freeze behavior on affected CUnits.
+            if (!StructureArmed[i]) {
+                if (StructureCooldown[i] > 0) {
+                    StructureCooldown[i] -= 1;
+                } else {
+                    StructureArmed[i] = 1;
+                }
+            } else {
+                const mine = CUnit(StructureUnit[i]);
+                var triggered = 0;
+                foreach (enemy : EUDLoopPlayerCUnit(mobs.MOB_OWNER_PLAYER)) {
+                    const dx = enemy.posX > mine.posX ? enemy.posX - mine.posX : mine.posX - enemy.posX;
+                    const dy = enemy.posY > mine.posY ? enemy.posY - mine.posY : mine.posY - enemy.posY;
+                    if (dx <= StructureTriggerRadius[i] && dy <= StructureTriggerRadius[i]) {
+                        triggered = 1;
+                        break;
+                    }
+                }
+
+                if (triggered) {
+                    // Apply a stun (order-freeze) to every enemy within the wider effect radius.
+                    foreach (enemy : EUDLoopPlayerCUnit(mobs.MOB_OWNER_PLAYER)) {
+                        const dx = enemy.posX > mine.posX ? enemy.posX - mine.posX : mine.posX - enemy.posX;
+                        const dy = enemy.posY > mine.posY ? enemy.posY - mine.posY : mine.posY - enemy.posY;
+                        if (dx <= StructureEffectRadius[i] && dy <= StructureEffectRadius[i]) {
+                            enemy.orderID = players.ORDER_HOLD_POSITION;
+                            enemy.orderTimer = MAELSTROM_STUN_TICKS;
+                        }
+                    }
+                    StructureArmed[i] = 0;
+                    StructureCooldown[i] = MAELSTROM_COOLDOWN_FRAMES;
+                }
+            }
         }
     }
 }

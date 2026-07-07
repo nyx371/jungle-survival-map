@@ -3,6 +3,7 @@
 // Map authors pre-place Flag placeholder units to mark valid mob spawn positions.
 
 import core.constants;
+import core.utils;
 import systems.day_night;
 import systems.lights;
 import systems.players;
@@ -17,6 +18,15 @@ const MAX_MOB_AREAS = MOB_AREA_COLUMNS * MOB_AREA_ROWS;
 // Tune after map pass. This is the total number of Flag markers we can index.
 const MAX_MOB_SPAWN_MARKERS = 1024;
 const MOB_SPAWN_PLACEHOLDER_UNIT = $U("Flag");
+// Flag markers are placed neutrally on P7, matching the resource-node marker convention.
+const MOB_MARKER_OWNER = P7;
+const MOB_OWNER_PLAYER = P8;
+const MIN_SPAWN_DISTANCE_TO_PLAYER = 5 * 32;
+
+const MAX_ACTIVE_MOBS = 200;
+const MobUnit = EUDArray(MAX_ACTIVE_MOBS);
+const MobArea = EUDArray(MAX_ACTIVE_MOBS);
+const MobActive = EUDArray(MAX_ACTIVE_MOBS);
 
 const AreaTargetDensity = EUDArray(MAX_MOB_AREAS);
 const AreaCurrentDensity = EUDArray(MAX_MOB_AREAS);
@@ -60,7 +70,7 @@ function clearMobAreaState(area) {
     AreaSpawnCount[area] = 0;
 }
 
-function indexMobSpawnMarker(markerUnit) {
+function indexMobSpawnMarker(markerUnit : CUnit) {
     const markerIndex = SpawnMarkerCount;
     if (markerIndex >= MAX_MOB_SPAWN_MARKERS) return;
 
@@ -75,7 +85,7 @@ function indexMobSpawnMarker(markerUnit) {
     AreaSpawnCount[area] += 1;
     SpawnMarkerCount += 1;
 
-    // TODO: remove or hide the placeholder unit after indexing so players never see flags.
+    utils.removeCUnit(markerUnit);
 }
 
 function indexMobSpawnMarkers() {
@@ -83,22 +93,41 @@ function indexMobSpawnMarkers() {
         AreaSpawnStart[area] = 0;
         AreaSpawnCount[area] = 0;
     }
+    SpawnMarkerCount = 0;
 
-    // TODO: scan all preplaced Flag units and call indexMobSpawnMarker(flagUnit).
-    // Important implementation detail: if we need fast contiguous ranges per area,
-    // either place/index flags area-by-area or compact/sort markers after scanning.
+    // Collect first, then index+remove afterward: removing units while
+    // iterating EUDLoopPlayerCUnit would disrupt that same iteration.
+    const found = EUDQueue(MAX_MOB_SPAWN_MARKERS)();
+    foreach (unit : EUDLoopPlayerCUnit(MOB_MARKER_OWNER)) {
+        if (unit.unitType == MOB_SPAWN_PLACEHOLDER_UNIT) {
+            found.append(unit);
+        }
+    }
+
+    while (!found.empty()) {
+        indexMobSpawnMarker(CUnit(found.popleft()));
+    }
 }
 
 function initMobs() {
     foreach (area : py_range(MAX_MOB_AREAS)) {
         clearMobAreaState(area);
     }
+    foreach (i : py_range(MAX_ACTIVE_MOBS)) {
+        MobActive[i] = 0;
+        MobUnit[i] = 0;
+        MobArea[i] = 0;
+    }
     indexMobSpawnMarkers();
 }
 
 function getPlayerCountSpawnScale() {
-    // TODO: count active human players. Placeholder 100%.
-    return 100;
+    var count = 0;
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        if (playerexist(p)) count += 1;
+    }
+    if (count == 0) return 100;
+    return count * 100 / constants.MAX_PLAYERS;
 }
 
 function refreshAreaPlayerPresence() {
@@ -116,9 +145,8 @@ function refreshAreaPlayerPresence() {
 }
 
 function refreshAreaLightLevels() {
+    // AreaLightLevel represents spawn suppression, not local screen brightness.
     foreach (area : py_range(MAX_MOB_AREAS)) {
-        // TODO: ask lights.eps for synchronized gameplay light coverage in this 16x16 area.
-        // AreaLightLevel should represent spawn suppression, not local screen brightness.
         AreaLightLevel[area] = lights.getAreaSpawnBlockLightLevel(area);
     }
 }
@@ -132,7 +160,7 @@ function getAreaSpawnBudget(area) {
 function shouldSpawnInArea(area) {
     if (AreaSpawnCount[area] == 0) return 0;
     if (AreaLightLevel[area] >= 100) return 0;
-    if (AreaCurrentDensity[area] >= AreaTargetDensity[area]) return 0;
+    if (AreaCurrentDensity[area] >= getAreaSpawnBudget(area)) return 0;
 
     // Areas containing players get active pressure; nearby/empty areas can refill more slowly.
     if (AreaPlayerPresence[area] > 0) return 1;
@@ -148,17 +176,46 @@ function shouldDespawnAreaMobs(area) {
 
 function canSpawnAt(x, y) {
     if (lights.isSpawnBlockedAt(x, y)) return 0;
-    // TODO: reject if too close to player hero, invalid terrain, or inside hard no-spawn zones.
+
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        if (players.HeroAlive[p]) {
+            const hero = players.getPlayerHeroUnit(p);
+            const dx = x > hero.posX ? x - hero.posX : hero.posX - x;
+            const dy = y > hero.posY ? y - hero.posY : hero.posY - y;
+            if (dx < MIN_SPAWN_DISTANCE_TO_PLAYER && dy < MIN_SPAWN_DISTANCE_TO_PLAYER) return 0;
+        }
+    }
     return 1;
 }
 
 function chooseSpawnMarkerInArea(area) {
-    // TODO: choose a random active marker where SpawnMarkerArea[index] == area.
-    // Placeholder returns the first active marker in the area.
+    // Reservoir sampling: uniformly picks one active marker in the area in a
+    // single pass, without needing a separate per-area index.
+    var chosen = -1;
+    var seen = 0;
     foreach (i : py_range(MAX_MOB_SPAWN_MARKERS)) {
-        if (SpawnMarkerActive[i] && SpawnMarkerArea[i] == area) return i;
+        if (SpawnMarkerActive[i] && SpawnMarkerArea[i] == area) {
+            seen += 1;
+            if (f_rand() % seen == 0) {
+                chosen = i;
+            }
+        }
+    }
+    return chosen;
+}
+
+function findFreeMobSlot() {
+    foreach (i : py_range(MAX_ACTIVE_MOBS)) {
+        if (!MobActive[i]) return i;
     }
     return -1;
+}
+
+function chooseMobFamily(area) {
+    // Simple 50/50 between the two currently mob_evolution-tiered families;
+    // weighting by budget/tier/day-night/nearby players can refine this later.
+    if (f_rand() % 2 == 0) return $U("Zerg Zergling");
+    return $U("Zerg Hydralisk");
 }
 
 function spawnMobInArea(area) {
@@ -169,15 +226,35 @@ function spawnMobInArea(area) {
     const y = SpawnMarkerY[marker];
     if (!canSpawnAt(x, y)) return;
 
-    // TODO: choose family based on area budget, current tier, day/night, and nearby players.
-    // TODO: create the chosen mob at x/y and tag it with its area for density/despawn tracking.
+    const slot = findFreeMobSlot();
+    if (slot < 0) return;
+
+    const family = chooseMobFamily(area);
+    setloc($L("_Place"), x, y);
+    const unit = utils.createUnitAndGetEpd(1, family, $L("_Place"), MOB_OWNER_PLAYER);
+
+    MobUnit[slot] = unit;
+    MobArea[slot] = area;
+    MobActive[slot] = 1;
     AreaCurrentDensity[area] += 1;
 }
 
 function despawnAreaMobs(area) {
-    // TODO: remove idle/unengaged mobs tagged to this area when light fully suppresses it.
-    // Do not delete mobs actively fighting a player unless the design wants lights to purge them.
-    AreaCurrentDensity[area] = 0;
+    // Only purge idle/unengaged mobs (no current order target); mobs actively
+    // fighting a player are left alone even if the area goes fully lit.
+    var remaining = AreaCurrentDensity[area];
+    foreach (i : py_range(MAX_ACTIVE_MOBS)) {
+        if (MobActive[i] && MobArea[i] == area) {
+            const unit = CUnit(MobUnit[i]);
+            if (unit.orderTargetUnit == 0) {
+                utils.removeCUnit(unit);
+                MobActive[i] = 0;
+                MobUnit[i] = 0;
+                remaining -= 1;
+            }
+        }
+    }
+    AreaCurrentDensity[area] = remaining;
 }
 
 function updateAreaSpawning(area) {
