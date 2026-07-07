@@ -2,3 +2,8 @@ dist/
 __pycache__/
 __epspy__/
 *.tmp
+
+# Audacity project + journals (editing sources, large/transient)
+*.aup3
+*.aup3-shm
+*.aup3-wal

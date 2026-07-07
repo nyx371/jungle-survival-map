@@ -28,15 +28,15 @@ const STEP_SFX = [
     StringBuffer("staredit/wav/player_step_grass_06.ogg"),
 ];
 const STEP_SFX_COUNT = 6;
-const STEP_SOUND_INTERVAL = 8; // frames between footsteps while moving
+const STEP_SOUND_INTERVAL = 12; // ~0.5s between footsteps while moving (23 fps)
 
 const ORDER_MOVE = 6;         // Move / Ignore
 const ORDER_ATTACK_MOVE = 14; // Attack Move
 
 // Low-HP heartbeat. Cooldown matches the heartbeat.ogg clip length (2.3s ~=
-// 37 frames at 16 fps) so it loops end-to-end without overlapping or cutting off.
+// 53 frames at 23 fps) so it loops end-to-end without overlapping or cutting off.
 const HEARTBEAT_WAV = "staredit/wav/heartbeat.ogg";
-const HEARTBEAT_COOLDOWN = 37;
+const HEARTBEAT_COOLDOWN = 48;
 
 const LastHp = EUDArray(constants.MAX_PLAYERS);
 const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);

@@ -66,23 +66,23 @@ const MINING_TOOL_SFX_COUNT = 5;
 const MiningToolCycle = EUDArray(constants.MAX_PLAYERS);
 
 function buildResourceConfig() {
-    RESOURCE_CONFIG[RESOURCE_TREE] = [4, 1, 500, 48];    // 3.0s per yield
+    RESOURCE_CONFIG[RESOURCE_TREE] = [4, 1, 500, 3 * constants.FRAMES_PER_GAME_SECOND];    // 3s per yield
     RESOURCE_IMAGES[RESOURCE_TREE] = [632, 634, 636];
     RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("staredit/wav/wood1.ogg"), StringBuffer("staredit/wav/wood2.ogg"), StringBuffer("staredit/wav/wood3.ogg"), StringBuffer("staredit/wav/wood4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_BUSH] = [2, 2, 500, 32];    // 2.0s -- quick, low yield
+    RESOURCE_CONFIG[RESOURCE_BUSH] = [2, 2, 500, 2 * constants.FRAMES_PER_GAME_SECOND];    // 2s -- quick, low yield
     RESOURCE_IMAGES[RESOURCE_BUSH] = [618, 620, 622];
     RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("staredit/wav/grass1.ogg"), StringBuffer("staredit/wav/grass2.ogg"), StringBuffer("staredit/wav/grass3.ogg"), StringBuffer("staredit/wav/grass4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_ROCK] = [6, 1, 500, 64];    // 4.0s -- slow, high yield
+    RESOURCE_CONFIG[RESOURCE_ROCK] = [6, 1, 500, 4 * constants.FRAMES_PER_GAME_SECOND];    // 4s -- slow, high yield
     RESOURCE_IMAGES[RESOURCE_ROCK] = [649, 650, 651];
     RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = [2, 5, 500, 80]; // 5.0s -- slow, gas-heavy
+    RESOURCE_CONFIG[RESOURCE_CRYSTAL] = [2, 5, 500, 5 * constants.FRAMES_PER_GAME_SECOND]; // 5s -- slow, gas-heavy
     RESOURCE_IMAGES[RESOURCE_CRYSTAL] = [607, 607, 607];
     RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
 
-    RESOURCE_CONFIG[RESOURCE_MAGMA] = [3, 3, 500, 64];   // 4.0s
+    RESOURCE_CONFIG[RESOURCE_MAGMA] = [3, 3, 500, 4 * constants.FRAMES_PER_GAME_SECOND];   // 4s
     RESOURCE_IMAGES[RESOURCE_MAGMA] = [600, 600, 600];
     RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
 }

@@ -44,7 +44,7 @@ const HERO_RESTED_ENERGY_LEVEL = 200 * 256;
 const HERO_HUNGRY_ENERGY_LEVEL = 80 * 256;
 const HERO_ENERGY_DRAIN_NIGHT = 1 * 256 / 4;
 const HERO_ENERGY_REGEN_DAY = 1 * 256 / 8;
-const HERO_HP_REGEN_RESTED = 1 * 256 / 2;
+const HERO_HP_REGEN_RESTED = 1 * 256 / 20;
 const HERO_HP_DRAIN_STARVING = 1 * 256 / 5;
 
 const PlayerEnergy = EUDArray(constants.MAX_PLAYERS);
@@ -54,7 +54,7 @@ const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
 // Per-player mining state machine. Lives here (not resources.eps) so all
 // per-player order handling is in one file; resources.eps still owns the
 // resource-node data (yield rates, node type, sounds) that this reads.
-const HARVEST_CHOP_FRAMES = 12; // sfx + mining-swing visual sub-beat; several per cycle
+const HARVEST_CHOP_FRAMES = 17; // ~0.75s sfx + mining-swing sub-beat; several per cycle (23 fps)
 const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
 const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
 const HarvestTick = EUDArray(constants.MAX_PLAYERS);       // counts down to next payout
