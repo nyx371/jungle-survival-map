@@ -3,7 +3,6 @@
 
 import core.constants;
 import core.utils;
-import systems.players;
 
 const TERRAN_COMSAT_STATION = $U("Terran Comsat Station"); // resource node placeholder marker (owned by P7)
 const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base unit; likely to be swapped later
@@ -15,7 +14,7 @@ const RESOURCE_TREE = 0;
 const RESOURCE_BUSH = 1;
 const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
-const RESOURCE_ORGANIC_GROWTH = 4;
+const RESOURCE_MAGMA = 4;
 const RESOURCE_TYPE_COUNT = 5;
 // How many of the RESOURCE_TYPE_COUNT types have art wired up (RESOURCE_IMAGES
 // below) and can currently spawn as a node. Extend as more images get added.
@@ -58,35 +57,40 @@ RESOURCE_IMAGES.append(0);
 RESOURCE_IMAGES.append(0);
 RESOURCE_IMAGES.append(0);
 
+// Per-resource-type mining sound sets. Unlike RESOURCE_CONFIG/RESOURCE_IMAGES
+// (compile-time py_lists, literal-indexed), this is a real EUDArray so a
+// runtime resourceType can index it; each element holds a bracket-literal
+// EUDArray of StringBuffers, played back with a runtime index via
+// playSoundArray (see playMiningSfx). Every type provides MINING_SFX_PER_TYPE.
+const MINING_SFX_PER_TYPE = 2;
+const RESOURCE_MINING_SFX = EUDArray(RESOURCE_TYPE_COUNT);
+
 function buildResourceConfig() {
     RESOURCE_CONFIG[RESOURCE_TREE] = list(4, 1, 500);
     RESOURCE_IMAGES[RESOURCE_TREE] = list(632, 634, 636);
+    RESOURCE_MINING_SFX[RESOURCE_TREE] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
 
     RESOURCE_CONFIG[RESOURCE_BUSH] = list(2, 2, 500);
     RESOURCE_IMAGES[RESOURCE_BUSH] = list(618, 620, 622);
+    RESOURCE_MINING_SFX[RESOURCE_BUSH] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
 
     RESOURCE_CONFIG[RESOURCE_ROCK] = list(6, 1, 500);
-    RESOURCE_IMAGES[RESOURCE_ROCK] = list(610, 612, 616);
+    RESOURCE_IMAGES[RESOURCE_ROCK] = list(649,650,651);
+    RESOURCE_MINING_SFX[RESOURCE_ROCK] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
 
     RESOURCE_CONFIG[RESOURCE_CRYSTAL] = list(2, 5, 500);
-    RESOURCE_IMAGES[RESOURCE_CRYSTAL] = list(RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE);
+    RESOURCE_IMAGES[RESOURCE_CRYSTAL] = list(607, 607, 607);
+    RESOURCE_MINING_SFX[RESOURCE_CRYSTAL] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
 
-    RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH] = list(3, 3, 500);
-    RESOURCE_IMAGES[RESOURCE_ORGANIC_GROWTH] = list(RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE, RESOURCE_IMAGE_NONE);
+    RESOURCE_CONFIG[RESOURCE_MAGMA] = list(3, 3, 500);
+    RESOURCE_IMAGES[RESOURCE_MAGMA] = list(600, 600, 600);
+    RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("sound\\terran\\scv\\tscmin00.wav"), StringBuffer("sound\\terran\\scv\\tscmin02.wav")];
 }
 
 // Terran Covert Ops sprite. Its image field is mutated right before each
 // CreateUnit call so the freshly created node sprite bakes in a random
 // resource look; later mutations do not retroactively affect earlier nodes.
-const RESOURCE_NODE_SPRITE_ID = 256;
-
-const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
-const HARVEST_WEAPON_LOCKOUT = 1;
-
-const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
-const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
-const HarvestProgress = EUDArray(constants.MAX_PLAYERS);
-const HarvestTick = EUDArray(constants.MAX_PLAYERS);
+const RESOURCE_NODE_SPRITE_ID = 504;
 
 function addMinerals(player, amount) {
     SetResources(player, Add, amount, Ore);
@@ -110,24 +114,6 @@ function loseMostMinerals(player, keepPercent) {
 function loseMostGas(player, keepPercent) {
     const p = TrgPlayer(player);
     p.gas = p.gas * keepPercent / 100;
-}
-
-function setPlayerHarvestLockout(player, enabled) {
-    if (enabled) {
-        // Force weapon cooldown so the Ghost cannot fire while harvesting; naturally
-        // expires if harvesting stops without another refresh.
-        const hero = players.getPlayerHeroUnit(player);
-        hero.groundWeaponCooldown = HARVEST_TICK_FRAMES;
-        hero.airWeaponCooldown = HARVEST_TICK_FRAMES;
-    }
-}
-
-function clearHarvestState(player) {
-    IsHarvesting[player] = 0;
-    HarvestTarget[player] = 0;
-    HarvestProgress[player] = 0;
-    HarvestTick[player] = 0;
-    setPlayerHarvestLockout(player, 0);
 }
 
 // Builds the compile-time RESOURCE_IMAGES/RESOURCE_CONFIG tables. Must run
@@ -182,7 +168,7 @@ function getHarvestRates(resourceType) {
     if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_GAS];
     if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_GAS];
     if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_GAS];
-    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH][RES_CFG_GAS];
+    if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_MINERALS], RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_GAS];
     return 1, 0;
 }
 
@@ -191,8 +177,24 @@ function getResourceStartingAmount(resourceType) {
     if (resourceType == RESOURCE_BUSH) return RESOURCE_CONFIG[RESOURCE_BUSH][RES_CFG_STARTING_AMOUNT];
     if (resourceType == RESOURCE_ROCK) return RESOURCE_CONFIG[RESOURCE_ROCK][RES_CFG_STARTING_AMOUNT];
     if (resourceType == RESOURCE_CRYSTAL) return RESOURCE_CONFIG[RESOURCE_CRYSTAL][RES_CFG_STARTING_AMOUNT];
-    if (resourceType == RESOURCE_ORGANIC_GROWTH) return RESOURCE_CONFIG[RESOURCE_ORGANIC_GROWTH][RES_CFG_STARTING_AMOUNT];
+    if (resourceType == RESOURCE_MAGMA) return RESOURCE_CONFIG[RESOURCE_MAGMA][RES_CFG_STARTING_AMOUNT];
     return RESOURCE_CONFIG[RESOURCE_TREE][RES_CFG_STARTING_AMOUNT];
+}
+
+// Plays one random entry of a runtime-indexable sound EUDArray on [player]'s
+// machine. soundArray is typed EUDArray so a value read out of another
+// EUDArray (RESOURCE_MINING_SFX[resourceType]) can be re-indexed at runtime.
+function playSoundArray(soundArray : EUDArray, player, count) {
+    if (soundArray == 0) return;
+    const savedCp = getcurpl();
+    setcurpl(player);
+    const idx = f_rand() % count;
+    StringBuffer.cast(soundArray[idx]).Play();
+    setcurpl(savedCp);
+}
+
+function playMiningSfx(player, resourceType) {
+    playSoundArray(RESOURCE_MINING_SFX[resourceType], player, MINING_SFX_PER_TYPE);
 }
 
 function initResourceNodes() {
@@ -226,20 +228,9 @@ function initResourceNodes() {
 }
 
 function initResources() {
-    foreach (p : py_range(constants.MAX_PLAYERS)) {
-        clearHarvestState(p);
-    }
     initResourceConfig();
     initResourceNodeImages();
     initResourceNodes();
-}
-
-function startHarvest(player, target) {
-    IsHarvesting[player] = 1;
-    HarvestTarget[player] = target;
-    HarvestProgress[player] = 0;
-    HarvestTick[player] = HARVEST_TICK_FRAMES;
-    setPlayerHarvestLockout(player, HARVEST_WEAPON_LOCKOUT);
 }
 
 function getHarvestTargetResourceType(target) {
@@ -248,52 +239,4 @@ function getHarvestTargetResourceType(target) {
     const unit = CUnit(target);
     if (unit.unitType == MINERAL_FIELD_UNIT_TYPE) return unit.unknown0x106;
     return RESOURCE_TREE;
-}
-
-function finishHarvestTick(player) {
-    const resourceType = getHarvestTargetResourceType(HarvestTarget[player]);
-    const minerals, gas = getHarvestRates(resourceType);
-    addHarvestResources(player, minerals, gas);
-
-    // Deplete the node's own real resourceAmount; remove it once exhausted.
-    const node = CUnit(HarvestTarget[player]);
-    const drained = minerals + gas;
-    if (node.resourceAmount <= drained) {
-        utils.removeCUnit(node);
-        clearHarvestState(player);
-    } else {
-        node.resourceAmount -= drained;
-    }
-}
-
-function updateHarvesting(player) {
-    const hero = players.getPlayerHeroUnit(player);
-    const targetingResource = hero.orderID == players.ORDER_HARVEST_MINERALS && hero.orderTarget != 0;
-
-    if (!IsHarvesting[player]) {
-        if (targetingResource) {
-            startHarvest(player, hero.orderTarget);
-        }
-        return;
-    }
-
-    // Cancel harvest if the player gave another order or the target is gone.
-    if (!targetingResource) {
-        clearHarvestState(player);
-        return;
-    }
-
-    // Mining is continuous: every HARVEST_TICK_FRAMES, the active node trickles resources.
-    if (HarvestTick[player] > 0) {
-        HarvestTick[player] -= 1;
-    } else {
-        HarvestTick[player] = HARVEST_TICK_FRAMES;
-        finishHarvestTick(player);
-    }
-}
-
-function updateResources() {
-    foreach (p : py_range(constants.MAX_PLAYERS)) {
-        updateHarvesting(p);
-    }
 }

@@ -33,3 +33,8 @@ function removeCUnit(unit:CUnit) {
     unit.unitType = 200;
     RemoveUnit(unit.unitType, AllPlayers);
 }
+
+function random(n) {
+    if (dwrand() % (100) < n) return true;
+    return false;
+}

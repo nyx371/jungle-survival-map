@@ -31,6 +31,7 @@ const DeathsThisRun = EUDArray(constants.MAX_PLAYERS);
 const LastKnownX = EUDArray(constants.MAX_PLAYERS);
 const LastKnownY = EUDArray(constants.MAX_PLAYERS);
 const PlayerHeroCUnit = EUDArray(constants.MAX_PLAYERS);
+const PlayerWeaponShots = EUDArray(constants.MAX_PLAYERS);
 const Screen = StringBuffer(256);
 
 const PLAYER_STATUS_RESTED = 0;
@@ -49,6 +50,14 @@ const HERO_HP_DRAIN_STARVING = 1 * 256 / 5;
 const PlayerEnergy = EUDArray(constants.MAX_PLAYERS);
 const PlayerEnergyMax = EUDArray(constants.MAX_PLAYERS);
 const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
+
+// Per-player mining state machine. Lives here (not resources.eps) so all
+// per-player order handling is in one file; resources.eps still owns the
+// resource-node data (yield rates, node type, sounds) that this reads.
+const HARVEST_TICK_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
+const IsHarvesting = EUDArray(constants.MAX_PLAYERS);
+const HarvestTarget = EUDArray(constants.MAX_PLAYERS);
+const HarvestTick = EUDArray(constants.MAX_PLAYERS);
 
 const PlayerSpawnMarkerX = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
 const PlayerSpawnMarkerY = EUDArray(MAX_PLAYER_SPAWN_MARKERS);
@@ -157,6 +166,12 @@ function getPlayerHeroUnit(player) : CUnit {
     return CUnit(PlayerHeroCUnit[player]);
 }
 
+function clearHarvestState(player) {
+    IsHarvesting[player] = 0;
+    HarvestTarget[player] = 0;
+    HarvestTick[player] = 0;
+}
+
 function initPlayers() {
     indexPlayerSpawnMarkers();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
@@ -165,9 +180,11 @@ function initPlayers() {
         DeathsThisRun[p] = 0;
         LastKnownX[p] = 0;
         LastKnownY[p] = 0;
+        PlayerWeaponShots[p] = 0;
         PlayerEnergyMax[p] = HERO_BASE_ENERGY_MAX;
         PlayerEnergy[p] = PlayerEnergyMax[p];
         PlayerStatus[p] = PLAYER_STATUS_OK;
+        clearHarvestState(p);
         createPlayerHero(p);
     }
 }
@@ -246,7 +263,7 @@ function markPlayerDead(player) {
     resources.loseMostGas(player, DEATH_RESOURCE_KEEP_PERCENT);
     companions.destroyPlayerCompanions(player);
     structures.destroyPlayerStructures(player);
-    resources.clearHarvestState(player);
+    clearHarvestState(player);
     audio.clearAudioDangerState(player);
     PlayerEnergy[player] = PlayerEnergyMax[player] / 2;
     updatePlayerStatus(player);
@@ -288,6 +305,56 @@ const ORDER_HARVEST_MINERALS = 87;
 const ORDER_HOLD_POSITION = 107;
 const MINING_ORDER_TIMER = 35;
 
+function startHarvest(player, target) {
+    IsHarvesting[player] = 1;
+    HarvestTarget[player] = target;
+    HarvestTick[player] = HARVEST_TICK_FRAMES;
+}
+
+function finishHarvestTick(player) {
+    const resourceType = resources.getHarvestTargetResourceType(HarvestTarget[player]);
+    const minerals, gas = resources.getHarvestRates(resourceType);
+    resources.addHarvestResources(player, minerals, gas);
+    resources.playMiningSfx(player, resourceType);
+
+    // Deplete the node's own real resourceAmount; remove it once exhausted.
+    const node = CUnit(HarvestTarget[player]);
+    const drained = minerals + gas;
+    if (node.resourceAmount <= drained) {
+        utils.removeCUnit(node);
+        clearHarvestState(player);
+    } else {
+        node.resourceAmount -= drained;
+    }
+}
+
+// Drives continuous right-click mining off the hero's harvest order.
+function updatePlayerHarvesting(player) {
+    const hero = getPlayerHeroUnit(player);
+    const targetingResource = hero.orderID == ORDER_HARVEST_MINERALS && hero.orderTarget != 0;
+
+    if (!IsHarvesting[player]) {
+        if (targetingResource) {
+            startHarvest(player, hero.orderTarget);
+        }
+        return;
+    }
+
+    // Cancel harvest if the player gave another order or the target is gone.
+    if (!targetingResource) {
+        clearHarvestState(player);
+        return;
+    }
+
+    // Mining is continuous: every HARVEST_TICK_FRAMES the active node trickles resources.
+    if (HarvestTick[player] > 0) {
+        HarvestTick[player] -= 1;
+    } else {
+        HarvestTick[player] = HARVEST_TICK_FRAMES;
+        finishHarvestTick(player);
+    }
+}
+
 function updatePlayerHeroBehavior(player) {
     const savedCp = getcurpl();
     setcurpl(player);    
@@ -299,9 +366,19 @@ function updatePlayerHeroBehavior(player) {
     }
 
     if (hero.orderID == 10) {
-        if (hero.groundWeaponCooldown == 1) {
-            PlayWAV("sound\\bullet\\shockbmb.wav");
-        }
+        if (hero.groundWeaponCooldown > 10) {
+            // PlayWAV("sound\\bullet\\psahit00.wav");
+            PlayerWeaponShots[player] += 1;
+            hero.groundWeaponCooldown = 10;
+            if (TrgUnit(constants.UNIT_TERRAN_GHOST).groundWeapon != constants.WEAPON_C_10_CONCUSSION_RIFLE) {
+                TrgUnit(constants.UNIT_TERRAN_GHOST).groundWeapon = constants.WEAPON_C_10_CONCUSSION_RIFLE;
+            }
+
+            if (PlayerWeaponShots[player] >= 10) {
+                PlayerWeaponShots[player] = 0;
+                TrgUnit(constants.UNIT_TERRAN_GHOST).groundWeapon = constants.WEAPON_FLECHETTE_GRENADE;
+            }
+        }        
     }
 
 
@@ -310,11 +387,12 @@ function updatePlayerHeroBehavior(player) {
         // out instead of letting the order complete/reset normally. Actual
         // resource yield is handled by resources.eps (updateHarvesting /
         // finishHarvestTick), which reads this same order/target.
-        if (hero.orderTimer > MINING_ORDER_TIMER) {
-            hero.orderTimer = MINING_ORDER_TIMER;
-        } else if (hero.orderTimer < 2) {
+        if (hero.orderTimer >= MINING_ORDER_TIMER) {
             hero.orderTimer = MINING_ORDER_TIMER;
             utils.createImageSpriteOnUnit(364, hero.orderTarget);
+            
+        } else if (hero.orderTimer < 2) {
+            hero.orderTimer = MINING_ORDER_TIMER;
         }
     }
     setcurpl(savedCp);
@@ -339,6 +417,7 @@ function updatePlayers() {
         updatePlayerDeathState(p);
         updatePlayerVitals(p);
         updatePlayerHeroBehavior(p);
+        updatePlayerHarvesting(p);
         updatePlayerDebugInfo(p, localPlayer);
     }
 }
