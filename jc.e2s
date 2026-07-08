@@ -446,7 +446,7 @@ iscriptPatcher :
 iscriptPatcheruse : False
 unpatcher : 
 unpatcheruse : False
-nqcuse : True
+nqcuse : False
 nqcunit : 58
 nqclocs : 
 nqccommands : \Q#0#1\E#1#1

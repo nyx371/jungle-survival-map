@@ -162,6 +162,10 @@ function createPlayerHero(player) {
         }
         break;
     }
+
+    if (playerexist(player)) {
+        audio.playGhostSpawnSfx(player);
+    }
 }
 
 function getPlayerHeroUnit(player) : CUnit {

@@ -38,6 +38,9 @@ const ORDER_ATTACK_MOVE = 14; // Attack Move
 const HEARTBEAT_WAV = "staredit/wav/heartbeat.ogg";
 const HEARTBEAT_COOLDOWN = 48;
 
+// One-shot Ghost breath played when a hero (re)spawns.
+const GHOST_SPAWN_WAV = "staredit/wav/breath.ogg";
+
 const LastHp = EUDArray(constants.MAX_PLAYERS);
 const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
 const StepSoundTimer = EUDArray(constants.MAX_PLAYERS);
@@ -58,6 +61,13 @@ function clearAudioDangerState(player) {
     HurtSoundTimer[player] = 0;
     StepSoundTimer[player] = 0;
     HeartbeatTimer[player] = 0;
+}
+
+function playGhostSpawnSfx(player) {
+    const savedCp = getcurpl();
+    setcurpl(player);
+    PlayWAV(GHOST_SPAWN_WAV);
+    setcurpl(savedCp);
 }
 
 function updateAudioForPlayer(player) {
