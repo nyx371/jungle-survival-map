@@ -15,6 +15,11 @@
     {
       "title": "Craft tactical constructs",
       "body": "Lights, walls, stations, turrets, companion tools, and Maelstrom Mines provide temporary battlefield control."
+    },
+    {
+      "title": "Rescue trapped warriors",
+      "body": "Find stranded fighters in the jungle and escort or free them to reinforce your squadron before night pressure closes in.",
+      "icon": "Zealot"
     }
   ],
   "enemies": [
