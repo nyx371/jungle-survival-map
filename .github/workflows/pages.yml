@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Pages serves the uploaded artifact, not the repo, so LFS blobs must be
+          # smudged here. Without this the artifact contains pointer files.
+          lfs: true
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
