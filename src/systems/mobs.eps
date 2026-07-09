@@ -171,8 +171,12 @@ function shouldSpawnInArea(area) {
     // Areas containing players get active pressure. Other marked regions still
     // repopulate occasionally during the day, then much more often at night.
     if (AreaPlayerPresence[area] > 0) return 1;
-    if (day_night.IsNight) return f_rand() % 100 < 45;
-    return f_rand() % 100 < 15;
+    if (day_night.IsNight) {
+        if (f_rand() % 100 < 45) return 1;
+        return 0;
+    }
+    if (f_rand() % 100 < 15) return 1;
+    return 0;
 }
 
 function shouldDespawnAreaMobs(area) {
