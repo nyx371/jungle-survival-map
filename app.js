@@ -482,9 +482,9 @@ function renderNotes(notes) {
 }
 
 const resourceIconUrls = {
-  minerals: 'https://classic.battle.net/images/battle/scc/terran/PICS/min.gif',
-  gas: 'https://classic.battle.net/images/battle/scc/terran/PICS/gas.gif',
-  energy: 'https://classic.battle.net/images/battle/scc/terran/pix/energy.gif',
+  minerals: 'assets/icons/minerals.gif',
+  gas: 'assets/icons/gas.gif',
+  energy: 'assets/icons/energy.gif',
 };
 
 function renderCostBar(item, options = {}) {
