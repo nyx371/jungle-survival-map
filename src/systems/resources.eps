@@ -14,7 +14,8 @@ const RESOURCE_BUSH = 1;
 const RESOURCE_ROCK = 2;
 const RESOURCE_CRYSTAL = 3;
 const RESOURCE_MAGMA = 4;
-const RESOURCE_TYPE_COUNT = 5;
+const RESOURCE_BIOMASS = 5; // gas-heavy; appears rarely within the rock category
+const RESOURCE_TYPE_COUNT = 6;
 // How many of the RESOURCE_TYPE_COUNT types can spawn as a node. All types
 // now have images/config wired up, so all of them are spawnable.
 const SPAWNABLE_RESOURCE_TYPE_COUNT = RESOURCE_TYPE_COUNT;
@@ -99,6 +100,10 @@ function buildResourceConfig() {
     RESOURCE_CONFIG[RESOURCE_MAGMA] = [3, 3, 500, 4 * constants.FRAMES_PER_GAME_SECOND];   // 4s
     RESOURCE_IMAGES[RESOURCE_MAGMA] = [600, 600, 600];
     RESOURCE_MINING_SFX[RESOURCE_MAGMA] = [StringBuffer("staredit/wav/stone1.ogg"), StringBuffer("staredit/wav/stone2.ogg"), StringBuffer("staredit/wav/stone3.ogg"), StringBuffer("staredit/wav/stone4.ogg")];
+
+    RESOURCE_CONFIG[RESOURCE_BIOMASS] = [1, 8, 500, 4 * constants.FRAMES_PER_GAME_SECOND]; // 4s -- mostly gas
+    RESOURCE_IMAGES[RESOURCE_BIOMASS] = [110, 110, 110];
+    RESOURCE_MINING_SFX[RESOURCE_BIOMASS] = [StringBuffer("staredit/wav/grass1.ogg"), StringBuffer("staredit/wav/grass2.ogg"), StringBuffer("staredit/wav/grass3.ogg"), StringBuffer("staredit/wav/grass4.ogg")];
 }
 
 // Terran Covert Ops sprite. Its image field is mutated right before each
@@ -189,7 +194,11 @@ function playMiningToolSfx(player) {
 // spawns a resource node whose type is randomized from [typeList] (length
 // [typeCount]). typeList is a typed EUDArray so its runtime index works.
 // Collect-then-process: units can't be created/removed mid-EUDLoop.
-function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount) {
+// [typeList] is the marker's common category (uniform random). [rareType] is
+// an optional rarer resource that overrides the pick [rareChance]% of the time
+// (pass rareChance 0 to disable). Lets a category mostly yield one resource but
+// occasionally drop something special.
+function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount, rareType, rareChance) {
     const found = EUDQueue(MAX_RESOURCE_NODE_MARKERS)();
     foreach (unit : EUDLoopPlayerCUnit(P7)) {
         if (unit.unitType == markerUnitType) {
@@ -204,7 +213,10 @@ function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount) {
         utils.removeCUnit(marker);
 
         if (f_rand() % 100 < RESOURCE_NODE_ACTIVATION_PERCENT) {
-            const resourceType = typeList[f_rand() % typeCount];
+            var resourceType = typeList[f_rand() % typeCount];
+            if (rareChance > 0) {
+                if (f_rand() % 100 < rareChance) resourceType = rareType;
+            }
             Sprite(RESOURCE_NODE_SPRITE_ID).image = chooseResourceNodeImage(resourceType);
 
             setloc($L("_Place"), x, y);
@@ -217,10 +229,10 @@ function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount) {
 }
 
 function initResourceNodes() {
-    scanResourceMarkers(MARKER_COMSAT, COMSAT_RESOURCES, 2);
-    scanResourceMarkers(MARKER_MACHINE_SHOP, MACHINE_SHOP_RESOURCES, 1);
-    scanResourceMarkers(MARKER_CONTROL_TOWER, CONTROL_TOWER_RESOURCES, 1);
-    scanResourceMarkers(MARKER_PHYSICS_LAB, PHYSICS_LAB_RESOURCES, 1);
+    scanResourceMarkers(MARKER_COMSAT, COMSAT_RESOURCES, 2, 0, 0);
+    scanResourceMarkers(MARKER_MACHINE_SHOP, MACHINE_SHOP_RESOURCES, 1, RESOURCE_BIOMASS, 10); // 10% biomass
+    scanResourceMarkers(MARKER_CONTROL_TOWER, CONTROL_TOWER_RESOURCES, 1, 0, 0);
+    scanResourceMarkers(MARKER_PHYSICS_LAB, PHYSICS_LAB_RESOURCES, 1, 0, 0);
 }
 
 function initResources() {
