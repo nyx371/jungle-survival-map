@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jungle Commandos Map</title>
     <meta name="description" content="Feature roadmap and epScript source viewer for the Jungle Commandos StarCraft map." />
-    <link rel="stylesheet" href="styles.css?v=card-spacing-cycle-radius-1" />
+    <link rel="stylesheet" href="styles.css?v=ui-cleanup-1" />
   </head>
   <body>
     <main>
@@ -16,7 +16,7 @@
           <button class="tab" type="button" data-system-target="system-resources" role="tab" aria-pressed="false">Resources</button>
           <button class="tab" type="button" data-system-target="system-enemies" role="tab" aria-pressed="false">Threats</button>
           <button class="tab" data-tab="source" role="tab" aria-pressed="false">Source Code</button>
-          <button class="tab" data-tab="notes" role="tab" aria-pressed="false">Dev Note</button>
+          <button class="tab" data-tab="notes" role="tab" aria-pressed="false">Dev notes</button>
         </div>
       </nav>
 
@@ -177,13 +177,6 @@ Not every contact belongs to the common brood ladder. Commanders should expect h
         </section>
 
         <section id="system-upgrades" class="system-section" hidden>
-          <div class="section-heading vertical compact-heading">
-            <p class="eyebrow">Commando progression</p>
-            <h2>Upgrades and craftable weapons</h2>
-            <p>
-Weapon packages unlock combat styles, field systems add generic permanent upgrades, active abilities add one equipped defensive/offensive command, and structures remain temporary battlefield tools.
-            </p>
-          </div>
           <div class="upgrade-section">
             <div class="section-heading vertical compact-heading upgrade-subheading">
               <p class="eyebrow">Weapon packages</p>
@@ -257,55 +250,6 @@ Development notes for field commands, weapon target abilities, passives, and exp
       </section>
 
       <section id="source" class="tab-panel">
-        <section class="source-system-map panel" aria-label="Jungle Commandos source system map">
-          <div class="source-map-copy">
-            <p class="eyebrow">EPS system map</p>
-            <h2>How the map code is wired</h2>
-            <p>
-              `main.eps` stays orchestration-only: it initializes every system, then each frame updates
-              the survival loop, resource economy, critter hunts, combat, structures, mobs, and victory state.
-            </p>
-          </div>
-          <div class="source-map-grid">
-            <article class="source-map-node core">
-              <span>01</span>
-              <strong>Core</strong>
-              <em>constants · DAT registry · utils</em>
-            </article>
-            <article class="source-map-node loop">
-              <span>02</span>
-              <strong>Loop</strong>
-              <em>day/night · players · camera</em>
-            </article>
-            <article class="source-map-node economy">
-              <span>03</span>
-              <strong>Economy</strong>
-              <em>resources · neural critters · transfers</em>
-            </article>
-            <article class="source-map-node combat">
-              <span>04</span>
-              <strong>Combat</strong>
-              <em>weapons · upgrades · audio</em>
-            </article>
-            <article class="source-map-node base">
-              <span>05</span>
-              <strong>Safe pockets</strong>
-              <em>structures · lights</em>
-            </article>
-            <article class="source-map-node threat">
-              <span>06</span>
-              <strong>Threat</strong>
-              <em>mobs · evolution · victory</em>
-            </article>
-          </div>
-          <div class="source-map-flow" aria-hidden="true">
-            <span>onPluginStart()</span>
-            <b>→</b>
-            <span>beforeTriggerExec()</span>
-            <b>→</b>
-            <span>win / endless</span>
-          </div>
-        </section>
         <div class="source-layout panel">
           <aside id="source-list" class="source-list" aria-label="EPS source files"></aside>
           <article class="source-viewer">
