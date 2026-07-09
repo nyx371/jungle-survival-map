@@ -25,7 +25,7 @@ body {
     var(--bg);
 }
 
-main, footer {
+main {
   width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
 }
@@ -462,16 +462,6 @@ h3 { margin-top: 0; }
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.section-heading::after {
-  content: '';
-  position: absolute;
-  inset: 0.55rem 0.65rem auto auto;
-  width: 3.4rem;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 180, 94, 0.75));
-}
-
 .section-heading.vertical {
   display: grid;
   justify-content: stretch;
@@ -816,18 +806,10 @@ pre code {
   white-space: pre;
 }
 
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 2rem 0 3rem;
-  color: var(--muted);
-}
-
 a { color: var(--accent); }
 
 @media (max-width: 780px) {
-  .section-heading, footer { flex-direction: column; align-items: flex-start; }
+  .section-heading { flex-direction: column; align-items: flex-start; }
   .source-system-map { grid-template-columns: 1fr; }
   .source-map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .source-layout { grid-template-columns: 1fr; }
@@ -1252,7 +1234,7 @@ body {
 
 body::before { display: none; }
 
-main, footer {
+main {
   width: min(1180px, calc(100% - 2rem));
 }
 
@@ -1615,7 +1597,6 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 
 .source-map-node span { background: #a4b4f8; }
 pre, code { background: #000; color: #cfd3dc; }
-footer { color: #6f7480; border-top: 1px solid #20242c; }
 
 @media (max-width: 780px) {
   .game-hero { grid-template-columns: 1fr; }
