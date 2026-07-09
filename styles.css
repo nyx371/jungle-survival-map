@@ -1754,6 +1754,21 @@ pre, code { background: #000; color: #cfd3dc; }
   filter: sepia(0.42) saturate(1.22) hue-rotate(8deg) brightness(1.12);
 }
 
+#system-resources .feature-icon,
+#system-resources .mini-icon {
+  border-color: rgba(116, 178, 255, 0.68);
+  box-shadow: 0 0 22px rgba(92, 158, 255, 0.18);
+}
+
+.source-file {
+  border-color: rgba(205, 211, 220, 0.62);
+}
+
+.source-file:hover,
+.source-file.active {
+  border-color: rgba(235, 237, 245, 0.9);
+}
+
 /* Lightweight epScript syntax highlighting (TypeScript-like). */
 pre code .tok-comment { color: #6f7d78; font-style: italic; }
 pre code .tok-string { color: #f6c177; }
