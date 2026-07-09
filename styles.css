@@ -326,7 +326,7 @@ h3 { margin-top: 0; }
   margin: 0;
   font-size: clamp(4rem, 13vw, 9.5rem);
   line-height: 0.78;
-  letter-spacing: -0.09em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -969,7 +969,7 @@ a { color: var(--accent); }
 .loop-node::before {
   content: "";
   position: absolute;
-  inset: auto -20% -45% -20%;
+  inset: auto -20% -65% -20%;
   height: 70%;
   background: radial-gradient(circle, var(--node-glow), transparent 65%);
   opacity: 0.5;
@@ -2234,6 +2234,7 @@ pre code .tok-function { color: #f4d35e; }
 #home .game-hero-copy h1 {
   font-size: clamp(2.4rem, 5.8vw, 5.2rem);
   margin: 0.45rem auto 0.75rem;
+  letter-spacing: 0;
 }
 
 #home .game-hero-copy .tagline {
