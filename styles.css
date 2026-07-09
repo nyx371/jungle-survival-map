@@ -441,6 +441,26 @@ h3 { margin-top: 0; }
   margin-bottom: 0;
 }
 
+.section-heading h2,
+.upgrade-subheading h3 {
+  min-height: 35px;
+  margin: 0.2rem 0 0.35rem;
+  padding: 6px 2.2rem 0 1.2rem;
+  color: #f4d57b;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  font-size: clamp(0.92rem, 1.8vw, 1.25rem);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-shadow: 0 1px 0 #000, 0 0 8px rgba(255, 210, 100, 0.28);
+  background-image:
+    url("assets/headers/header-left-clean.png"),
+    url("assets/headers/header-right.gif"),
+    url("assets/headers/header-stretch.gif");
+  background-repeat: no-repeat, no-repeat, repeat-x;
+  background-position: left top, right top, left top;
+  background-size: auto 35px, auto 35px, auto 35px;
+}
+
 .panel {
   margin: 1.25rem 0;
   padding: clamp(1.25rem, 3vw, 2rem);
@@ -453,13 +473,10 @@ h3 { margin-top: 0; }
   gap: 1rem;
   align-items: baseline;
   margin-bottom: 1rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid rgba(76, 196, 40, 0.18);
-  border-radius: 14px;
-  background:
-    linear-gradient(135deg, rgba(76, 196, 40, 0.1), rgba(0, 0, 0, 0.08) 42%),
-    rgba(5, 5, 5, 0.72);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(76, 196, 40, 0.14);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(76, 196, 40, 0.08), rgba(0, 0, 0, 0.08) 44%), rgba(5, 5, 5, 0.58);
 }
 
 .section-heading.vertical {
@@ -1515,11 +1532,6 @@ a:hover, #source-link:hover { color: #a4b4f8; }
     #050505;
 }
 
-.upgrade-subheading h3 {
-  margin: 0.2rem 0 0.35rem;
-  font-family: Michroma, "Nanum Gothic", sans-serif;
-  color: #ffffff;
-}
 .upgrade-card {
   position: relative;
   display: grid;
