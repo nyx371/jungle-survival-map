@@ -13,9 +13,11 @@ var CurrentNight = 0;
 var NightsSurvived = 0;
 var NightIntensity = 0;
 var VictoryPending = 0;
+var TimeUiFrame = 0;
 
 const DAY_FRAMES = constants.DAY_SECONDS * constants.FRAMES_PER_GAME_SECOND;
 const NIGHT_FRAMES = constants.NIGHT_SECONDS * constants.FRAMES_PER_GAME_SECOND;
+const TIME_UI_INTERVAL_FRAMES = constants.FRAMES_PER_GAME_SECOND;
 
 function initDayNight() {
     GlobalFrame = 0;
@@ -26,6 +28,7 @@ function initDayNight() {
     NightsSurvived = 0;
     NightIntensity = 0;
     VictoryPending = 0;
+    TimeUiFrame = 0;
 }
 
 function startNight() {
@@ -51,9 +54,31 @@ function endNight() {
     }
 }
 
+function printTimeOfDayUi() {
+    const totalSeconds = CycleFrame / constants.FRAMES_PER_GAME_SECOND;
+    const minute = totalSeconds / 60;
+    const second = totalSeconds % 60;
+
+    if (IsNight) {
+        eprintAll("\x04Night {}  {}:{} / 22:00", CurrentNight, minute, second);
+    } else {
+        eprintAll("\x04Day {}  {}:{} / 22:00", CurrentDay, minute, second);
+    }
+}
+
+function updateTimeOfDayUi() {
+    TimeUiFrame += 1;
+    if (TimeUiFrame >= TIME_UI_INTERVAL_FRAMES) {
+        TimeUiFrame = 0;
+        printTimeOfDayUi();
+    }
+}
+
 function updateDayNight() {
     GlobalFrame += 1;
     CycleFrame += 1;
+
+    updateTimeOfDayUi();
 
     if (IsNight == 0 && CycleFrame >= DAY_FRAMES) {
         startNight();
@@ -67,4 +92,18 @@ function getNightSpawnMultiplier() {
         return 100 + NightIntensity * 25;
     }
     return 60 + CurrentDay * 10;
+}
+
+function getSpawnIntervalFrames() {
+    // Prototype pacing: enemies still appear during the day, but nights ramp
+    // noticeably harder with each survived cycle.
+    if (IsNight) {
+        const seconds = 28 - CurrentNight * 3;
+        if (seconds < 10) return 10 * constants.FRAMES_PER_GAME_SECOND;
+        return seconds * constants.FRAMES_PER_GAME_SECOND;
+    }
+
+    const seconds = 75 - CurrentDay * 5;
+    if (seconds < 45) return 45 * constants.FRAMES_PER_GAME_SECOND;
+    return seconds * constants.FRAMES_PER_GAME_SECOND;
 }
