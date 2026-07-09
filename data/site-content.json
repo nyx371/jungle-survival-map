@@ -374,51 +374,59 @@
   "weapons": [
     {
       "title": "Railgun Carbine",
-      "body": "Long-range single-target rifle. Steady auto-fire keeps pressure on one enemy at a time from a safe distance.",
+      "body": "Long-range single-target rifle. Steady auto-fire keeps pressure on one enemy at a time from a safe distance. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "An extended-range charged shot that deals bonus damage to a single elite target.",
-      "icon": "C-10 Canister Rifle"
+      "icon": "C-10 Canister Rifle",
+      "specialIcon": "Lockdown"
     },
     {
       "title": "Riot Incinerator",
-      "body": "Close-range cone weapon. Short auto-fire reach demands the Ghost hold ground, but it clears everything in front.",
+      "body": "Close-range cone weapon. Short auto-fire reach demands the Ghost hold ground, but it clears everything in front. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Ignites a cone in front of the Ghost, burning every enemy caught inside over a few seconds.",
-      "icon": "Flame Thrower"
+      "icon": "Flame Thrower",
+      "specialIcon": "Fragmentation Grenade"
     },
     {
       "title": "Arc Autocannon",
-      "body": "Bouncing-shot cannon. Auto-fire arcs between nearby enemies instead of committing to one target.",
+      "body": "Bouncing-shot cannon. Auto-fire arcs between nearby enemies instead of committing to one target. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Fires a chaining bolt that jumps to additional nearby targets before dissipating.",
-      "icon": "EMP Shockwave"
+      "icon": "EMP Shockwave",
+      "specialIcon": "EMP Shockwave"
     },
     {
       "title": "Corrosive Sprayer",
-      "body": "Damage-over-time sprayer. Auto-fire applies a light corrosive coat rather than big upfront damage.",
+      "body": "Damage-over-time sprayer. Auto-fire applies a light corrosive coat rather than big upfront damage. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Coats a target in corrosive residue that continues dealing damage over several seconds.",
-      "icon": "Acid Spore"
+      "icon": "Acid Spore",
+      "specialIcon": "Plague"
     },
     {
       "title": "Storm Rifle",
-      "body": "Burst-fire rifle. Auto-fire unloads in rapid clusters instead of a steady stream, favoring short trades.",
+      "body": "Burst-fire rifle. Auto-fire unloads in rapid clusters instead of a steady stream, favoring short trades. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Unloads a rapid three-round burst for a short window of high damage per second.",
-      "icon": "Gauss Rifle"
+      "icon": "Gauss Rifle",
+      "specialIcon": "Use Stimpack"
     },
     {
       "title": "Demolition Launcher",
-      "body": "Explosive splash weapon. Auto-fire is slower and awkward at close range but punishes grouped enemies.",
+      "body": "Explosive splash weapon. Auto-fire is slower and awkward at close range but punishes grouped enemies. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Lobs a delayed-fuse warhead that detonates in a blast radius around the impact point.",
-      "icon": "Hellfire Missile Pack"
+      "icon": "Hellfire Missile Pack",
+      "specialIcon": "Nuclear Strike"
     },
     {
       "title": "Twin-Spike Driver",
-      "body": "Piercing-line weapon. Auto-fire rounds punch through the first target to strike whatever stands behind it.",
+      "body": "Piercing-line weapon. Auto-fire rounds punch through the first target to strike whatever stands behind it. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Fires a paired piercing round that passes through the lead target to hit a second enemy in line.",
-      "icon": "Gemini Missiles"
+      "icon": "Gemini Missiles",
+      "specialIcon": "Gemini Missiles"
     },
     {
       "title": "Lockdown Snare Gun",
-      "body": "Slow and control weapon. Auto-fire is weak, trading damage for reliable crowd disruption.",
+      "body": "Slow and control weapon. Auto-fire is weak, trading damage for reliable crowd disruption. Craft with minerals and gas to unlock; once crafted, it can be freely re-equipped later.",
       "special": "Freezes a target in a stasis field, halting its movement and attacks for a few seconds.",
-      "icon": "Lockdown"
+      "icon": "Lockdown",
+      "specialIcon": "Lockdown"
     }
   ],
   "structures": [
@@ -460,36 +468,34 @@
   ],
   "upgrades": [
     {
-      "title": "Survival: max health",
-      "body": "Raises Ghost vitality so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued."
+      "title": "Field systems: max health",
+      "body": "Generic mineral-and-gas upgrade that raises Ghost vitality so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued.",
+      "icon": "Plasma Shields"
     },
     {
-      "title": "Survival: armor and shields",
-      "body": "Adds defensive layers such as armor plating, shield capacity, or regeneration systems. These upgrades reduce sudden deaths without replacing good positioning."
+      "title": "Field systems: armor and shields",
+      "body": "Generic mineral-and-gas upgrade for armor plating, shield capacity, or regeneration layers. Reduces sudden deaths without replacing good positioning.",
+      "icon": "Infantry Armor"
     },
     {
-      "title": "Mobility and vision",
-      "body": "Improves patrol speed, scouting range, kiting, and withdrawal options. Mobility upgrades help the squad choose fights instead of being pinned by them."
+      "title": "Field systems: mobility and vision",
+      "body": "Generic mineral-and-gas upgrade for patrol speed, scouting range, kiting, and withdrawal options so the squad can choose fights instead of being pinned.",
+      "icon": "Ocular Implants"
     },
     {
-      "title": "Harvest efficiency",
-      "body": "Improves field gathering so the Ghost spends less time exposed at trees, rocks, crystals, organic growth, and other resource points."
+      "title": "Field systems: harvest efficiency",
+      "body": "Generic mineral-and-gas upgrade that reduces exposure while gathering from trees, rocks, crystals, organic growth, and other resource points.",
+      "icon": "Gather"
     },
     {
-      "title": "Construct utility",
-      "body": "Improves temporary structures: better repair value, deconstruction refunds, alerts, deployable support, and the ability to hold a pocket slightly longer before abandoning it."
+      "title": "Field systems: construct utility",
+      "body": "Generic mineral-and-gas upgrade for repair value, deconstruction refunds, alerts, deploy support, and temporary hold strength.",
+      "icon": "Terran Basic Buildings"
     },
     {
-      "title": "Maelstrom Mines",
-      "body": "Burrowed stun devices used to interrupt rushes, cover retreats, or set up neural critter harvests. Upgrades may alter radius, stun duration, arming time, or elite interrupt value."
-    },
-    {
-      "title": "Companion unlocks",
-      "body": "Authorizes robotic support, controlled Zerg specimens, or resurrected organisms. Companions add tactical options, but they are support assets rather than the main army."
-    },
-    {
-      "title": "Companion upgrades",
-      "body": "Improves companion count, durability, or battlefield role. Companion power still remains tied to Ghost survival, so losing the commando costs the squad."
+      "title": "Field systems: companion support",
+      "body": "Generic mineral-and-gas upgrade for support assets such as robotic helpers, controlled specimens, or resurrected organisms. Companions support the Ghost rather than replacing them.",
+      "icon": "Probe"
     }
   ],
   "gameplayLoop": [
@@ -555,15 +561,47 @@
     },
     {
       "title": "Command card stays readable",
-      "body": "Keep the command card operationally clear. Weapon packages should swap the main target ability instead of adding extra buttons."
+      "body": "Keep the command card operationally clear: one weapon special from the equipped weapon, one chosen active ability, and structures/utilities in their own lane."
     },
     {
       "title": "Few active hotbar abilities",
-      "body": "Limit universal field commands to Heal, Speed, and Stun; weapon-specific target abilities carry tactical variety."
+      "body": "Weapon packages swap the weapon-specific target command. Separately, crafted active abilities compete for one equipped defensive/offensive active slot."
     },
     {
       "title": "Psi Emitter feasibility",
       "body": "Test a deployable emitter that lures hostile movement or amplifies nearby field effects."
+    }
+  ],
+  "activeAbilities": [
+    {
+      "title": "Kinetic Barrier",
+      "body": "Defensive active ability. Craft with minerals and gas to unlock, then equip as the current active system to absorb or blunt a dangerous engage.",
+      "icon": "Plasma Shields"
+    },
+    {
+      "title": "Emergency Medburst",
+      "body": "Defensive active ability. Unlock once, then equip when the squad needs a clutch self-save or ally recovery button instead of extra offense.",
+      "icon": "Restoration"
+    },
+    {
+      "title": "Overclock Sprint",
+      "body": "Defensive mobility active. Equip for rapid withdrawal, rescue runs, or reposition windows when night pressure closes in.",
+      "icon": "Use Stimpack"
+    },
+    {
+      "title": "Shock Pulse",
+      "body": "Offensive active ability. Equip to interrupt a rush, briefly stun clustered mobs, or create space around a harvest point.",
+      "icon": "EMP Shockwave"
+    },
+    {
+      "title": "Orbital Spike",
+      "body": "Offensive active ability. Equip for a high-impact ground-target strike against dense waves or elite threats.",
+      "icon": "Nuclear Strike"
+    },
+    {
+      "title": "Toxic Cloud",
+      "body": "Offensive active ability. Equip to contaminate a ground area, softening mobs that path through a choke or around a light pocket.",
+      "icon": "Plague"
     }
   ]
 }

@@ -1525,11 +1525,18 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 .upgrade-card .checklist { grid-column: 2; }
 
 .weapon-special {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
   margin-top: .5rem;
   padding-top: .5rem;
   border-top: 1px dashed #20242c;
 }
 .weapon-special strong { color: #4cc428; }
+.special-ability-icon {
+  flex: 0 0 auto;
+  border-color: rgba(255, 180, 94, 0.5);
+}
 
 .evolution,
 .source-map-node,

@@ -499,14 +499,20 @@ function renderUpgrades(upgrades) {
 
 function renderWeapons(weapons) {
   const grid = document.querySelector('#weapon-upgrade-grid');
-  grid.innerHTML = weapons.map((weapon) => `
+  grid.innerHTML = weapons.map((weapon) => {
+    const specialIcon = getIconByTitle(weapon.specialIcon || weapon.icon);
+    return `
     <article class="card feature-card upgrade-card">
       <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(weapon.icon), weapon.title.slice(0, 2))}</div>
       <h3>${escapeHtml(weapon.title)}</h3>
       <p>${escapeHtml(weapon.body)}</p>
-      <p class="weapon-special"><strong>Special ability:</strong> ${escapeHtml(weapon.special)}</p>
-    </article>
-  `).join('');
+      <p class="weapon-special"><span class="mini-icon special-ability-icon" title="${escapeHtml(specialIcon?.title || 'Special ability')}">${renderIcon(specialIcon, '★')}</span><strong>Special ability:</strong> ${escapeHtml(weapon.special)}</p>
+    </article>`;
+  }).join('');
+}
+
+function renderActiveAbilities(abilities) {
+  renderUpgradeCards('#active-ability-grid', abilities || []);
 }
 
 function renderStructures(structures) {
@@ -641,6 +647,7 @@ async function init() {
     renderEnemies(state.content.enemies);
     renderUpgrades(state.content.upgrades);
     renderWeapons(state.content.weapons);
+    renderActiveAbilities(state.content.activeAbilities);
     renderStructures(state.content.structures);
   } catch (error) {
     document.querySelector('#home-grid').innerHTML = `<p class="muted">Unable to load site content: ${escapeHtml(error.message)}</p>`;
