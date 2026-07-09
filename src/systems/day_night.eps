@@ -1,12 +1,28 @@
 // Day/Night Director
-// 22 minute day/night cycle. Victory after five nights, with optional final boss.
+// 24-hour AM/PM clock. Day runs DAWN_HOUR (6 AM) through DUSK_HOUR (10 PM);
+// night is the rest (10 PM -> 6 AM). Victory after surviving
+// TARGET_NIGHTS_TO_WIN nights. Brightness itself lives in systems.lights,
+// gated on IsNight (DEFAULT_DAY_LIGHT by day, light-source levels at night).
 
 import core.constants;
 import systems.mob_evolution;
 import systems.victory;
 
-var GlobalFrame = 0;
-var CycleFrame = 0;
+const HOURS_PER_DAY = 24;
+const NOON_HOUR = 12;
+const DAWN_HOUR = 6;   // morning begins -> day
+const DUSK_HOUR = 22;  // 10 PM -> night
+
+// Real minutes for one full 24h cycle. Tune to taste: day is
+// (DUSK_HOUR - DAWN_HOUR)/24 of this, night the rest.
+const CYCLE_REAL_MINUTES = 12;
+const CYCLE_FRAMES = CYCLE_REAL_MINUTES * 60 * constants.FRAMES_PER_GAME_SECOND;
+const FRAMES_PER_HOUR = CYCLE_FRAMES / HOURS_PER_DAY;
+const CLOCK_START = DAWN_HOUR * FRAMES_PER_HOUR; // start the map at 6 AM
+
+const TIME_UI_INTERVAL_FRAMES = constants.FRAMES_PER_GAME_SECOND;
+
+var Clock = 0;          // 0..CYCLE_FRAMES-1, wraps at midnight; a 24h clock
 var IsNight = 0;
 var CurrentDay = 1;
 var CurrentNight = 0;
@@ -15,13 +31,8 @@ var NightIntensity = 0;
 var VictoryPending = 0;
 var TimeUiFrame = 0;
 
-const DAY_FRAMES = constants.DAY_SECONDS * constants.FRAMES_PER_GAME_SECOND;
-const NIGHT_FRAMES = constants.NIGHT_SECONDS * constants.FRAMES_PER_GAME_SECOND;
-const TIME_UI_INTERVAL_FRAMES = constants.FRAMES_PER_GAME_SECOND;
-
 function initDayNight() {
-    GlobalFrame = 0;
-    CycleFrame = 0;
+    Clock = CLOCK_START;
     IsNight = 0;
     CurrentDay = 1;
     CurrentNight = 0;
@@ -31,9 +42,12 @@ function initDayNight() {
     TimeUiFrame = 0;
 }
 
+function getClockHour() {
+    return Clock / FRAMES_PER_HOUR;
+}
+
 function startNight() {
     IsNight = 1;
-    CycleFrame = 0;
     CurrentNight += 1;
     NightIntensity = CurrentNight;
     mob_evolution.addEvolutionPressure(25 + CurrentNight * 10);
@@ -42,7 +56,6 @@ function startNight() {
 
 function endNight() {
     IsNight = 0;
-    CycleFrame = 0;
     NightsSurvived += 1;
 
     if (NightsSurvived >= constants.TARGET_NIGHTS_TO_WIN) {
@@ -55,14 +68,20 @@ function endNight() {
 }
 
 function printTimeOfDayUi() {
-    const totalSeconds = CycleFrame / constants.FRAMES_PER_GAME_SECOND;
-    const minute = totalSeconds / 60;
-    const second = totalSeconds % 60;
+    const hour24 = getClockHour();
+    const minute = (Clock % FRAMES_PER_HOUR) * 60 / FRAMES_PER_HOUR;
 
-    if (IsNight) {
-        eprintAll("\x04Night {}  {}:{} / 22:00", CurrentNight, minute, second);
+    // 12-hour clock face.
+    var hour12 = hour24 % 12;
+    if (hour12 == 0) hour12 = 12;
+
+    // AM/PM + zero-padded minutes; branch since the labels are literal strings.
+    if (hour24 < NOON_HOUR) {
+        if (minute < 10) eprintAll("\x04Day {}  {}:0{} AM", CurrentDay, hour12, minute);
+        else eprintAll("\x04Day {}  {}:{} AM", CurrentDay, hour12, minute);
     } else {
-        eprintAll("\x04Day {}  {}:{} / 22:00", CurrentDay, minute, second);
+        if (minute < 10) eprintAll("\x04Day {}  {}:0{} PM", CurrentDay, hour12, minute);
+        else eprintAll("\x04Day {}  {}:{} PM", CurrentDay, hour12, minute);
     }
 }
 
@@ -75,16 +94,19 @@ function updateTimeOfDayUi() {
 }
 
 function updateDayNight() {
-    GlobalFrame += 1;
-    CycleFrame += 1;
+    Clock += 1;
+    if (Clock >= CYCLE_FRAMES) Clock = 0;
 
-    updateTimeOfDayUi();
+    const hour24 = getClockHour();
+    const shouldBeNight = (hour24 >= DUSK_HOUR || hour24 < DAWN_HOUR) ? 1 : 0;
 
-    if (IsNight == 0 && CycleFrame >= DAY_FRAMES) {
+    if (IsNight == 0 && shouldBeNight == 1) {
         startNight();
-    } else if (IsNight == 1 && CycleFrame >= NIGHT_FRAMES) {
+    } else if (IsNight == 1 && shouldBeNight == 0) {
         endNight();
     }
+
+    updateTimeOfDayUi();
 }
 
 function getNightSpawnMultiplier() {

@@ -19,18 +19,18 @@ const LIGHT_TILE_SIZE = 32;
 
 // StarCraft brightness memory accepts a small 0-31-ish range. Keep day maxed and
 // night readable only around lights, with smooth one-step transitions per frame.
-const DAY_BRIGHTNESS = 31;
-const NIGHT_BRIGHTNESS_MIN = 20;
-const NIGHT_BRIGHTNESS_L1 = 23;
-const NIGHT_BRIGHTNESS_L2 = 26;
-const NIGHT_BRIGHTNESS_L3 = 29;
-const NIGHT_BRIGHTNESS_L4 = 31;
+const DEFAULT_DAY_LIGHT = 31;
+const DEFAULT_NIGHT_LIGHT_MIN = 20;
+const DEFAULT_NIGHT_LIGHT_L1 = 23;
+const DEFAULT_NIGHT_LIGHT_L2 = 26;
+const DEFAULT_NIGHT_LIGHT_L3 = 29;
+const DEFAULT_NIGHT_LIGHT_L4 = 31;
 
 const PlayerBrightness = EUDArray(constants.MAX_PLAYERS);
 
 function initLights() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
-        PlayerBrightness[p] = DAY_BRIGHTNESS;
+        PlayerBrightness[p] = DEFAULT_DAY_LIGHT;
     }
 }
 
@@ -94,13 +94,13 @@ function updateLocalBrightness(player) {
     const hero = players.getPlayerHeroUnit(player);
     setloc($L("_Screen"), hero.posX, hero.posY);
 
-    var targetBrightness = DAY_BRIGHTNESS;
+    var targetBrightness = DEFAULT_DAY_LIGHT;
     if (day_night.IsNight) {
-        if (Bring(AllPlayers, AtLeast, 4, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L4;
-        else if (Bring(AllPlayers, AtLeast, 3, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L3;
-        else if (Bring(AllPlayers, AtLeast, 2, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L2;
-        else if (Bring(AllPlayers, AtLeast, 1, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = NIGHT_BRIGHTNESS_L1;
-        else targetBrightness = NIGHT_BRIGHTNESS_MIN;
+        if (Bring(AllPlayers, AtLeast, 4, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = DEFAULT_NIGHT_LIGHT_L4;
+        else if (Bring(AllPlayers, AtLeast, 3, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = DEFAULT_NIGHT_LIGHT_L3;
+        else if (Bring(AllPlayers, AtLeast, 2, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = DEFAULT_NIGHT_LIGHT_L2;
+        else if (Bring(AllPlayers, AtLeast, 1, structures.UNIT_LIGHT_STRUCTURE, $L("_Screen"))) targetBrightness = DEFAULT_NIGHT_LIGHT_L1;
+        else targetBrightness = DEFAULT_NIGHT_LIGHT_MIN;
     }
 
     easePlayerBrightness(player, targetBrightness);
