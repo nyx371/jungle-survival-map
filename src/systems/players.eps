@@ -47,6 +47,8 @@ const HERO_ENERGY_REGEN_DAY = 1 * 256 / 8;
 const HERO_HP_REGEN_RESTED = 1 * 256 / 20;
 const HERO_HP_DRAIN_STARVING = 1 * 256 / 5;
 
+const MINING_ORDER_TIMER = 35;
+
 const PlayerEnergy = EUDArray(constants.MAX_PLAYERS);
 const PlayerEnergyMax = EUDArray(constants.MAX_PLAYERS);
 const PlayerStatus = EUDArray(constants.MAX_PLAYERS);
@@ -308,10 +310,6 @@ function updatePlayerDeathState(player) {
     }
 }
 
-const ORDER_PLAYER_GUARD = 3;
-const ORDER_HARVEST_MINERALS = 87;
-const ORDER_HOLD_POSITION = 107;
-const MINING_ORDER_TIMER = 35;
 
 function startHarvest(player, target) {
     const resourceType = resources.getHarvestTargetResourceType(target);
@@ -354,7 +352,7 @@ function harvestChop(player) {
 // updatePlayerHeroBehavior is separate and can be retired once this is proven.
 function updatePlayerHarvesting(player) {
     const hero = getPlayerHeroUnit(player);
-    const targetingResource = hero.orderID == ORDER_HARVEST_MINERALS && hero.orderTarget != 0;
+    const targetingResource = hero.orderID == constants.ORDER_HARVEST_MINERALS_3 && hero.orderTarget != 0;
 
     if (!IsHarvesting[player]) {
         if (targetingResource) {
@@ -392,11 +390,23 @@ function updatePlayerHeroBehavior(player) {
     if (!HeroAlive[player]) return;
     const hero = getPlayerHeroUnit(player);
 
-    if (hero.orderID == ORDER_PLAYER_GUARD) {
-        hero.orderID = ORDER_HOLD_POSITION; // always hold position when idle
+    if (hero.orderID == constants.ORDER_IDLE_REAVER) {
+        utils.createImageSpriteOnUnit(constants.IMAGE_VESPENE_GEYSER_SMOKE1, hero);
+        PlayWAV("sound\\bullet\\psahit00.wav");
+        hero.orderID = constants.ORDER_PLAYER_GUARD;
     }
 
-    if (hero.orderID == 10) {
+    if (hero.orderID == constants.ORDER_EMP_SHOCKWAVE) {
+        utils.createImageSpriteAtPoint(constants.IMAGE_VESPENE_GEYSER_SMOKE1, hero.orderTargetX, hero.orderTargetY);
+        PlayWAV("sound\\bullet\\psahit00.wav");
+        hero.orderID = constants.ORDER_PLAYER_GUARD;
+    }
+
+    if (hero.orderID == constants.ORDER_PLAYER_GUARD) {
+        hero.orderID = constants.ORDER_HOLD_POSITION_2; // always hold position when idle
+    }
+
+    if (hero.orderID == constants.ORDER_ATTACK_UNIT) {
         if (hero.groundWeaponCooldown > 10) {
             // PlayWAV("sound\\bullet\\psahit00.wav");
             PlayerWeaponShots[player] += 1;
@@ -413,7 +423,7 @@ function updatePlayerHeroBehavior(player) {
     }
 
 
-    if (hero.orderID == ORDER_HARVEST_MINERALS && hero.orderState == 5) {
+    if (hero.orderID == constants.ORDER_HARVEST_MINERALS_3 && hero.orderState == 5) {
         // Prevents the mining-order crash: keep the order timer from running
         // out instead of letting the order complete/reset normally. Actual
         // resource yield is handled by resources.eps (updateHarvesting /
@@ -434,7 +444,7 @@ function updatePlayerDebugInfo(player, localPlayer) {
         Screen.printfAt(0, "{}", RespawnTimer[player]);
     }
     const hero = getPlayerHeroUnit(player);
-    Screen.printfAt(1, "{} {} {}", hero.orderID, hero.orderTimer,  hero.groundWeaponCooldown);
+    Screen.printfAt(1, "{} {} {} {}", hero.orderID, hero.secondaryOrder, hero.orderTimer,  hero.groundWeaponCooldown);
     setcurpl(savedCp);
 }
 
