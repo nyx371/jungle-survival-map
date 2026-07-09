@@ -441,26 +441,6 @@ h3 { margin-top: 0; }
   margin-bottom: 0;
 }
 
-.section-heading h2,
-.upgrade-subheading h3 {
-  min-height: 35px;
-  margin: 0.2rem 0 0.35rem;
-  padding: 6px 2.2rem 0 1.2rem;
-  color: #f4d57b;
-  font-family: Michroma, "Nanum Gothic", sans-serif;
-  font-size: clamp(0.92rem, 1.8vw, 1.25rem);
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-  text-shadow: 0 1px 0 #000, 0 0 8px rgba(255, 210, 100, 0.28);
-  background-image:
-    url("assets/headers/header-left-clean.png"),
-    url("assets/headers/header-right.gif"),
-    url("assets/headers/header-stretch.gif");
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: left top, right top, left top;
-  background-size: auto 35px, auto 35px, auto 35px;
-}
-
 .panel {
   margin: 1.25rem 0;
   padding: clamp(1.25rem, 3vw, 2rem);
@@ -1609,6 +1589,26 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 
 .source-map-node span { background: #a4b4f8; }
 pre, code { background: #000; color: #cfd3dc; }
+
+.section-heading h2,
+.upgrade-subheading h3 {
+  min-height: 35px;
+  margin: 0.2rem 0 0.35rem;
+  padding: 6px 2.2rem 0 1.2rem;
+  color: #f4d57b;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  font-size: clamp(0.92rem, 1.8vw, 1.25rem);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-shadow: 0 1px 0 #000, 0 0 8px rgba(255, 210, 100, 0.28);
+  background-image:
+    url("assets/headers/header-left-clean.png"),
+    url("assets/headers/header-right.gif"),
+    url("assets/headers/header-stretch.gif");
+  background-repeat: no-repeat, no-repeat, repeat-x;
+  background-position: left top, right top, left top;
+  background-size: auto 35px, auto 35px, auto 35px;
+}
 
 @media (max-width: 780px) {
   .game-hero { grid-template-columns: 1fr; }
