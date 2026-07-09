@@ -1376,7 +1376,7 @@ a:hover, #source-link:hover { color: #a4b4f8; }
   float: left;
   width: 38px;
   height: 38px;
-  margin: 0.1rem 0.75rem 0.35rem 0;
+  margin: 0.1rem 1.05rem 0.35rem 0;
   border: 2px solid #780000;
   border-radius: 8px;
   background: #000;
@@ -1386,6 +1386,7 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 }
 
 .feature-icon img { display: block; }
+.feature-card p { margin: 0.22rem 0 0.45rem; }
 .apex-threat {
   position: relative;
   display: grid;
@@ -1518,7 +1519,7 @@ a:hover, #source-link:hover { color: #a4b4f8; }
   display: flow-root;
   padding-bottom: 3.25rem;
 }
-.upgrade-card .feature-icon { margin: 0.1rem 0.75rem 0.35rem 0; }
+.upgrade-card .feature-icon { margin: 0.1rem 1.05rem 0.35rem 0; }
 .upgrade-card .checklist { grid-column: auto; }
 
 .weapon-special,
@@ -2155,6 +2156,7 @@ pre code .tok-function { color: #f4d35e; }
 .day-cycle-transition .cycle-phase-list {
   min-height: 2.5rem;
   border: 0;
+  border-radius: 14px;
   background: rgba(0, 0, 0, 0.28);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
