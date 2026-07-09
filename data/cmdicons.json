@@ -115,6 +115,11 @@
     "file": "assets/cmdicons/cmdicons_188.png"
   },
   {
+    "index": 190,
+    "title": "Warp Gate",
+    "file": "assets/cmdicons/warp-gate.gif"
+  },
+  {
     "index": 219,
     "title": "Khaydarin Crystal",
     "file": "assets/cmdicons/cmdicons_219.png"

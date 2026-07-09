@@ -25,6 +25,11 @@
       "title": "Scavenge lost equipment",
       "body": "Recover abandoned caches and broken field gear to unlock precious resources for weapons, field systems, and active abilities.",
       "icon": "Gas Tank"
+    },
+    {
+      "title": "Power ancient warp gates",
+      "body": "Restore dormant gates hidden in the jungle to rapidly traverse the map, reverse bad positions, and open emergency escape routes.",
+      "icon": "Warp Gate"
     }
   ],
   "enemies": [
