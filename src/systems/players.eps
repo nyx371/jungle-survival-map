@@ -524,7 +524,7 @@ function updatePlayerAudio(player) {
     if (HurtSoundTimer[player] > 0) HurtSoundTimer[player] -= 1;
 
     // Footsteps while moving (Move / Attack Move), on a step cadence.
-    if (hero.orderID == constants.ORDER_MOVE || hero.orderID == constants.ORDER_ATTACK_MOVE) {
+    if (hero.orderID == constants.ORDER_MOVE || hero.orderID == constants.ORDER_ATTACK_MOVE || hero.orderID == constants.ORDER_HARVEST_MINERALS_1) {
         if (StepSoundTimer[player] == 0) {
             var idx = f_rand() % (STEP_SFX_COUNT - 1);
             if (idx >= StepLastSfx[player]) idx += 1;
@@ -550,6 +550,26 @@ function updatePlayerAudio(player) {
     LastHp[player] = currentHp;
 }
 
+// Ghost command-card train buttons are repurposed as ability triggers.
+// check_buildq detects which unit a button queued; for now just report the
+// id. Always reset_buildq at the end so nothing actually trains and the next
+// press reads fresh. (Options 1-8 map to units ~74..81; checking 73..81
+// covers the range so the printout reveals the real option->unit mapping.)
+function updatePlayerCommandCard(player) {
+    if (!HeroAlive[player]) return;
+    const hero = getPlayerHeroUnit(player);
+
+    foreach (trainUnit : py_range(73, 82)) {
+        if (hero.check_buildq(trainUnit)) {
+            const savedCp = getcurpl();
+            setcurpl(player);
+            Screen.printf("Command card: unit {}", trainUnit);
+            setcurpl(savedCp);
+        }
+    }
+    hero.reset_buildq();
+}
+
 function updatePlayers() {
     const localPlayer = getuserplayerid();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
@@ -558,6 +578,7 @@ function updatePlayers() {
         updatePlayerHeroBehavior(p);
         updatePlayerHarvesting(p);
         updatePlayerAudio(p);
+        updatePlayerCommandCard(p);
         updatePlayerDebugInfo(p, localPlayer);
     }
 }
