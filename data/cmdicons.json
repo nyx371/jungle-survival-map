@@ -368,5 +368,10 @@
     "index": 382,
     "title": "Subterranean Spines",
     "file": "assets/cmdicons/cmdicons_382.png"
+  },
+  {
+    "index": 10001,
+    "title": "Gas Tank",
+    "file": "assets/icons/gas.gif"
   }
 ]

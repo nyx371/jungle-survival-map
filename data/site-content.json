@@ -20,6 +20,11 @@
       "title": "Rescue trapped warriors",
       "body": "Find stranded fighters in the jungle and escort or free them to reinforce your squadron before night pressure closes in.",
       "icon": "Zealot"
+    },
+    {
+      "title": "Scavenge lost equipment",
+      "body": "Recover abandoned caches and broken field gear to unlock precious resources for weapons, field systems, and active abilities.",
+      "icon": "Gas Tank"
     }
   ],
   "enemies": [
