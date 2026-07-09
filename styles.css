@@ -1362,20 +1362,18 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 }
 
 .feature-card {
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  column-gap: .85rem;
-  align-items: start;
+  display: flow-root;
 }
 
 .feature-card h3,
 .feature-card p,
-.feature-card .icon-strip { grid-column: 2; }
+.feature-card .icon-strip { grid-column: auto; }
 
 .feature-icon {
-  grid-row: span 2;
+  float: left;
   width: 38px;
   height: 38px;
+  margin: 0.1rem 0.75rem 0.35rem 0;
   border: 2px solid #780000;
   border-radius: 8px;
   background: #000;
@@ -1514,18 +1512,14 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 
 .upgrade-card {
   position: relative;
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  column-gap: .85rem;
-  align-items: start;
+  display: flow-root;
   padding-bottom: 3.25rem;
 }
-.upgrade-card .feature-icon { grid-row: span 4; margin-bottom: 0; }
-.upgrade-card .checklist { grid-column: 2; }
+.upgrade-card .feature-icon { margin: 0.1rem 0.75rem 0.35rem 0; }
+.upgrade-card .checklist { grid-column: auto; }
 
 .weapon-special,
 .weapon-passive {
-  grid-column: 2;
   margin-top: .5rem;
   padding-top: .5rem;
   border-top: 1px dashed #20242c;
