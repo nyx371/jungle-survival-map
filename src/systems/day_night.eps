@@ -15,12 +15,16 @@ const DUSK_HOUR = 22;  // 10 PM -> night
 
 // Real minutes for one full 24h cycle. Tune to taste: day is
 // (DUSK_HOUR - DAWN_HOUR)/24 of this, night the rest.
-const CYCLE_REAL_MINUTES = 12;
+const CYCLE_REAL_MINUTES = 11;
 const CYCLE_FRAMES = CYCLE_REAL_MINUTES * 60 * constants.FRAMES_PER_GAME_SECOND;
 const FRAMES_PER_HOUR = CYCLE_FRAMES / HOURS_PER_DAY;
 const CLOCK_START = DAWN_HOUR * FRAMES_PER_HOUR; // start the map at 6 AM
 
 const TIME_UI_INTERVAL_FRAMES = constants.FRAMES_PER_GAME_SECOND;
+
+// DEBUG: clock frames advanced per real frame. 1 = normal. Bump this (e.g.
+// 30) to fast-forward the day/night cycle when testing, then set back to 1.
+const DEBUG_TIME_SCALE = 1;
 
 var Clock = 0;          // 0..CYCLE_FRAMES-1, wraps at midnight; a 24h clock
 var IsNight = 0;
@@ -94,8 +98,8 @@ function updateTimeOfDayUi() {
 }
 
 function updateDayNight() {
-    Clock += 1;
-    if (Clock >= CYCLE_FRAMES) Clock = 0;
+    Clock += DEBUG_TIME_SCALE;
+    if (Clock >= CYCLE_FRAMES) Clock -= CYCLE_FRAMES;
 
     const hour24 = getClockHour();
     const shouldBeNight = (hour24 >= DUSK_HOUR || hour24 < DAWN_HOUR) ? 1 : 0;
