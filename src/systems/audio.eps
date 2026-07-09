@@ -44,7 +44,7 @@ const GHOST_SPAWN_WAV = "staredit/wav/breath.ogg";
 const LastHp = EUDArray(constants.MAX_PLAYERS);
 const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
 const StepSoundTimer = EUDArray(constants.MAX_PLAYERS);
-const StepCycle = EUDArray(constants.MAX_PLAYERS); // footsteps cycle in order, not random
+const StepLastSfx = EUDArray(constants.MAX_PLAYERS); // last footstep index; never repeat it
 const HeartbeatTimer = EUDArray(constants.MAX_PLAYERS);
 
 function initAudio() {
@@ -52,7 +52,7 @@ function initAudio() {
         LastHp[p] = 0;
         HurtSoundTimer[p] = 0;
         StepSoundTimer[p] = 0;
-        StepCycle[p] = 0;
+        StepLastSfx[p] = 0;
         HeartbeatTimer[p] = 0;
     }
 }
@@ -87,9 +87,13 @@ function updateAudioForPlayer(player) {
     // Footsteps while moving (Move / Attack Move), on a step cadence.
     if (hero.orderID == ORDER_MOVE || hero.orderID == ORDER_ATTACK_MOVE) {
         if (StepSoundTimer[player] == 0) {
-            utils.playSoundArrayAt(STEP_SFX, player, StepCycle[player]);
-            StepCycle[player] += 1;
-            if (StepCycle[player] >= STEP_SFX_COUNT) StepCycle[player] = 0;
+            // Random footstep, but never the same one twice in a row: pick
+            // uniformly from the STEP_SFX_COUNT-1 indices that aren't the last,
+            // then shift past the excluded index.
+            var idx = f_rand() % (STEP_SFX_COUNT - 1);
+            if (idx >= StepLastSfx[player]) idx += 1;
+            utils.playSoundArrayAt(STEP_SFX, player, idx);
+            StepLastSfx[player] = idx;
             StepSoundTimer[player] = STEP_SOUND_INTERVAL;
         }
     }
