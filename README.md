@@ -52,7 +52,6 @@ src/
     mob_evolution.eps
     menus.eps
     transfers.eps
-    audio.eps
     camera.eps
     victory.eps
 ```

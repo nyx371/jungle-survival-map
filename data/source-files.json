@@ -28,10 +28,6 @@
     "path": "src/systems/abilities.eps"
   },
   {
-    "label": "systems/audio.eps",
-    "path": "src/systems/audio.eps"
-  },
-  {
     "label": "systems/camera.eps",
     "path": "src/systems/camera.eps"
   },

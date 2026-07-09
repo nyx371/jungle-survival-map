@@ -4,7 +4,6 @@ import core.constants;
 import core.dat_registry;
 import core.utils;
 import systems.day_night;
-import systems.audio;
 import systems.companions;
 import systems.resources;
 import systems.structures;
@@ -130,6 +129,67 @@ function pickRespawnPosition() {
     return pickRandomSpawnPoint();
 }
 
+// --- Ghost/hero audio: hurt, footsteps, low-HP heartbeat, spawn breath ---
+const LOW_HP_PERCENT = 30;
+
+// Hurt: randomized between variants, rate-limited so damage doesn't spam it.
+const HURT_SFX = [
+    StringBuffer("staredit/wav/player_hurt_01.ogg"),
+    StringBuffer("staredit/wav/player_hurt_02.ogg"),
+    StringBuffer("staredit/wav/player_hurt_03.ogg"),
+    StringBuffer("staredit/wav/player_hurt_04.ogg"),
+];
+const HURT_SFX_COUNT = 4;
+const HURT_SOUND_COOLDOWN = 3 * constants.FRAMES_PER_GAME_SECOND;
+
+// Footsteps: randomized (never the same twice in a row), on a walk cadence.
+const STEP_SFX = [
+    StringBuffer("staredit/wav/player_step_grass_01.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_02.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_03.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_04.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_05.ogg"),
+    StringBuffer("staredit/wav/player_step_grass_06.ogg"),
+];
+const STEP_SFX_COUNT = 6;
+const STEP_SOUND_INTERVAL = 7; // ~0.3s between footsteps while moving (23 fps)
+
+// Low-HP heartbeat. Cooldown matches the heartbeat.ogg clip length (~2.1s).
+const HEARTBEAT_WAV = "staredit/wav/heartbeat.ogg";
+const HEARTBEAT_COOLDOWN = 48;
+
+// One-shot Ghost breath played when a hero (re)spawns.
+const GHOST_SPAWN_WAV = "staredit/wav/breath.ogg";
+
+const LastHp = EUDArray(constants.MAX_PLAYERS);
+const HurtSoundTimer = EUDArray(constants.MAX_PLAYERS);
+const StepSoundTimer = EUDArray(constants.MAX_PLAYERS);
+const StepLastSfx = EUDArray(constants.MAX_PLAYERS); // last footstep index; never repeat it
+const HeartbeatTimer = EUDArray(constants.MAX_PLAYERS);
+
+function initPlayerAudio() {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        LastHp[p] = 0;
+        HurtSoundTimer[p] = 0;
+        StepSoundTimer[p] = 0;
+        StepLastSfx[p] = 0;
+        HeartbeatTimer[p] = 0;
+    }
+}
+
+function clearPlayerAudioDangerState(player) {
+    HurtSoundTimer[player] = 0;
+    StepSoundTimer[player] = 0;
+    HeartbeatTimer[player] = 0;
+}
+
+function playGhostSpawnSfx(player) {
+    const savedCp = getcurpl();
+    setcurpl(player);
+    PlayWAV(GHOST_SPAWN_WAV);
+    setcurpl(savedCp);
+}
+
 function createPlayerHero(player) {
     // PlayerHeroUnits is a compile-time list; it can only be indexed by a
     // compile-time constant, so dispatch on the runtime player id via switch.
@@ -166,7 +226,7 @@ function createPlayerHero(player) {
     }
 
     if (playerexist(player)) {
-        audio.playGhostSpawnSfx(player);
+        playGhostSpawnSfx(player);
     }
 }
 
@@ -184,6 +244,7 @@ function clearHarvestState(player) {
 
 function initPlayers() {
     indexPlayerSpawnMarkers();
+    initPlayerAudio();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         HeroAlive[p] = 1;
         RespawnTimer[p] = 0;
@@ -274,7 +335,7 @@ function markPlayerDead(player) {
     companions.destroyPlayerCompanions(player);
     structures.destroyPlayerStructures(player);
     clearHarvestState(player);
-    audio.clearAudioDangerState(player);
+    clearPlayerAudioDangerState(player);
     PlayerEnergy[player] = PlayerEnergyMax[player] / 2;
     updatePlayerStatus(player);
 }
@@ -304,7 +365,7 @@ function updatePlayerDeathState(player) {
         } else {
             respawnPlayer(player);
         }
-    } else if (getPlayerHeroUnit(player).orderID == 0) {
+    } else if (getPlayerHeroUnit(player).orderID == constants.ORDER_DIE) {
         // orderID 0 is the Die order; the tracked hero CUnit has died.
         markPlayerDead(player);
     }
@@ -448,6 +509,47 @@ function updatePlayerDebugInfo(player, localPlayer) {
     setcurpl(savedCp);
 }
 
+function updatePlayerAudio(player) {
+    if (!HeroAlive[player]) return;
+
+    const hero = getPlayerHeroUnit(player);
+    const maxHp = getPlayerHeroMaxHp(player);
+    const currentHp = hero.hp;
+
+    // Hurt sound: fire once when HP drops, then hold off for the cooldown.
+    if (currentHp < LastHp[player] && HurtSoundTimer[player] == 0) {
+        utils.playSoundArray(HURT_SFX, player, HURT_SFX_COUNT);
+        HurtSoundTimer[player] = HURT_SOUND_COOLDOWN;
+    }
+    if (HurtSoundTimer[player] > 0) HurtSoundTimer[player] -= 1;
+
+    // Footsteps while moving (Move / Attack Move), on a step cadence.
+    if (hero.orderID == constants.ORDER_MOVE || hero.orderID == constants.ORDER_ATTACK_MOVE) {
+        if (StepSoundTimer[player] == 0) {
+            var idx = f_rand() % (STEP_SFX_COUNT - 1);
+            if (idx >= StepLastSfx[player]) idx += 1;
+            utils.playSoundArrayAt(STEP_SFX, player, idx);
+            StepLastSfx[player] = idx;
+            StepSoundTimer[player] = STEP_SOUND_INTERVAL;
+        }
+    }
+    if (StepSoundTimer[player] > 0) StepSoundTimer[player] -= 1;
+
+    // Low-HP heartbeat.
+    if (maxHp > 0 && currentHp * 100 / maxHp <= LOW_HP_PERCENT) {
+        if (HeartbeatTimer[player] == 0) {
+            const savedCp = getcurpl();
+            setcurpl(player);
+            PlayWAV(HEARTBEAT_WAV);
+            setcurpl(savedCp);
+            HeartbeatTimer[player] = HEARTBEAT_COOLDOWN;
+        }
+    }
+    if (HeartbeatTimer[player] > 0) HeartbeatTimer[player] -= 1;
+
+    LastHp[player] = currentHp;
+}
+
 function updatePlayers() {
     const localPlayer = getuserplayerid();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
@@ -455,6 +557,7 @@ function updatePlayers() {
         updatePlayerVitals(p);
         updatePlayerHeroBehavior(p);
         updatePlayerHarvesting(p);
+        updatePlayerAudio(p);
         updatePlayerDebugInfo(p, localPlayer);
     }
 }

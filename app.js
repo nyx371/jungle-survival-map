@@ -220,7 +220,7 @@ const exactIconTitles = new Map(Object.entries({
   'Builds stay personal': 'C-10 Canister Rifle',
   'Craft tactical constructs': 'Use Spider Mines',
   'Rescue trapped warriors': 'Zealot',
-  'Scavenge lost equipment': 'Gas Tank',
+  'Scavenge lost equipment': 'Data Disc',
   'Power ancient warp gates': 'Warp Gate',
   'Death hurts without ending the run': 'Restoration',
   'The jungle does not stay still': 'Zergling',
@@ -237,7 +237,7 @@ const exactIconTitles = new Map(Object.entries({
   'Organic growth': 'Toxic Spores',
   'Sap vines': 'Gather',
   'Basalt veins': 'Mineral Cluster (Type 2)',
-  'Spore pods': 'Spines',
+  'Spore pods': 'Seeker Spores',
   'Neural critters': 'Bengalaas (Jungle Critter)',
   'Crafted weapons': 'Gauss Rifle',
   'Weapon upgrades': 'Infantry Weapons',
@@ -247,7 +247,7 @@ const exactIconTitles = new Map(Object.entries({
   'Reuse unused abilities as spells': 'Cloak',
   'Command card stays readable': 'Patrol',
   'Few active hotbar abilities': 'Heal',
-  'Psi Emitter feasibility': 'Khaydarin Crystal',
+  'Psi Emitter feasibility': 'Psi Emitter',
 }));
 
 function iconTitleForText(value) {
@@ -292,7 +292,7 @@ function chooseIcon(item, fallbackTitle = 'Scanner Sweep') {
   const title = String(item.title || '').toLowerCase();
   const pairs = [
     [/maelstrom|mine|trap/, 'Maelstrom'],
-    [/psi emitter|beacon|lure/, 'Khaydarin Crystal'],
+    [/psi emitter|beacon|lure/, 'Psi Emitter'],
     [/heal/, 'Heal'],
     [/speed|sprint|tempo/, 'Use Stimpack'],
     [/stun|control|maelstrom/, 'Maelstrom'],
@@ -337,8 +337,8 @@ function iconStripForItem(item) {
     'Builds stay personal': ['Gauss Rifle', 'C-10 Canister Rifle', 'Flame Thrower'],
     'Craft tactical constructs': ['Terran Basic Buildings', 'Use Spider Mines', 'Maelstrom'],
     'Rescue trapped warriors': ['Zealot', 'Marine', 'Heal'],
-    'Scavenge lost equipment': ['Gas Tank', 'Vespene Geyser', 'Gather'],
-    'Power ancient warp gates': ['Warp Gate', 'Khaydarin Crystal', 'Patrol'],
+    'Scavenge lost equipment': ['Data Disc', 'Return Resources', 'Gather'],
+    'Power ancient warp gates': ['Warp Gate', 'Recall', 'Khaydarin Crystal'],
     'Death hurts without ending the run': ['Nuclear Strike', 'Restoration', 'Heal'],
     'The jungle does not stay still': ['Zergling', 'Lurker Aspect', 'Dark Swarm'],
     'Survive five nights in the jungle': ['Hold Position', 'Dark Swarm', 'Scanner Sweep'],
@@ -357,7 +357,7 @@ function iconStripForItem(item) {
     'Organic growth': ['Toxic Spores', 'Spines', 'Gather'],
     'Sap vines': ['Gather', 'Vespene Geyser', 'Hold Position'],
     'Basalt veins': ['Mineral Cluster (Type 2)', 'Fusion Cutter', 'Gather'],
-    'Spore pods': ['Spines', 'Toxic Spores', 'Gather'],
+    'Spore pods': ['Seeker Spores', 'Toxic Spores', 'Gather'],
     'Neural critters': ['Bengalaas (Jungle Critter)', 'Maelstrom', 'Gather'],
     'Zerg Larva': ['Drone', 'Broodling', 'Restoration'],
     'Zerg Drone': ['Drone', 'Claws', 'Repair'],
@@ -373,12 +373,12 @@ function iconStripForItem(item) {
     'Reuse unused abilities as spells': ['Cloak', 'EMP Shockwave', 'Maelstrom'],
     'Command card stays readable': ['Patrol', 'Gauss Rifle', 'Hold Position'],
     'Few active hotbar abilities': ['Heal', 'Use Stimpack', 'Maelstrom'],
-    'Psi Emitter feasibility': ['Khaydarin Crystal', 'Dark Swarm', 'Scanner Sweep'],
+    'Psi Emitter feasibility': ['Psi Emitter', 'Dark Swarm', 'Scanner Sweep'],
   }[title];
 
   const titles = exact ? [...exact] : [];
   const rules = [
-    [/psi emitter|beacon|lure/, 'Khaydarin Crystal'],
+    [/psi emitter|beacon|lure/, 'Psi Emitter'],
     [/heal/, 'Heal'],
     [/speed|sprint|tempo/, 'Use Stimpack'],
     [/stun|control|maelstrom/, 'Maelstrom'],
@@ -507,7 +507,7 @@ function renderUpgradeCards(selector, upgrades, options = {}) {
   const grid = document.querySelector(selector);
   grid.innerHTML = upgrades.map((upgrade) => `
     <article class="card feature-card upgrade-card">
-      <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(upgrade), upgrade.title.slice(0, 2))}</div>
+      <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(upgrade.icon) || chooseIcon(upgrade), upgrade.title.slice(0, 2))}</div>
       <h3>${escapeHtml(upgrade.title)}</h3>
       <p>${escapeHtml(upgrade.body)}</p>
       ${renderCostBar(upgrade, options)}

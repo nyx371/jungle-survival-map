@@ -12,7 +12,6 @@ const CRITTER_SPAWN_INTERVAL_FRAMES = 20 * constants.FRAMES_PER_GAME_SECOND;
 var CritterSpawnTimer = CRITTER_SPAWN_INTERVAL_FRAMES;
 
 const NEURAL_CRITTER_UNIT = $U("Bengalaas");
-const ORDER_MOVE = 6;
 const MAX_NEURAL_CRITTERS = 24;
 const CRITTER_STATE_IDLE = 0;
 const CRITTER_STATE_FLEEING = 1;
@@ -113,7 +112,7 @@ function updateCritterFlee(critter) {
         const hero = players.getPlayerHeroUnit(threatPlayer);
         const dx = unit.posX - hero.posX;
         const dy = unit.posY - hero.posY;
-        unit.orderID = ORDER_MOVE;
+        unit.orderID = constants.ORDER_MOVE;
         unit.orderTargetX = unit.posX + dx;
         unit.orderTargetY = unit.posY + dy;
     }

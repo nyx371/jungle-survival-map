@@ -20,7 +20,6 @@ const ROBOTIC_FIGHTER_GAS_COST = 25;
 const RESURRECTED_ZERG_UNIT = $U("Zerg Zergling");
 const RESURRECT_GAS_COST = 50;
 const COMPANION_FOLLOW_DISTANCE = 4 * 32;
-const ORDER_MOVE = 6;
 
 const CompanionActive = EUDArray(MAX_COMPANIONS);
 const CompanionOwner = EUDArray(MAX_COMPANIONS);
@@ -124,7 +123,7 @@ function updateCompanionOrders(player) {
             const dx = unit.posX > hero.posX ? unit.posX - hero.posX : hero.posX - unit.posX;
             const dy = unit.posY > hero.posY ? unit.posY - hero.posY : hero.posY - unit.posY;
             if (dx > COMPANION_FOLLOW_DISTANCE || dy > COMPANION_FOLLOW_DISTANCE) {
-                unit.orderID = ORDER_MOVE;
+                unit.orderID = constants.ORDER_MOVE;
                 unit.orderTarget = hero;
             }
         }

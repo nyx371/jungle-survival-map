@@ -24,7 +24,7 @@
     {
       "title": "Scavenge lost equipment",
       "body": "Recover abandoned caches and broken field gear to unlock precious resources for weapons, field systems, and active abilities.",
-      "icon": "Gas Tank"
+      "icon": "Data Disc"
     },
     {
       "title": "Power ancient warp gates",
@@ -392,7 +392,7 @@
       "body": "Long-range single-target rifle. Steady auto-fire keeps pressure on one enemy at a time from a safe distance. Once crafted, it can be freely re-equipped later.",
       "special": "An extended-range charged shot that deals bonus damage to a single elite target.",
       "icon": "C-10 Canister Rifle",
-      "specialIcon": "Lockdown",
+      "specialIcon": "Yamato Gun",
       "cost": {
         "minerals": 120,
         "gas": 35
@@ -415,7 +415,7 @@
       "title": "Arc Autocannon",
       "body": "Bouncing-shot cannon. Auto-fire arcs between nearby enemies instead of committing to one target. Once crafted, it can be freely re-equipped later.",
       "special": "Fires a chaining bolt that jumps to additional nearby targets before dissipating.",
-      "icon": "EMP Shockwave",
+      "icon": "Twin Autocannons",
       "specialIcon": "EMP Shockwave",
       "cost": {
         "minerals": 135,
@@ -463,7 +463,7 @@
       "title": "Twin-Spike Driver",
       "body": "Piercing-line weapon. Auto-fire rounds punch through the first target to strike whatever stands behind it. Once crafted, it can be freely re-equipped later.",
       "special": "Fires a paired piercing round that passes through the lead target to hit a second enemy in line.",
-      "icon": "Gemini Missiles",
+      "icon": "Needle Spines",
       "specialIcon": "Gemini Missiles",
       "cost": {
         "minerals": 145,
@@ -476,7 +476,7 @@
       "body": "Slow and control weapon. Auto-fire is weak, trading damage for reliable crowd disruption. Once crafted, it can be freely re-equipped later.",
       "special": "Freezes a target in a stasis field, halting its movement and attacks for a few seconds.",
       "icon": "Lockdown",
-      "specialIcon": "Lockdown",
+      "specialIcon": "Stasis Field",
       "cost": {
         "minerals": 130,
         "gas": 70
@@ -493,12 +493,12 @@
     {
       "title": "Bunker",
       "body": "Garrisons a wounded commando behind cover for safe supporting fire, trading mobility for a hardened firing position during a stand.",
-      "icon": "Terran Basic Buildings"
+      "icon": "Bunker"
     },
     {
       "title": "Light Post (Psi Emitter)",
       "body": "Gradually brightens the surrounding ground and keeps new mobs from spawning nearby. The anchor of any safe pocket.",
-      "icon": "Khaydarin Crystal"
+      "icon": "Psi Emitter"
     },
     {
       "title": "Palisade Wall",
@@ -513,19 +513,19 @@
     {
       "title": "Turret",
       "body": "Automated defensive fire for a temporary hold. Strong alone, stronger as part of a covered perimeter.",
-      "icon": "Twin Autocannons"
+      "icon": "Missile Tower"
     },
     {
       "title": "Signal Flare Beacon",
       "body": "Deployable flare that marks a rally point and briefly scares off newly spawned mobs, buying a window to regroup.",
-      "icon": "Optical Flare"
+      "icon": "Terran Beacon"
     }
   ],
   "upgrades": [
     {
       "title": "Field systems: max health",
       "body": "Generic field system that raises Ghost vitality so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued.",
-      "icon": "Plasma Shields",
+      "icon": "Medic",
       "cost": {
         "minerals": 80,
         "gas": 25
@@ -552,7 +552,7 @@
     {
       "title": "Field systems: harvest efficiency",
       "body": "Generic field system that reduces exposure while gathering from trees, rocks, crystals, organic growth, and other resource points.",
-      "icon": "Gather",
+      "icon": "Fusion Cutter (Harvest)",
       "cost": {
         "minerals": 75,
         "gas": 20

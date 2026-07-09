@@ -17,7 +17,6 @@ import systems.mobs;
 import systems.mob_evolution;
 import systems.menus;
 import systems.transfers;
-import systems.audio;
 import systems.camera;
 import systems.victory;
 
@@ -38,7 +37,6 @@ function onPluginStart() {
     mob_evolution.initMobEvolution();
     menus.initMenus();
     transfers.initTransfers();
-    audio.initAudio();
     camera.initCamera();
     victory.initVictory();
 
@@ -60,7 +58,6 @@ function beforeTriggerExec() {
     mob_evolution.updateMobEvolution();
     mobs.updateMobs();
     transfers.updateTransfers();
-    audio.updateAudio();
     camera.updateCamera();
     menus.updateMenus();
     victory.updateVictory();
