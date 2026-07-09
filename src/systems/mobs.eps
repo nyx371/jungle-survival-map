@@ -255,12 +255,14 @@ function spawnMobInArea(area) {
     if (slot < 0) return;
 
     const family = chooseMobFamily(area);
-    // Create in the always-clear _SafeCreate spot, then move the finished
-    // unit to its real target -- creating directly on top of terrain/units
-    // at the target can fail or get shoved around by collision.
+    // Create in the always-clear _SafeCreate spot, then MoveUnit the finished
+    // unit to its real target -- creating directly on occupied terrain can
+    // fail. (CUnit.setloc moves the LOCATION onto the unit, not the unit, so
+    // the real relocation must be a MoveUnit action; family is a runtime
+    // value here so move by "Any unit" -- the only one just made at _SafeCreate.)
     const unit = CUnit(utils.createUnitAndGetEpd(1, family, $L("_SafeCreate"), MOB_OWNER_PLAYER));
     setloc($L("_Place"), x, y);
-    unit.setloc($L("_Place"));
+    MoveUnit(1, "Any unit", MOB_OWNER_PLAYER, $L("_SafeCreate"), $L("_Place"));
     orderMobJunkyardRoam(unit, area);
 
     MobUnit[slot] = unit;

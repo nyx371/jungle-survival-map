@@ -391,7 +391,7 @@ function updatePlayerHeroBehavior(player) {
     const hero = getPlayerHeroUnit(player);
 
     if (hero.orderID == constants.ORDER_IDLE_REAVER) {
-        utils.createImageSpriteOnUnit(constants.IMAGE_VESPENE_GEYSER_SMOKE1, hero);
+        // utils.createImageSpriteOnUnit(constants.IMAGE_VESPENE_GEYSER_SMOKE1, hero);
         PlayWAV("sound\\bullet\\psahit00.wav");
         hero.orderID = constants.ORDER_PLAYER_GUARD;
     }
