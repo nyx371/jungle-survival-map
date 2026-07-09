@@ -4,8 +4,7 @@
 import core.constants;
 import core.utils;
 
-const TERRAN_COMSAT_STATION = $U("Terran Comsat Station"); // resource node placeholder marker (owned by P7)
-const TERRAN_COVERT_OPS = $U("Terran Covert Ops");         // resource node base unit; likely to be swapped later
+const TERRAN_COVERT_OPS = $U("Terran Covert Ops"); // resource node base unit; likely to be swapped later
 const MINERAL_FIELD_UNIT_TYPE = 176;                          // Mineral Field (Type 1)
 const MAX_RESOURCE_NODE_MARKERS = 64;
 const RESOURCE_NODE_ACTIVATION_PERCENT = 95; // basic run-to-run variance
@@ -19,6 +18,21 @@ const RESOURCE_TYPE_COUNT = 5;
 // How many of the RESOURCE_TYPE_COUNT types can spawn as a node. All types
 // now have images/config wired up, so all of them are spawnable.
 const SPAWNABLE_RESOURCE_TYPE_COUNT = RESOURCE_TYPE_COUNT;
+
+// Resource-node markers, pre-placed by the map author on P7. Each marker
+// unit type maps to a category (a list of resource types); a node spawned
+// from that marker randomizes its type from the list. This lets one map
+// area/biome favor certain resources -- add more markers/categories, and
+// more types to a list, to grow variety. Always randomize from the list.
+const MARKER_COMSAT = constants.UNIT_TERRAN_COMSAT_STATION;       // bush / tree
+const MARKER_MACHINE_SHOP = constants.UNIT_TERRAN_MACHINE_SHOP;   // rock
+const MARKER_CONTROL_TOWER = constants.UNIT_TERRAN_CONTROL_TOWER; // crystal
+const MARKER_PHYSICS_LAB = constants.UNIT_TERRAN_PHYSICS_LAB;     // magma
+
+const COMSAT_RESOURCES = [RESOURCE_BUSH, RESOURCE_TREE];
+const MACHINE_SHOP_RESOURCES = [RESOURCE_ROCK];
+const CONTROL_TOWER_RESOURCES = [RESOURCE_CRYSTAL];
+const PHYSICS_LAB_RESOURCES = [RESOURCE_MAGMA];
 
 // One config row per resource type, indexed by the RESOURCE_* constants
 // above -- add a new resource type by adding one clustered block to
@@ -136,15 +150,6 @@ function initResourceNodeImages() {
     }
 }
 
-function chooseResourceNodeType() {
-    const roll = f_rand() % SPAWNABLE_RESOURCE_TYPE_COUNT;
-    if (roll == 0) return RESOURCE_TREE;
-    if (roll == 1) return RESOURCE_BUSH;
-    if (roll == 2) return RESOURCE_ROCK;
-    if (roll == 3) return RESOURCE_CRYSTAL;
-    return RESOURCE_MAGMA;
-}
-
 function chooseResourceNodeImage(resourceType) {
     const roll = f_rand() % RESOURCE_IMAGE_VARIANTS;
     // RESOURCE_IMAGES[resourceType] reads out a plain value (the sub-array's
@@ -180,17 +185,18 @@ function playMiningToolSfx(player) {
     if (MiningToolCycle[player] >= MINING_TOOL_SFX_COUNT) MiningToolCycle[player] = 0;
 }
 
-function initResourceNodes() {
+// Scans P7 for [markerUnitType] markers, removes each, and (probabilistically)
+// spawns a resource node whose type is randomized from [typeList] (length
+// [typeCount]). typeList is a typed EUDArray so its runtime index works.
+// Collect-then-process: units can't be created/removed mid-EUDLoop.
+function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount) {
     const found = EUDQueue(MAX_RESOURCE_NODE_MARKERS)();
     foreach (unit : EUDLoopPlayerCUnit(P7)) {
-        if (unit.unitType == TERRAN_COMSAT_STATION) {
+        if (unit.unitType == markerUnitType) {
             found.append(unit);
         }
     }
 
-    // Only a percentage of candidates actually become nodes, for run-to-run
-    // variance. True weighting between resource types needs more marker/node
-    // variety than exists today (see getHarvestTargetResourceType).
     while (!found.empty()) {
         const marker = CUnit(found.popleft());
         const x = marker.posX;
@@ -198,7 +204,7 @@ function initResourceNodes() {
         utils.removeCUnit(marker);
 
         if (f_rand() % 100 < RESOURCE_NODE_ACTIVATION_PERCENT) {
-            const resourceType = chooseResourceNodeType();
+            const resourceType = typeList[f_rand() % typeCount];
             Sprite(RESOURCE_NODE_SPRITE_ID).image = chooseResourceNodeImage(resourceType);
 
             setloc($L("_Place"), x, y);
@@ -208,6 +214,13 @@ function initResourceNodes() {
             node.resourceAmount = getResourceStartingAmount(resourceType);
         }
     }
+}
+
+function initResourceNodes() {
+    scanResourceMarkers(MARKER_COMSAT, COMSAT_RESOURCES, 2);
+    scanResourceMarkers(MARKER_MACHINE_SHOP, MACHINE_SHOP_RESOURCES, 1);
+    scanResourceMarkers(MARKER_CONTROL_TOWER, CONTROL_TOWER_RESOURCES, 1);
+    scanResourceMarkers(MARKER_PHYSICS_LAB, PHYSICS_LAB_RESOURCES, 1);
 }
 
 function initResources() {
