@@ -481,14 +481,30 @@ function renderNotes(notes) {
   renderCardGrid('#notes-grid', notes);
 }
 
-function renderUpgradeCards(selector, upgrades) {
+const resourceIconUrls = {
+  minerals: 'https://classic.battle.net/images/battle/scc/terran/PICS/min.gif',
+  gas: 'https://classic.battle.net/images/battle/scc/terran/PICS/gas.gif',
+  energy: 'https://classic.battle.net/images/battle/scc/terran/pix/energy.gif',
+};
+
+function renderCostBar(item, options = {}) {
+  const cost = item.cost || {};
+  const parts = [];
+  if (cost.minerals) parts.push(`<span><img src="${resourceIconUrls.minerals}" alt="Minerals" loading="lazy" />${escapeHtml(String(cost.minerals))}</span>`);
+  if (cost.gas) parts.push(`<span><img src="${resourceIconUrls.gas}" alt="Gas" loading="lazy" />${escapeHtml(String(cost.gas))}</span>`);
+  if (options.energy || cost.energy) parts.push(`<span><img src="${resourceIconUrls.energy}" alt="Energy" loading="lazy" />${escapeHtml(String(cost.energy || 50))}</span>`);
+  if (!parts.length) return '';
+  return `<div class="card-cost" aria-label="Cost">${parts.join('')}</div>`;
+}
+
+function renderUpgradeCards(selector, upgrades, options = {}) {
   const grid = document.querySelector(selector);
   grid.innerHTML = upgrades.map((upgrade) => `
     <article class="card feature-card upgrade-card">
       <div class="feature-icon" aria-hidden="true">${renderIcon(chooseIcon(upgrade), upgrade.title.slice(0, 2))}</div>
       <h3>${escapeHtml(upgrade.title)}</h3>
       <p>${escapeHtml(upgrade.body)}</p>
-      ${renderIconStrip(iconStripForItem(upgrade), `${upgrade.title} command icons`)}
+      ${renderCostBar(upgrade, options)}
     </article>
   `).join('');
 }
@@ -506,13 +522,15 @@ function renderWeapons(weapons) {
       <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(weapon.icon), weapon.title.slice(0, 2))}</div>
       <h3>${escapeHtml(weapon.title)}</h3>
       <p>${escapeHtml(weapon.body)}</p>
-      <p class="weapon-special"><span class="mini-icon special-ability-icon" title="${escapeHtml(specialIcon?.title || 'Special ability')}">${renderIcon(specialIcon, '★')}</span><strong>Special ability:</strong> ${escapeHtml(weapon.special)}</p>
+      <p class="weapon-special"><span class="mini-icon special-ability-icon" title="${escapeHtml(specialIcon?.title || 'Special ability')}">${renderIcon(specialIcon, '★')}</span>${escapeHtml(weapon.special)}</p>
+      ${weapon.passive ? `<p class="weapon-passive"><strong>Passive:</strong> ${escapeHtml(weapon.passive)}</p>` : ''}
+      ${renderCostBar(weapon)}
     </article>`;
   }).join('');
 }
 
 function renderActiveAbilities(abilities) {
-  renderUpgradeCards('#active-ability-grid', abilities || []);
+  renderUpgradeCards('#active-ability-grid', abilities || [], { energy: true });
 }
 
 function renderStructures(structures) {
@@ -522,6 +540,7 @@ function renderStructures(structures) {
       <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(structure.icon), structure.title.slice(0, 2))}</div>
       <h3>${escapeHtml(structure.title)}</h3>
       <p>${escapeHtml(structure.body)}</p>
+      ${renderCostBar(structure)}
     </article>
   `).join('');
 }

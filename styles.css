@@ -448,11 +448,30 @@ h3 { margin-top: 0; }
 }
 
 .section-heading {
+  position: relative;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: baseline;
   margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(76, 196, 40, 0.18);
+  border-left: 4px solid rgba(76, 196, 40, 0.72);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(76, 196, 40, 0.1), rgba(0, 0, 0, 0.08) 42%),
+    rgba(5, 5, 5, 0.72);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.section-heading::after {
+  content: '';
+  position: absolute;
+  inset: 0.55rem 0.65rem auto auto;
+  width: 3.4rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 180, 94, 0.75));
 }
 
 .section-heading.vertical {
@@ -1511,8 +1530,11 @@ a:hover, #source-link:hover { color: #a4b4f8; }
 
 .upgrade-subheading {
   padding: 1rem 1.1rem;
-  border: 1px solid #20242c;
-  background: #050505;
+  border-color: rgba(255, 180, 94, 0.2);
+  border-left-color: rgba(255, 180, 94, 0.78);
+  background:
+    linear-gradient(135deg, rgba(255, 180, 94, 0.09), rgba(0, 0, 0, 0.06) 45%),
+    #050505;
 }
 
 .upgrade-subheading h3 {
@@ -1520,22 +1542,56 @@ a:hover, #source-link:hover { color: #a4b4f8; }
   font-family: Michroma, "Nanum Gothic", sans-serif;
   color: #ffffff;
 }
-.upgrade-card { display: grid; grid-template-columns: 42px 1fr; column-gap: .85rem; align-items: start; }
-.upgrade-card .feature-icon { grid-row: span 2; margin-bottom: 0; }
+.upgrade-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  column-gap: .85rem;
+  align-items: start;
+  padding-bottom: 3.25rem;
+}
+.upgrade-card .feature-icon { grid-row: span 4; margin-bottom: 0; }
 .upgrade-card .checklist { grid-column: 2; }
 
-.weapon-special {
-  display: flex;
-  align-items: center;
-  gap: .45rem;
+.weapon-special,
+.weapon-passive {
+  grid-column: 2;
   margin-top: .5rem;
   padding-top: .5rem;
   border-top: 1px dashed #20242c;
 }
-.weapon-special strong { color: #4cc428; }
+.weapon-special strong,
+.weapon-passive strong { color: #4cc428; }
 .special-ability-icon {
-  flex: 0 0 auto;
+  float: left;
+  margin: 0.05rem .5rem .2rem 0;
   border-color: rgba(255, 180, 94, 0.5);
+}
+.card-cost {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.9rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: .55rem;
+  padding-top: .55rem;
+  border-top: 1px solid rgba(32, 36, 44, 0.82);
+}
+.card-cost span {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  min-width: 3.2rem;
+  justify-content: flex-end;
+  color: #f5e6b1;
+  font-family: Michroma, "Nanum Gothic", sans-serif;
+  font-size: .72rem;
+}
+.card-cost img {
+  width: 14px;
+  height: 14px;
+  image-rendering: pixelated;
 }
 
 .evolution,
