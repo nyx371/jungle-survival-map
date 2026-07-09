@@ -1,5 +1,5 @@
 @import url('https://fonts.cdnfonts.com/css/eurostile');
-@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Nanum+Gothic:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
 
 :root {
   color-scheme: dark;
@@ -12,7 +12,7 @@
   --accent-2: #ffb45e;
   --danger: #ff5f56;
   --border: rgba(255, 255, 255, 0.16);
-  --body-font: 'EuroStyle', 'Eurostile', Michroma, 'Nanum Gothic', Verdana, sans-serif;
+  --body-font: 'EuroStyle', 'Eurostile', Michroma, Verdana, sans-serif;
   --heading-font: var(--body-font);
 }
 
