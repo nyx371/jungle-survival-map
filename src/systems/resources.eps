@@ -21,19 +21,25 @@ const RESOURCE_TYPE_COUNT = 6;
 const SPAWNABLE_RESOURCE_TYPE_COUNT = RESOURCE_TYPE_COUNT;
 
 // Resource-node markers, pre-placed by the map author on P7. Each marker
-// unit type maps to a category (a list of resource types); a node spawned
-// from that marker randomizes its type from the list. This lets one map
-// area/biome favor certain resources -- add more markers/categories, and
-// more types to a list, to grow variety. Always randomize from the list.
+// unit type maps to a category: a weighted [type, weight, type, weight, ...]
+// table (one <marker>_PAIRS count each). A node spawned from that marker
+// picks a type weighted-randomly (see pickWeightedResource) -- higher weight
+// = more common; weights are relative and need not sum to 100. This lets a
+// map area/biome favor certain resources while rarely dropping others. Add
+// more markers/categories, or more [type, weight] pairs, to grow variety.
 const MARKER_COMSAT = constants.UNIT_TERRAN_COMSAT_STATION;       // bush / tree
-const MARKER_MACHINE_SHOP = constants.UNIT_TERRAN_MACHINE_SHOP;   // rock
+const MARKER_MACHINE_SHOP = constants.UNIT_TERRAN_MACHINE_SHOP;   // rock / biomass
 const MARKER_CONTROL_TOWER = constants.UNIT_TERRAN_CONTROL_TOWER; // crystal
 const MARKER_PHYSICS_LAB = constants.UNIT_TERRAN_PHYSICS_LAB;     // magma
 
-const COMSAT_RESOURCES = [RESOURCE_BUSH, RESOURCE_TREE];
-const MACHINE_SHOP_RESOURCES = [RESOURCE_ROCK];
-const CONTROL_TOWER_RESOURCES = [RESOURCE_CRYSTAL];
-const PHYSICS_LAB_RESOURCES = [RESOURCE_MAGMA];
+const COMSAT_RESOURCES = [RESOURCE_BUSH, 50, RESOURCE_TREE, 50];
+const COMSAT_PAIRS = 2;
+const MACHINE_SHOP_RESOURCES = [RESOURCE_ROCK, 90, RESOURCE_BIOMASS, 10];
+const MACHINE_SHOP_PAIRS = 2;
+const CONTROL_TOWER_RESOURCES = [RESOURCE_CRYSTAL, 100];
+const CONTROL_TOWER_PAIRS = 1;
+const PHYSICS_LAB_RESOURCES = [RESOURCE_MAGMA, 100];
+const PHYSICS_LAB_PAIRS = 1;
 
 // One config row per resource type, indexed by the RESOURCE_* constants
 // above -- add a new resource type by adding one clustered block to
@@ -194,11 +200,39 @@ function playMiningToolSfx(player) {
 // spawns a resource node whose type is randomized from [typeList] (length
 // [typeCount]). typeList is a typed EUDArray so its runtime index works.
 // Collect-then-process: units can't be created/removed mid-EUDLoop.
-// [typeList] is the marker's common category (uniform random). [rareType] is
-// an optional rarer resource that overrides the pick [rareChance]% of the time
-// (pass rareChance 0 to disable). Lets a category mostly yield one resource but
-// occasionally drop something special.
-function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount, rareType, rareChance) {
+// Weighted random pick from a [type, weight, type, weight, ...] EUDArray of
+// [pairCount] pairs. Higher weight = more likely; weights are relative
+// positive ints (need not sum to 100).
+function pickWeightedResource(pairs : EUDArray, pairCount) {
+    var total = 0;
+    var i = 0;
+    while (i < pairCount) {
+        total += pairs[i * 2 + 1];
+        i += 1;
+    }
+
+    const roll = f_rand() % total;
+    var chosen = pairs[0]; // fallback: first type
+    var acc = 0;
+    var done = 0;
+    i = 0;
+    while (i < pairCount) {
+        if (done == 0) {
+            acc += pairs[i * 2 + 1];
+            if (roll < acc) {
+                chosen = pairs[i * 2];
+                done = 1;
+            }
+        }
+        i += 1;
+    }
+    return chosen;
+}
+
+// Scans P7 for [markerUnitType] markers, removes each, and (probabilistically)
+// spawns a resource node whose type is weighted-random from [pairs].
+// Collect-then-process: units can't be created/removed mid-EUDLoop.
+function scanResourceMarkers(markerUnitType, pairs : EUDArray, pairCount) {
     const found = EUDQueue(MAX_RESOURCE_NODE_MARKERS)();
     foreach (unit : EUDLoopPlayerCUnit(P7)) {
         if (unit.unitType == markerUnitType) {
@@ -213,10 +247,7 @@ function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount, rar
         utils.removeCUnit(marker);
 
         if (f_rand() % 100 < RESOURCE_NODE_ACTIVATION_PERCENT) {
-            var resourceType = typeList[f_rand() % typeCount];
-            if (rareChance > 0) {
-                if (f_rand() % 100 < rareChance) resourceType = rareType;
-            }
+            const resourceType = pickWeightedResource(pairs, pairCount);
             Sprite(RESOURCE_NODE_SPRITE_ID).image = chooseResourceNodeImage(resourceType);
 
             setloc($L("_Place"), x, y);
@@ -229,10 +260,10 @@ function scanResourceMarkers(markerUnitType, typeList : EUDArray, typeCount, rar
 }
 
 function initResourceNodes() {
-    scanResourceMarkers(MARKER_COMSAT, COMSAT_RESOURCES, 2, 0, 0);
-    scanResourceMarkers(MARKER_MACHINE_SHOP, MACHINE_SHOP_RESOURCES, 1, RESOURCE_BIOMASS, 10); // 10% biomass
-    scanResourceMarkers(MARKER_CONTROL_TOWER, CONTROL_TOWER_RESOURCES, 1, 0, 0);
-    scanResourceMarkers(MARKER_PHYSICS_LAB, PHYSICS_LAB_RESOURCES, 1, 0, 0);
+    scanResourceMarkers(MARKER_COMSAT, COMSAT_RESOURCES, COMSAT_PAIRS);
+    scanResourceMarkers(MARKER_MACHINE_SHOP, MACHINE_SHOP_RESOURCES, MACHINE_SHOP_PAIRS);
+    scanResourceMarkers(MARKER_CONTROL_TOWER, CONTROL_TOWER_RESOURCES, CONTROL_TOWER_PAIRS);
+    scanResourceMarkers(MARKER_PHYSICS_LAB, PHYSICS_LAB_RESOURCES, PHYSICS_LAB_PAIRS);
 }
 
 function initResources() {
