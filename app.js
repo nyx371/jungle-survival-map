@@ -487,6 +487,23 @@ function renderNotes(notes) {
   renderCardGrid('#notes-grid', notes);
 }
 
+function renderSounds(sounds = []) {
+  const list = document.querySelector('#sound-list');
+  if (!list) return;
+
+  list.innerHTML = sounds.map((sound) => `
+    <article class="sound-item">
+      <div>
+        <strong>${escapeHtml(sound.name)}</strong>
+        <span>${escapeHtml(sound.path)}</span>
+      </div>
+      ${sound.preview
+        ? `<audio controls preload="none" src="${escapeHtml(sound.path)}"></audio>`
+        : '<em>Listed only</em>'}
+    </article>
+  `).join('');
+}
+
 const resourceIconUrls = {
   minerals: 'assets/icons/minerals.gif',
   gas: 'assets/icons/gas.gif',
@@ -669,6 +686,7 @@ async function init() {
     renderFeatures(state.content.features);
     renderResources(state.content.resources);
     renderNotes(state.content.notes || []);
+    renderSounds(state.content.sounds || []);
     renderEnemies(state.content.enemies);
     renderUpgrades(state.content.upgrades);
     renderWeapons(state.content.weapons);

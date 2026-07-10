@@ -643,6 +643,10 @@
       "body": "Keep the command card operationally clear: one weapon special from the equipped weapon, one player-centered active ability, and structures/utilities in their own lane."
     },
     {
+      "title": "Clickable upgrade menus via train buttons",
+      "body": "Use the Ghost command-card train-unit queue as the clickable menu input layer for upgrades: suit, weapons, and later settings. Buttons queue dummy units, epScript detects the queued unit id, then resets the build queue so the menu behaves like UI instead of production."
+    },
+    {
       "title": "Few active hotbar abilities",
       "body": "Weapon packages swap the weapon-specific target command. Separately, crafted active abilities compete for one equipped defensive/offensive active slot."
     },
@@ -711,6 +715,188 @@
         "gas": 75,
         "energy": 50
       }
+    }
+  ],
+  "sounds": [
+    {
+      "name": "EDrRep00.wav",
+      "path": "snd/EDrRep00.wav",
+      "preview": true
+    },
+    {
+      "name": "EDrRep01.wav",
+      "path": "snd/EDrRep01.wav",
+      "preview": true
+    },
+    {
+      "name": "EDrRep02.wav",
+      "path": "snd/EDrRep02.wav",
+      "preview": true
+    },
+    {
+      "name": "EDrRep03.wav",
+      "path": "snd/EDrRep03.wav",
+      "preview": true
+    },
+    {
+      "name": "EDrRep04.wav",
+      "path": "snd/EDrRep04.wav",
+      "preview": true
+    },
+    {
+      "name": "_src.m4a",
+      "path": "snd/_src.m4a",
+      "preview": true
+    },
+    {
+      "name": "_src2.m4a",
+      "path": "snd/_src2.m4a",
+      "preview": true
+    },
+    {
+      "name": "breath.ogg",
+      "path": "snd/breath.ogg",
+      "preview": true
+    },
+    {
+      "name": "eat1.ogg",
+      "path": "snd/eat1.ogg",
+      "preview": true
+    },
+    {
+      "name": "eat2.ogg",
+      "path": "snd/eat2.ogg",
+      "preview": true
+    },
+    {
+      "name": "grass1.ogg",
+      "path": "snd/grass1.ogg",
+      "preview": true
+    },
+    {
+      "name": "grass2.ogg",
+      "path": "snd/grass2.ogg",
+      "preview": true
+    },
+    {
+      "name": "grass3.ogg",
+      "path": "snd/grass3.ogg",
+      "preview": true
+    },
+    {
+      "name": "grass4.ogg",
+      "path": "snd/grass4.ogg",
+      "preview": true
+    },
+    {
+      "name": "heartbeat.aup3",
+      "path": "snd/heartbeat.aup3",
+      "preview": false
+    },
+    {
+      "name": "heartbeat.ogg",
+      "path": "snd/heartbeat.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_amplify.ogg",
+      "path": "snd/player_amplify.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_hurt_01.ogg",
+      "path": "snd/player_hurt_01.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_hurt_02.ogg",
+      "path": "snd/player_hurt_02.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_hurt_03.ogg",
+      "path": "snd/player_hurt_03.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_hurt_04.ogg",
+      "path": "snd/player_hurt_04.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_step_grass_01.ogg",
+      "path": "snd/player_step_grass_01.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_step_grass_02.ogg",
+      "path": "snd/player_step_grass_02.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_step_grass_03.ogg",
+      "path": "snd/player_step_grass_03.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_step_grass_04.ogg",
+      "path": "snd/player_step_grass_04.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_step_grass_05.ogg",
+      "path": "snd/player_step_grass_05.ogg",
+      "preview": true
+    },
+    {
+      "name": "player_step_grass_06.ogg",
+      "path": "snd/player_step_grass_06.ogg",
+      "preview": true
+    },
+    {
+      "name": "pop.ogg",
+      "path": "snd/pop.ogg",
+      "preview": true
+    },
+    {
+      "name": "stone1.ogg",
+      "path": "snd/stone1.ogg",
+      "preview": true
+    },
+    {
+      "name": "stone2.ogg",
+      "path": "snd/stone2.ogg",
+      "preview": true
+    },
+    {
+      "name": "stone3.ogg",
+      "path": "snd/stone3.ogg",
+      "preview": true
+    },
+    {
+      "name": "stone4.ogg",
+      "path": "snd/stone4.ogg",
+      "preview": true
+    },
+    {
+      "name": "wood1.ogg",
+      "path": "snd/wood1.ogg",
+      "preview": true
+    },
+    {
+      "name": "wood2.ogg",
+      "path": "snd/wood2.ogg",
+      "preview": true
+    },
+    {
+      "name": "wood3.ogg",
+      "path": "snd/wood3.ogg",
+      "preview": true
+    },
+    {
+      "name": "wood4.ogg",
+      "path": "snd/wood4.ogg",
+      "preview": true
     }
   ]
 }
