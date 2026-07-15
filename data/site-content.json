@@ -670,6 +670,10 @@
     {
       "title": "Psi Emitter feasibility",
       "body": "Test a deployable emitter that lures hostile movement or amplifies nearby field effects."
+    },
+    {
+      "title": "Upgrade categories & weapon coupling (open)",
+      "body": "Three upgrade categories planned: base/stat upgrades, passive abilities, and active abilities tied to the equipped weapon. Open problem — weapons: stacking multiple upgrades/modifiers on the same weapon (unit) isn't really feasible today, unless a weapon triggers an effect every Nth shot or similar. Needs more thought. Active abilities: leaning toward three active abilities per player."
     }
   ],
   "sounds": [
