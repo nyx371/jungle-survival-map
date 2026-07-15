@@ -673,7 +673,7 @@
     },
     {
       "title": "Upgrade categories & weapon coupling (open)",
-      "body": "Three upgrade categories planned: base/stat upgrades, passive abilities, and active abilities tied to the equipped weapon. Open problem — weapons: stacking multiple upgrades/modifiers on the same weapon (unit) isn't really feasible today, unless a weapon triggers an effect every Nth shot or similar. Needs more thought. Active abilities: leaning toward three active abilities per player."
+      "body": "Three upgrade categories planned: base/stat upgrades, passive abilities, and active abilities tied to the equipped weapon. Open problem — weapons: stacking multiple upgrades/modifiers on the same weapon (unit) isn't really feasible today, unless a weapon triggers an effect every Nth shot or similar. Needs more thought. Active abilities: there are 24 ability slots, which divides cleanly as 8 players × 3 — enough for every player to own 3 active abilities and customize them independently, since each player edits their own DAT entries. That is the per-player \"EUD draft\": on pick, modify and set that ability's properties for that player via EUD member (dot) writes. Should be doable with the member-function DAT changes — would be a really cool system."
     }
   ],
   "sounds": [
