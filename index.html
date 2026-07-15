@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jungle Commandos Map</title>
     <meta name="description" content="Feature roadmap and epScript source viewer for the Jungle Commandos StarCraft map." />
-    <link rel="stylesheet" href="styles.css?v=features-warp-gate-1" />
+    <link rel="stylesheet" href="styles.css?v=roguelike-1" />
   </head>
   <body>
     <main>
@@ -25,7 +25,7 @@
           <div class="game-hero-copy">
             <p class="hero-kicker">StarCraft co-op survival map</p>
             <h1>Jungle Commandos</h1>
-            <p class="tagline">Command a Ghost detachment through five nights of jungle contact.</p>
+            <p class="tagline">Command a Ghost detachment through ten nights of jungle contact &mdash; and draft the build that survives them.</p>
           </div>
           <div class="hero-visual-stack">
             <div class="tactical-map" aria-label="Jungle survival tactical map illustration">
@@ -41,16 +41,37 @@
             </div>
             <aside class="mission-card" aria-label="Mission briefing">
               <p class="eyebrow">Mission</p>
-              <h2>Survive 5 nights</h2>
+              <h2>Survive 10 nights</h2>
               <ul>
                 <li><strong>Players:</strong> 1–5 Ghost commandos</li>
-                <li><strong>Cycle:</strong> 22 minute days / 22 minute nights</li>
-                <li><strong>Pressure:</strong> wave-based Zerg attacks</li>
-                <li><strong>Death:</strong> respawn, lose resources and structures, keep progression</li>
+                <li><strong>Economy:</strong> minerals from rocks, essence from kills</li>
+                <li><strong>Growth:</strong> draft synergizing upgrades between fights</li>
+                <li><strong>Death:</strong> respawn and drop carried resources, keep drafted progression</li>
               </ul>
             </aside>
           </div>
         </div>
+
+        <section class="draft-showcase panel" aria-label="Roguelike upgrade draft">
+          <div class="draft-copy">
+            <p class="eyebrow">Roguelike core</p>
+            <h2>Kill. Bank essence. Draft your build.</h2>
+            <p>The swarm pays for your power. Every mob you drop banks combat essence; bank enough and the field offers a draft of three randomized upgrades. Keep one, then go earn the next.</p>
+            <ol class="draft-steps">
+              <li><span class="draft-step-num">1</span><div><strong>Kill mobs</strong><span>Combat essence accrues from every drop.</span></div></li>
+              <li><span class="draft-step-num">2</span><div><strong>Hit the threshold</strong><span>Banked essence opens an upgrade draft.</span></div></li>
+              <li><span class="draft-step-num">3</span><div><strong>Pick 1 of 3</strong><span>Three random upgrades &mdash; keep the one that synergizes.</span></div></li>
+            </ol>
+          </div>
+          <div class="draft-picks" aria-label="Example draft of three upgrades">
+            <p class="draft-picks-label">Example draft &mdash; choose one</p>
+            <div class="draft-pick-cards">
+              <article class="draft-pick weapon"><span class="draft-pick-tag">Weapon</span><strong>Arc Autocannon</strong><p>Auto-fire arcs between nearby enemies.</p></article>
+              <article class="draft-pick survival"><span class="draft-pick-tag">Survival</span><strong>Siphon Rounds</strong><p>A share of damage dealt returns as health.</p></article>
+              <article class="draft-pick field"><span class="draft-pick-tag">Field</span><strong>Static Field</strong><p>Attackers take reflected shock damage.</p></article>
+            </div>
+          </div>
+        </section>
 
 
         <section class="home-loop-section" aria-label="Field rhythm">
@@ -58,7 +79,7 @@
             <p class="eyebrow">Core loop</p>
             <h2>Reconnoiter. Commit. Extract.</h2>
             <p>
-Each phase lasts 22 minutes. The cycle below shows the field rhythm; the cards summarize the operating rules that matter most.
+The clock runs a short day/night cycle. The visual tracks the time of day; the cards below summarize the roguelike loop that drives every run.
             </p>
           </div>
           <div class="day-cycle-transition" data-day-cycle aria-label="Jungle time of day transition: sunrise, day, sunset, night">
@@ -119,10 +140,10 @@ Each phase lasts 22 minutes. The cycle below shows the field rhythm; the cards s
       <section id="system" class="tab-panel">
         <section id="system-resources" class="system-section" hidden>
           <div class="section-heading vertical compact-heading">
-            <p class="eyebrow">Scavenging</p>
-            <h2>Resources</h2>
+            <p class="eyebrow">Economy</p>
+            <h2>Minerals &amp; essence</h2>
             <p>
-Field resources produce different mineral and vespene yields. A harvesting Ghost cannot provide supporting fire until the task is broken off.
+Minerals come from rock formations scattered across the map &mdash; each rock type trades yield against exposure, and a harvesting Ghost can't return fire until it breaks off. <strong>Gas is no longer mined:</strong> it is combat essence, earned only by killing mobs and spent on upgrade drafts.
             </p>
           </div>
           <div id="resource-grid" class="grid"></div>
@@ -177,40 +198,41 @@ Not every contact belongs to the common brood ladder. Commanders should expect h
         </section>
 
         <section id="system-upgrades" class="system-section" hidden>
+          <div class="section-heading vertical compact-heading">
+            <p class="eyebrow">Roguelike drafts</p>
+            <h2>Upgrades</h2>
+            <p>Essence from kills opens a draft of three randomized upgrades; keep one and the swarm funds the next. Every pick belongs to one of three families, and the families are built to combine.</p>
+          </div>
+
           <div class="upgrade-section">
             <div class="section-heading vertical compact-heading upgrade-subheading">
-              <p class="eyebrow">Weapon packages</p>
-              <h3>Primary weapons and target abilities</h3>
-              <p>Craft a weapon package to unlock it. The commando may craft other weapons later, switch between unlocked packages, and freely switch back to any weapon already crafted. Equipping a weapon also swaps in that weapon's single-target or ground-target special ability.</p>
+              <p class="eyebrow">Family 1 &middot; Weapons &amp; actives</p>
+              <h3>Weapon systems</h3>
+              <p>Your primary weapon &mdash; with its single- or ground-target special &mdash; plus one equipped active ability. Weapons are crafted with minerals and can be freely re-equipped; only one active ability is slotted at a time.</p>
             </div>
             <div id="weapon-upgrade-grid" class="grid"></div>
+            <div class="upgrade-subgroup">
+              <p class="eyebrow subgroup-eyebrow">Active abilities &mdash; one equipped slot</p>
+              <div id="active-ability-grid" class="grid"></div>
+            </div>
           </div>
 
           <div class="upgrade-section">
             <div class="section-heading vertical compact-heading upgrade-subheading">
-              <p class="eyebrow">Field systems</p>
-              <h3>Survival, economy, and support</h3>
-              <p>Generic permanent systems: survivability, mobility, harvesting, utility, and support improvements that do not change the equipped weapon.</p>
+              <p class="eyebrow">Family 2 &middot; Stats &amp; survival</p>
+              <h3>Survival systems</h3>
+              <p>Permanent stat and economy improvements &mdash; vitality, plating, mobility, harvest, and essence yield. The backbone that keeps a run alive long enough to spike.</p>
             </div>
-            <div id="field-upgrade-grid" class="grid"></div>
+            <div id="survival-upgrade-grid" class="grid"></div>
           </div>
 
           <div class="upgrade-section">
             <div class="section-heading vertical compact-heading upgrade-subheading">
-              <p class="eyebrow">Active abilities</p>
-              <h3>One equipped tactical system</h3>
-              <p>Craft a defensive or offensive ability to unlock it. Crafted abilities can be switched later, but only one active ability may be equipped at a time. Active abilities trigger on or around the player.</p>
+              <p class="eyebrow">Family 3 &middot; Passive fields</p>
+              <h3>Field systems</h3>
+              <p>Always-on passive effects that reshape how the whole build behaves &mdash; lifesteal, reflect, kill-spread, momentum. This is where synergies snowball.</p>
             </div>
-            <div id="active-ability-grid" class="grid"></div>
-          </div>
-
-          <div class="upgrade-section">
-            <div class="section-heading vertical compact-heading upgrade-subheading">
-              <p class="eyebrow">Craftable constructs</p>
-              <h3>Structures built in the field</h3>
-              <p>Temporary battlefield tools. Everything here can be deconstructed and rebuilt elsewhere as the squad relocates.</p>
-            </div>
-            <div id="structure-upgrade-grid" class="grid"></div>
+            <div id="passive-upgrade-grid" class="grid"></div>
           </div>
         </section>
       </section>

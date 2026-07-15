@@ -2226,3 +2226,75 @@ pre code .tok-function { color: #f4d35e; }
   color: #ffffff;
 }
 
+
+/* --- Roguelike draft showcase (home) --- */
+.draft-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  align-items: center;
+}
+@media (max-width: 780px) {
+  .draft-showcase { grid-template-columns: 1fr; }
+}
+.draft-copy h2 { margin: 0.2rem 0 0.6rem; }
+.draft-copy > p { color: var(--muted); margin: 0 0 1rem; }
+.draft-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.draft-steps li { display: flex; gap: 0.7rem; align-items: flex-start; }
+.draft-step-num {
+  flex: 0 0 auto;
+  width: 1.75rem; height: 1.75rem;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-weight: 800; font-size: 0.9rem;
+}
+.draft-steps strong { display: block; }
+.draft-steps span { color: var(--muted); font-size: 0.92rem; }
+
+.draft-picks {
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  padding: 1rem;
+  background: var(--panel);
+}
+.draft-picks-label {
+  margin: 0 0 0.7rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 0.72rem; color: var(--muted);
+}
+.draft-pick-cards { display: grid; gap: 0.6rem; }
+.draft-pick {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+  background: var(--panel-strong);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.draft-pick:hover { transform: translateY(-2px); }
+.draft-pick.weapon { border-left-color: var(--accent-2); }
+.draft-pick.survival { border-left-color: var(--accent); }
+.draft-pick.field { border-left-color: #7db2ff; }
+.draft-pick-tag {
+  display: inline-block;
+  font-size: 0.66rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin-bottom: 0.25rem;
+}
+.draft-pick.weapon .draft-pick-tag { color: var(--accent-2); }
+.draft-pick.survival .draft-pick-tag { color: var(--accent); }
+.draft-pick.field .draft-pick-tag { color: #7db2ff; }
+.draft-pick strong { display: block; margin-bottom: 0.2rem; }
+.draft-pick p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+
+/* --- Upgrade sub-group (active abilities under the weapon family) --- */
+.upgrade-subgroup { margin-top: 1.1rem; }
+.subgroup-eyebrow {
+  display: block;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 0.72rem; color: var(--muted);
+  margin: 0 0 0.55rem;
+}

@@ -532,8 +532,12 @@ function renderUpgradeCards(selector, upgrades, options = {}) {
   `).join('');
 }
 
-function renderUpgrades(upgrades) {
-  renderUpgradeCards('#field-upgrade-grid', upgrades);
+function renderSurvival(survival) {
+  renderUpgradeCards('#survival-upgrade-grid', survival || []);
+}
+
+function renderPassives(passives) {
+  renderUpgradeCards('#passive-upgrade-grid', passives || []);
 }
 
 function renderWeapons(weapons) {
@@ -554,18 +558,6 @@ function renderWeapons(weapons) {
 
 function renderActiveAbilities(abilities) {
   renderUpgradeCards('#active-ability-grid', abilities || [], { energy: true });
-}
-
-function renderStructures(structures) {
-  const grid = document.querySelector('#structure-upgrade-grid');
-  grid.innerHTML = structures.map((structure) => `
-    <article class="card feature-card upgrade-card">
-      <div class="feature-icon" aria-hidden="true">${renderIcon(getIconByTitle(structure.icon), structure.title.slice(0, 2))}</div>
-      <h3>${escapeHtml(structure.title)}</h3>
-      <p>${escapeHtml(structure.body)}</p>
-      ${renderCostBar(structure)}
-    </article>
-  `).join('');
 }
 
 
@@ -688,10 +680,10 @@ async function init() {
     renderNotes(state.content.notes || []);
     renderSounds(state.content.sounds || []);
     renderEnemies(state.content.enemies);
-    renderUpgrades(state.content.upgrades);
+    renderSurvival(state.content.survival);
     renderWeapons(state.content.weapons);
     renderActiveAbilities(state.content.activeAbilities);
-    renderStructures(state.content.structures);
+    renderPassives(state.content.passives);
   } catch (error) {
     document.querySelector('#home-grid').innerHTML = `<p class="muted">Unable to load site content: ${escapeHtml(error.message)}</p>`;
   }

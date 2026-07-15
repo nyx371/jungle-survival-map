@@ -5,26 +5,22 @@
       "body": "Each commando is a valuable field asset. Support units can extend an operation, but the loss of the Ghost remains the critical failure point."
     },
     {
+      "title": "Kills are your economy",
+      "body": "Every mob you drop feeds combat essence. Bank enough and the field offers you an upgrade — the swarm literally pays for your build.",
+      "icon": "Data Disc"
+    },
+    {
+      "title": "Upgrades that synergize",
+      "body": "Weapons, survival systems, and passive fields stack into a build. A lifesteal weapon loves fire-rate passives; a control gun loves splash. No two runs settle the same way."
+    },
+    {
       "title": "Hunt neural critters",
       "body": "Some jungle specimens flee when approached. Stun them first, then harvest before they recover and vanish into cover."
-    },
-    {
-      "title": "Builds stay personal",
-      "body": "Commandos may specialize as marksmen, assault troops, demolitions experts, or field support."
-    },
-    {
-      "title": "Craft tactical constructs",
-      "body": "Lights, walls, stations, turrets, companion tools, and Maelstrom Mines provide temporary battlefield control."
     },
     {
       "title": "Rescue trapped warriors",
       "body": "Find stranded fighters in the jungle and escort or free them to reinforce your squadron before night pressure closes in.",
       "icon": "Zealot"
-    },
-    {
-      "title": "Scavenge lost equipment",
-      "body": "Recover abandoned caches and broken field gear to unlock precious resources for weapons, field systems, and active abilities.",
-      "icon": "Data Disc"
     },
     {
       "title": "Power ancient warp gates",
@@ -484,177 +480,6 @@
       "passive": "Controlled enemies take increased damage from the squad for a short window."
     }
   ],
-  "structures": [
-    {
-      "title": "Maelstrom Mine",
-      "body": "Burrowed stun device armed at a fixed point. Detonates under the first enemy that crosses its trigger radius, interrupting rushes or setting up a critter harvest.",
-      "icon": "Maelstrom"
-    },
-    {
-      "title": "Bunker",
-      "body": "Garrisons a wounded commando behind cover for safe supporting fire, trading mobility for a hardened firing position during a stand.",
-      "icon": "Bunker"
-    },
-    {
-      "title": "Light Post (Psi Emitter)",
-      "body": "Gradually brightens the surrounding ground and keeps new mobs from spawning nearby. The anchor of any safe pocket.",
-      "icon": "Psi Emitter"
-    },
-    {
-      "title": "Palisade Wall",
-      "body": "Cheap barrier that delays and redirects incoming mobs, buying time to reposition or finish a harvest.",
-      "icon": "Infantry Armor"
-    },
-    {
-      "title": "Regeneration Station",
-      "body": "Stationary recovery point that speeds HP return for any commando standing nearby.",
-      "icon": "Restoration"
-    },
-    {
-      "title": "Turret",
-      "body": "Automated defensive fire for a temporary hold. Strong alone, stronger as part of a covered perimeter.",
-      "icon": "Missile Tower"
-    },
-    {
-      "title": "Signal Flare Beacon",
-      "body": "Deployable flare that marks a rally point and briefly scares off newly spawned mobs, buying a window to regroup.",
-      "icon": "Terran Beacon"
-    }
-  ],
-  "upgrades": [
-    {
-      "title": "Field systems: max health",
-      "body": "Generic field system that raises Ghost vitality so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued.",
-      "icon": "Medic",
-      "cost": {
-        "minerals": 80,
-        "gas": 25
-      }
-    },
-    {
-      "title": "Field systems: armor and shields",
-      "body": "Generic field system for armor plating, shield capacity, or regeneration layers. Reduces sudden deaths without replacing good positioning.",
-      "icon": "Infantry Armor",
-      "cost": {
-        "minerals": 100,
-        "gas": 35
-      }
-    },
-    {
-      "title": "Field systems: mobility and vision",
-      "body": "Generic field system for patrol speed, scouting range, kiting, and withdrawal options so the squad can choose fights instead of being pinned.",
-      "icon": "Ocular Implants",
-      "cost": {
-        "minerals": 90,
-        "gas": 30
-      }
-    },
-    {
-      "title": "Field systems: harvest efficiency",
-      "body": "Generic field system that reduces exposure while gathering from trees, rocks, crystals, organic growth, and other resource points.",
-      "icon": "Fusion Cutter (Harvest)",
-      "cost": {
-        "minerals": 75,
-        "gas": 20
-      }
-    },
-    {
-      "title": "Field systems: construct utility",
-      "body": "Generic field system for repair value, deconstruction refunds, alerts, deploy support, and temporary hold strength.",
-      "icon": "Terran Basic Buildings",
-      "cost": {
-        "minerals": 95,
-        "gas": 30
-      }
-    },
-    {
-      "title": "Field systems: companion support",
-      "body": "Generic field system for support assets such as robotic helpers, controlled specimens, or resurrected organisms. Companions support the Ghost rather than replacing them.",
-      "icon": "Probe",
-      "cost": {
-        "minerals": 120,
-        "gas": 50
-      }
-    }
-  ],
-  "gameplayLoop": [
-    {
-      "title": "Five-night operation",
-      "body": "Hold the sector through five night cycles. Extraction conditions remain unconfirmed."
-    },
-    {
-      "title": "Daylight creates choices",
-      "body": "Use safe hours to pick one priority: gather supplies, train weapons, fortify, or relocate."
-    },
-    {
-      "title": "Night punishes delay",
-      "body": "When enemy movement increases, hesitation costs more than withdrawal."
-    },
-    {
-      "title": "Failure costs momentum",
-      "body": "Death removes field assets and carried resources, but retained training lets the operation continue."
-    }
-  ],
-  "resources": [
-    {
-      "title": "Trees",
-      "body": "Common mineral-heavy supply nodes with minor gas yield."
-    },
-    {
-      "title": "Bushes",
-      "body": "Fast organic harvest points suited to moving patrols."
-    },
-    {
-      "title": "Rocks",
-      "body": "Mineral-rich deposits requiring a safer work window."
-    },
-    {
-      "title": "Crystals",
-      "body": "Vespene-rich formations usually found deeper in hostile territory."
-    },
-    {
-      "title": "Organic growth",
-      "body": "Balanced biological matter, often near contested ground."
-    },
-    {
-      "title": "Sap vines",
-      "body": "Slow-drip vespene ooze tapped from thick canopy vines, safe to work under cover."
-    },
-    {
-      "title": "Basalt veins",
-      "body": "Exposed volcanic mineral seams. Heavier yield, but a longer exposed harvest window."
-    },
-    {
-      "title": "Spore pods",
-      "body": "Pressurized vespene pods that burst on contact. Fast yield, but risky near active mobs."
-    },
-    {
-      "title": "Neural critters",
-      "body": "Mobile wildlife specimens. Stun or trap them before harvest."
-    }
-  ],
-  "notes": [
-    {
-      "title": "Reuse unused abilities as spells",
-      "body": "Review dormant StarCraft abilities and retain only effects that read clearly in combat."
-    },
-    {
-      "title": "Command card stays readable",
-      "body": "Keep the command card operationally clear: one weapon special from the equipped weapon, one player-centered active ability, and structures/utilities in their own lane."
-    },
-    {
-      "title": "Clickable upgrade menus via train buttons",
-      "body": "Use the Ghost command-card train-unit queue as the clickable menu input layer for upgrades: suit, weapons, and later settings. Buttons queue dummy units, epScript detects the queued unit id, then resets the build queue so the menu behaves like UI instead of production."
-    },
-    {
-      "title": "Few active hotbar abilities",
-      "body": "Weapon packages swap the weapon-specific target command. Separately, crafted active abilities compete for one equipped defensive/offensive active slot."
-    },
-    {
-      "title": "Psi Emitter feasibility",
-      "body": "Test a deployable emitter that lures hostile movement or amplifies nearby field effects."
-    }
-  ],
   "activeAbilities": [
     {
       "title": "Kinetic Barrier",
@@ -715,6 +540,136 @@
         "gas": 75,
         "energy": 50
       }
+    }
+  ],
+  "survival": [
+    {
+      "title": "Vitality",
+      "body": "Raises Ghost max health so a commando can survive surrounds, night collapses, and failed withdrawals long enough to recover or be rescued.",
+      "icon": "Medic"
+    },
+    {
+      "title": "Plating & Shields",
+      "body": "Armor plating, shield capacity, or regeneration layers. Reduces sudden deaths without replacing good positioning.",
+      "icon": "Infantry Armor"
+    },
+    {
+      "title": "Mobility & Vision",
+      "body": "Patrol speed, scouting range, kiting, and withdrawal options so the squad chooses fights instead of being pinned.",
+      "icon": "Ocular Implants"
+    },
+    {
+      "title": "Harvest Efficiency",
+      "body": "Faster mining and less exposure while working rock nodes, so minerals cost you less time in the open.",
+      "icon": "Fusion Cutter (Harvest)"
+    },
+    {
+      "title": "Essence Yield",
+      "body": "Mobs surrender more combat essence on death, accelerating how quickly the next draft comes around.",
+      "icon": "Data Disc"
+    },
+    {
+      "title": "Companion Support",
+      "body": "Support assets such as robotic helpers, controlled specimens, or resurrected organisms. Companions support the Ghost rather than replacing them.",
+      "icon": "Probe"
+    }
+  ],
+  "passives": [
+    {
+      "title": "Siphon Rounds",
+      "body": "A share of the damage you deal returns as health. Scales hardest with fast, multi-hit weapons.",
+      "icon": "Restoration"
+    },
+    {
+      "title": "Static Field",
+      "body": "Enemies that strike you take reflected shock damage. Rewards holding ground inside a pack.",
+      "icon": "Plasma Shields"
+    },
+    {
+      "title": "Overflow",
+      "body": "Kills have a chance to leave a lingering hazard field that keeps damaging nearby mobs — great with splash weapons.",
+      "icon": "EMP Shockwave"
+    },
+    {
+      "title": "Momentum",
+      "body": "Repositioning builds charge; your next shots after a move land harder. Pairs with mobility drafts.",
+      "icon": "Use Stimpack"
+    },
+    {
+      "title": "Scavenger's Instinct",
+      "body": "Mobs drop more essence and minerals. A pure economy passive that compounds every other pick.",
+      "icon": "Ocular Implants"
+    },
+    {
+      "title": "Adrenal Surge",
+      "body": "Dropping below a health threshold briefly spikes move and fire rate — a built-in clutch window.",
+      "icon": "Medic"
+    }
+  ],
+  "gameplayLoop": [
+    {
+      "title": "Fight for essence",
+      "body": "Clearing mobs banks combat essence. Kills are the economy now — the harder the night, the faster your build accelerates."
+    },
+    {
+      "title": "Draft your build",
+      "body": "Spend essence to open a draft of three randomized upgrades and keep one. Pick for synergy with what you already run, not just raw power."
+    },
+    {
+      "title": "Mine minerals from the rocks",
+      "body": "Different rock formations across the map yield minerals, the staple currency for crafting and re-equipping your weapons."
+    },
+    {
+      "title": "Survive the nights",
+      "body": "Every night ramps harder as the swarm evolves. Your drafted synergies are what carry the squad from one dawn to the next."
+    }
+  ],
+  "resources": [
+    {
+      "title": "Surface Scree",
+      "body": "Loose rubble that mines fast for a small mineral trickle. Grab-and-go nodes for patrols on the move."
+    },
+    {
+      "title": "Ore Boulder",
+      "body": "The standard mineral rock — balanced yield against a moderate, exposed work window."
+    },
+    {
+      "title": "Dense Seam",
+      "body": "A slow, high-yield mineral vein. Worth the trip, but the long harvest leaves a Ghost committed and vulnerable."
+    },
+    {
+      "title": "Crystalline Rock",
+      "body": "A rich mineral formation, usually seated deeper in hostile ground where the swarm patrols."
+    },
+    {
+      "title": "Volcanic Rock",
+      "body": "Heavy mineral payload near dangerous terrain. High reward, high exposure — clear the area first."
+    },
+    {
+      "title": "Neural critters",
+      "body": "Mobile wildlife specimens. Stun or trap them, then harvest a burst of minerals before they bolt."
+    }
+  ],
+  "notes": [
+    {
+      "title": "Reuse unused abilities as spells",
+      "body": "Review dormant StarCraft abilities and retain only effects that read clearly in combat."
+    },
+    {
+      "title": "Command card stays readable",
+      "body": "Keep the command card operationally clear: one weapon special from the equipped weapon, one player-centered active ability, and structures/utilities in their own lane."
+    },
+    {
+      "title": "Clickable upgrade menus via train buttons",
+      "body": "Use the Ghost command-card train-unit queue as the clickable menu input layer for upgrades: suit, weapons, and later settings. Buttons queue dummy units, epScript detects the queued unit id, then resets the build queue so the menu behaves like UI instead of production."
+    },
+    {
+      "title": "Few active hotbar abilities",
+      "body": "Weapon packages swap the weapon-specific target command. Separately, crafted active abilities compete for one equipped defensive/offensive active slot."
+    },
+    {
+      "title": "Psi Emitter feasibility",
+      "body": "Test a deployable emitter that lures hostile movement or amplifies nearby field effects."
     }
   ],
   "sounds": [
