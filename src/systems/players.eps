@@ -242,9 +242,27 @@ function clearHarvestState(player) {
     HarvestChopTick[player] = 0;
 }
 
+// The ghost's command card repurposes 8 train buttons as ability triggers.
+// They map to units in this id range (see updatePlayerCommandCard).
+const COMMAND_CARD_UNIT_FIRST = 73;
+const COMMAND_CARD_UNIT_LAST = 81;
+
+// Zero out the mineral/gas/supply cost of those units so their command-card
+// buttons are always clickable (a real cost would grey them out / block the
+// queue). One-time DAT setup.
+function initCommandCardUnits() {
+    foreach (trainUnit : py_range(COMMAND_CARD_UNIT_FIRST, COMMAND_CARD_UNIT_LAST + 1)) {
+        const u = TrgUnit(trainUnit);
+        u.mineralCost = 0;
+        u.gasCost = 0;
+        u.supplyUsed = 0;
+    }
+}
+
 function initPlayers() {
     indexPlayerSpawnMarkers();
     initPlayerAudio();
+    initCommandCardUnits();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         HeroAlive[p] = 1;
         RespawnTimer[p] = 0;
@@ -559,7 +577,7 @@ function updatePlayerCommandCard(player) {
     if (!HeroAlive[player]) return;
     const hero = getPlayerHeroUnit(player);
 
-    foreach (trainUnit : py_range(73, 82)) {
+    foreach (trainUnit : py_range(COMMAND_CARD_UNIT_FIRST, COMMAND_CARD_UNIT_LAST + 1)) {
         if (hero.check_buildq(trainUnit)) {
             const savedCp = getcurpl();
             setcurpl(player);
