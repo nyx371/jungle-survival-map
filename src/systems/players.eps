@@ -16,6 +16,11 @@ const DEATH_RESOURCE_KEEP_PERCENT = 20;
 const RESPAWN_SEARCH_RADIUS = 15 * 32;
 const RESPAWN_MIN_MOB_DISTANCE = 8 * 32;
 const RESPAWN_ATTEMPTS = 5;
+const RESURRECTION_STASIS_DURATION = 5 * constants.FRAMES_PER_GAME_SECOND;
+const RESURRECTION_STASIS_COOLDOWN = 4 * 60 * constants.FRAMES_PER_GAME_SECOND;
+const RESURRECTION_STASIS_TRIGGER_PERCENT = 15;
+const RESURRECTION_STASIS_REGEN_PER_FRAME = 1 * 256;
+const RESURRECTION_STASIS_EXIT_PERCENT = 65;
 
 // Map authors pre-place Terran Beacon units to mark valid random spawn
 // positions, owned neutrally on P7 (matching the resource-node/mob-spawn
@@ -31,6 +36,8 @@ const LastKnownX = EUDArray(constants.MAX_PLAYERS);
 const LastKnownY = EUDArray(constants.MAX_PLAYERS);
 const PlayerHeroCUnit = EUDArray(constants.MAX_PLAYERS);
 const PlayerWeaponShots = EUDArray(constants.MAX_PLAYERS);
+const ResurrectionStasisTimer = EUDArray(constants.MAX_PLAYERS);
+const ResurrectionStasisCooldown = EUDArray(constants.MAX_PLAYERS);
 const Screen = StringBuffer(256);
 
 const PLAYER_STATUS_RESTED = 0;
@@ -270,6 +277,8 @@ function initPlayers() {
         LastKnownX[p] = 0;
         LastKnownY[p] = 0;
         PlayerWeaponShots[p] = 0;
+        ResurrectionStasisTimer[p] = 0;
+        ResurrectionStasisCooldown[p] = 0;
         PlayerEnergyMax[p] = HERO_BASE_ENERGY_MAX;
         PlayerEnergy[p] = PlayerEnergyMax[p];
         PlayerStatus[p] = PLAYER_STATUS_OK;
@@ -315,10 +324,56 @@ function healPlayerHero(player, amount) {
     else hero.hp += amount;
 }
 
+function triggerResurrectionStasis(player) {
+    if (!HeroAlive[player]) return 0;
+    if (ResurrectionStasisCooldown[player] > 0) return 0;
+
+    const hero = getPlayerHeroUnit(player);
+    ResurrectionStasisTimer[player] = RESURRECTION_STASIS_DURATION;
+    ResurrectionStasisCooldown[player] = RESURRECTION_STASIS_COOLDOWN;
+    hero.set_invincible();
+    hero.stasisTimer = RESURRECTION_STASIS_DURATION / 8;
+    healPlayerHero(player, getPlayerHeroMaxHp(player) / 4);
+    clearHarvestState(player);
+    clearPlayerAudioDangerState(player);
+
+    const savedCp = getcurpl();
+    setcurpl(player);
+    PlayWAV("sound\\protoss\\ARBStas.wav");
+    DisplayText("Resurrection Stasis: emergency shield engaged.");
+    setcurpl(savedCp);
+    return 1;
+}
+
 function damagePlayerHero(player, amount) {
     const hero = getPlayerHeroUnit(player);
-    if (hero.hp <= amount) hero.hp = 0;
-    else hero.hp -= amount;
+    if (hero.hp <= amount) {
+        if (!triggerResurrectionStasis(player)) hero.hp = 0;
+    } else hero.hp -= amount;
+}
+
+function updateResurrectionStasis(player) {
+    if (!HeroAlive[player]) return;
+
+    const hero = getPlayerHeroUnit(player);
+    const maxHp = getPlayerHeroMaxHp(player);
+
+    if (ResurrectionStasisTimer[player] > 0) {
+        ResurrectionStasisTimer[player] -= 1;
+        hero.set_invincible();
+        hero.stasisTimer = 2;
+        healPlayerHero(player, RESURRECTION_STASIS_REGEN_PER_FRAME);
+
+        if (maxHp > 0 && hero.hp * 100 / maxHp >= RESURRECTION_STASIS_EXIT_PERCENT) {
+            ResurrectionStasisTimer[player] = 0;
+        }
+        if (ResurrectionStasisTimer[player] == 0) {
+            hero.clear_invincible();
+            hero.stasisTimer = 0;
+        }
+    } else if (maxHp > 0 && hero.hp * 100 / maxHp <= RESURRECTION_STASIS_TRIGGER_PERCENT) {
+        triggerResurrectionStasis(player);
+    }
 }
 
 function updatePlayerVitals(player) {
@@ -354,6 +409,8 @@ function markPlayerDead(player) {
     structures.destroyPlayerStructures(player);
     clearHarvestState(player);
     clearPlayerAudioDangerState(player);
+    ResurrectionStasisTimer[player] = 0;
+    CUnit(PlayerHeroCUnit[player]).clear_invincible();
     PlayerEnergy[player] = PlayerEnergyMax[player] / 2;
     updatePlayerStatus(player);
 }
@@ -369,6 +426,7 @@ function respawnPlayer(player) {
     upgrades.applyHeroUpgradeDat(player);
     weapons.applyActiveWeaponDat(player);
     PlayerEnergy[player] = PlayerEnergyMax[player];
+    ResurrectionStasisTimer[player] = 0;
     updatePlayerStatus(player);
     const savedCp = getcurpl();
     setcurpl(player);
@@ -377,16 +435,31 @@ function respawnPlayer(player) {
 }
 
 function updatePlayerDeathState(player) {
+    if (ResurrectionStasisCooldown[player] > 0) ResurrectionStasisCooldown[player] -= 1;
+
     if (HeroAlive[player] == 0) {
         if (RespawnTimer[player] > 0) {
             RespawnTimer[player] -= 1;
         } else {
             respawnPlayer(player);
         }
-    } else if (getPlayerHeroUnit(player).orderID == constants.ORDER_DIE) {
-        // orderID 0 is the Die order; the tracked hero CUnit has died.
-        markPlayerDead(player);
+        return;
     }
+
+    const hero = getPlayerHeroUnit(player);
+    if (hero.orderID == constants.ORDER_DIE) {
+        // Final safety net: if the engine has already put the hero into Die,
+        // try to yank them into stasis before the normal respawn path runs.
+        if (triggerResurrectionStasis(player)) {
+            hero.hp = getPlayerHeroMaxHp(player) / 4;
+            hero.orderID = constants.ORDER_HOLD_POSITION_2;
+            return;
+        }
+        markPlayerDead(player);
+        return;
+    }
+
+    updateResurrectionStasis(player);
 }
 
 
@@ -568,26 +641,6 @@ function updatePlayerAudio(player) {
     LastHp[player] = currentHp;
 }
 
-// Ghost command-card train buttons are repurposed as ability triggers.
-// check_buildq detects which unit a button queued; for now just report the
-// id. Always reset_buildq at the end so nothing actually trains and the next
-// press reads fresh. (Options 1-8 map to units ~74..81; checking 73..81
-// covers the range so the printout reveals the real option->unit mapping.)
-function updatePlayerCommandCard(player) {
-    if (!HeroAlive[player]) return;
-    const hero = getPlayerHeroUnit(player);
-
-    foreach (trainUnit : py_range(COMMAND_CARD_UNIT_FIRST, COMMAND_CARD_UNIT_LAST + 1)) {
-        if (hero.check_buildq(trainUnit)) {
-            const savedCp = getcurpl();
-            setcurpl(player);
-            Screen.printf("Command card: unit {}", trainUnit);
-            setcurpl(savedCp);
-        }
-    }
-    hero.reset_buildq();
-}
-
 function updatePlayers() {
     const localPlayer = getuserplayerid();
     foreach (p : py_range(constants.MAX_PLAYERS)) {
@@ -596,7 +649,6 @@ function updatePlayers() {
         updatePlayerHeroBehavior(p);
         updatePlayerHarvesting(p);
         updatePlayerAudio(p);
-        updatePlayerCommandCard(p);
         updatePlayerDebugInfo(p, localPlayer);
     }
 }

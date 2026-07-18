@@ -1,7 +1,7 @@
 // Active Ability System
 // Ported from the prior map.eps pattern: players keep a small set of active abilities,
 // each with energy cost, cooldown, and an effect timer. Jungle Commandos keeps this
-// intentionally narrow: Heal, Speed, and Stun.
+// intentionally narrow but expandable: Heal, Speed, Stun, and Rewind.
 
 import core.constants;
 import systems.players;
@@ -9,25 +9,36 @@ import systems.players;
 const ABILITY_HEAL = 0;
 const ABILITY_SPEED = 1;
 const ABILITY_STUN = 2;
-const ABILITY_COUNT = 3;
+const ABILITY_REWIND = 3;
+const ABILITY_COUNT = 4;
 
 const ABILITY_HEAL_ENERGY_COST = 35 * 256;
 const ABILITY_SPEED_ENERGY_COST = 25 * 256;
 const ABILITY_STUN_ENERGY_COST = 45 * 256;
+const ABILITY_REWIND_ENERGY_COST = 55 * 256;
 
 const ABILITY_HEAL_COOLDOWN = 28 * constants.FRAMES_PER_GAME_SECOND;
 const ABILITY_SPEED_COOLDOWN = 24 * constants.FRAMES_PER_GAME_SECOND;
 const ABILITY_STUN_COOLDOWN = 34 * constants.FRAMES_PER_GAME_SECOND;
+const ABILITY_REWIND_COOLDOWN = 38 * constants.FRAMES_PER_GAME_SECOND;
 
 const ABILITY_HEAL_AMOUNT = 35 * 256;
 const ABILITY_SPEED_DURATION = 6 * constants.FRAMES_PER_GAME_SECOND;
 const ABILITY_STUN_DURATION = 4 * constants.FRAMES_PER_GAME_SECOND;
 const ABILITY_STUN_RADIUS = 4 * 32;
+const ABILITY_REWIND_FRAMES = 3 * constants.FRAMES_PER_GAME_SECOND;
+
+// Command-card train buttons are read as active ability hotkeys. The same
+// range is zero-costed in players.eps; options 1-4 map to these ids.
+const COMMAND_CARD_ABILITY_FIRST = 73;
 
 const AbilityUnlocked = EUDArray(constants.MAX_PLAYERS * ABILITY_COUNT);
 const AbilityCooldown = EUDArray(constants.MAX_PLAYERS * ABILITY_COUNT);
 const AbilityTimer = EUDArray(constants.MAX_PLAYERS * ABILITY_COUNT);
 const SelectedAbility = EUDArray(constants.MAX_PLAYERS);
+const RewindX = EUDArray(constants.MAX_PLAYERS * ABILITY_REWIND_FRAMES);
+const RewindY = EUDArray(constants.MAX_PLAYERS * ABILITY_REWIND_FRAMES);
+const RewindCursor = EUDArray(constants.MAX_PLAYERS);
 function abilityIndex(player, abilityId) {
     return player * ABILITY_COUNT + abilityId;
 }
@@ -36,6 +47,7 @@ function getAbilityEnergyCost(abilityId) {
     if (abilityId == ABILITY_HEAL) return ABILITY_HEAL_ENERGY_COST;
     if (abilityId == ABILITY_SPEED) return ABILITY_SPEED_ENERGY_COST;
     if (abilityId == ABILITY_STUN) return ABILITY_STUN_ENERGY_COST;
+    if (abilityId == ABILITY_REWIND) return ABILITY_REWIND_ENERGY_COST;
     return 0;
 }
 
@@ -43,20 +55,27 @@ function getAbilityCooldownFrames(abilityId) {
     if (abilityId == ABILITY_HEAL) return ABILITY_HEAL_COOLDOWN;
     if (abilityId == ABILITY_SPEED) return ABILITY_SPEED_COOLDOWN;
     if (abilityId == ABILITY_STUN) return ABILITY_STUN_COOLDOWN;
+    if (abilityId == ABILITY_REWIND) return ABILITY_REWIND_COOLDOWN;
     return 0;
 }
 
 function initAbilities() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         SelectedAbility[p] = ABILITY_HEAL;
+        RewindCursor[p] = 0;
         foreach (a : py_range(ABILITY_COUNT)) {
             AbilityUnlocked[abilityIndex(p, a)] = 0;
             AbilityCooldown[abilityIndex(p, a)] = 0;
             AbilityTimer[abilityIndex(p, a)] = 0;
         }
+        foreach (r : py_range(ABILITY_REWIND_FRAMES)) {
+            RewindX[p * ABILITY_REWIND_FRAMES + r] = 0;
+            RewindY[p * ABILITY_REWIND_FRAMES + r] = 0;
+        }
 
-        // Heal is the default safety valve. Speed/Stun can be upgrade/menu unlocks.
+        // Heal and Rewind are default safety valves. Speed/Stun can be upgrade/menu unlocks.
         AbilityUnlocked[abilityIndex(p, ABILITY_HEAL)] = 1;
+        AbilityUnlocked[abilityIndex(p, ABILITY_REWIND)] = 1;
     }
 }
 
@@ -102,12 +121,54 @@ function castStun(player) {
     applyStunPulse(player, ABILITY_STUN_RADIUS, ABILITY_STUN_DURATION);
 }
 
+function getRewindHistoryIndex(player) {
+    var cursor = RewindCursor[player];
+    if (cursor >= ABILITY_REWIND_FRAMES) cursor = 0;
+    return player * ABILITY_REWIND_FRAMES + cursor;
+}
+
+function recordRewindPoint(player) {
+    if (!players.HeroAlive[player]) return;
+    const hero = players.getPlayerHeroUnit(player);
+    const index = getRewindHistoryIndex(player);
+    RewindX[index] = hero.posX;
+    RewindY[index] = hero.posY;
+    RewindCursor[player] += 1;
+    if (RewindCursor[player] >= ABILITY_REWIND_FRAMES) RewindCursor[player] = 0;
+}
+
+function castRewind(player) {
+    const index = getRewindHistoryIndex(player);
+    const x = RewindX[index];
+    const y = RewindY[index];
+    if (x == 0 && y == 0) return 0;
+
+    const hero = players.getPlayerHeroUnit(player);
+    hero.setloc($L("_Screen"));
+    setloc($L("_Place"), x, y);
+    MoveUnit(1, "Any unit", player, $L("_Screen"), $L("_Place"));
+    hero.orderID = constants.ORDER_HOLD_POSITION_2;
+
+    const savedCp = getcurpl();
+    setcurpl(player);
+    PlayWAV("sound\\misc\\transmission.wav");
+    DisplayText("Rewind: pulled back 3 seconds.");
+    setcurpl(savedCp);
+    return 1;
+}
+
 function castAbility(player, abilityId) {
     if (!canCastAbility(player, abilityId)) return 0;
 
     if (abilityId == ABILITY_HEAL) castHeal(player);
     else if (abilityId == ABILITY_SPEED) castSpeed(player);
     else if (abilityId == ABILITY_STUN) castStun(player);
+    else if (abilityId == ABILITY_REWIND) {
+        if (!castRewind(player)) {
+            players.restorePlayerEnergy(player, getAbilityEnergyCost(abilityId));
+            return 0;
+        }
+    }
 
     AbilityCooldown[abilityIndex(player, abilityId)] = getAbilityCooldownFrames(abilityId);
     return 1;
@@ -130,8 +191,24 @@ function updateAbilityTimers(player) {
     }
 }
 
+function updateAbilityCommandCard(player) {
+    if (!players.HeroAlive[player]) return;
+    const hero = players.getPlayerHeroUnit(player);
+
+    foreach (abilityId : py_range(ABILITY_COUNT)) {
+        const trainUnit = COMMAND_CARD_ABILITY_FIRST + abilityId;
+        if (hero.check_buildq(trainUnit)) {
+            selectAbility(player, abilityId);
+            castAbility(player, abilityId);
+        }
+    }
+    hero.reset_buildq();
+}
+
 function updateAbilities() {
     foreach (p : py_range(constants.MAX_PLAYERS)) {
         updateAbilityTimers(p);
+        updateAbilityCommandCard(p);
+        recordRewindPoint(p);
     }
 }

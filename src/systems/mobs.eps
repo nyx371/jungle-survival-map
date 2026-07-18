@@ -7,6 +7,7 @@ import core.utils;
 import systems.day_night;
 import systems.lights;
 import systems.players;
+import systems.mob_evolution;
 
 const MAP_TILE_WIDTH = 256;
 const MAP_TILE_HEIGHT = 256;
@@ -26,10 +27,22 @@ const MIN_SPAWN_DISTANCE_TO_PLAYER = 5 * 32;
 const MAX_ACTIVE_MOBS = 48; // kept modest: this cap is scanned by both mob despawn logic and player respawn-safety checks
 const AREA_SPAWN_CHECKS_PER_FRAME = 3;
 const MOB_ROAM_RETARGET_FRAMES = 12 * constants.FRAMES_PER_GAME_SECOND;
+const MOB_SPECIAL_COOLDOWN = 8 * constants.FRAMES_PER_GAME_SECOND;
+const MOB_AMBUSH_RANGE = 9 * 32;
+const MOB_JUMP_MIN_RANGE = 5 * 32;
+const MOB_JUMP_MAX_RANGE = 12 * 32;
+const MOB_JUMP_DAMAGE = 18 * 256;
+const MOB_BLEED_DURATION = 5 * constants.FRAMES_PER_GAME_SECOND;
+const MOB_BLEED_DAMAGE_PER_FRAME = 1 * 256 / 5;
+const MOB_SLOW_DURATION = 4 * constants.FRAMES_PER_GAME_SECOND;
 const MobUnit = EUDArray(MAX_ACTIVE_MOBS);
 const MobArea = EUDArray(MAX_ACTIVE_MOBS);
 const MobActive = EUDArray(MAX_ACTIVE_MOBS);
 const MobRoamTimer = EUDArray(MAX_ACTIVE_MOBS);
+const MobTier = EUDArray(MAX_ACTIVE_MOBS);
+const MobSpecialCooldown = EUDArray(MAX_ACTIVE_MOBS);
+const PlayerBleedTimer = EUDArray(constants.MAX_PLAYERS);
+const PlayerSlowTimer = EUDArray(constants.MAX_PLAYERS);
 var SpawnAreaCursor = 0;
 
 const AreaTargetDensity = EUDArray(MAX_MOB_AREAS);
@@ -122,6 +135,12 @@ function initMobs() {
         MobUnit[i] = 0;
         MobArea[i] = 0;
         MobRoamTimer[i] = 0;
+        MobTier[i] = mob_evolution.GlobalMobTier;
+        MobSpecialCooldown[i] = 0;
+    }
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        PlayerBleedTimer[p] = 0;
+        PlayerSlowTimer[p] = 0;
     }
     SpawnAreaCursor = 0;
     indexMobSpawnMarkers();
@@ -223,9 +242,21 @@ function findFreeMobSlot() {
 }
 
 function chooseMobFamily(area) {
-    // Simple 50/50 between the two currently mob_evolution-tiered families;
-    // weighting by budget/tier/day-night/nearby players can refine this later.
-    if (f_rand() % 2 == 0) return $U("Zerg Zergling");
+    // Higher evolution tiers unlock elite bodies with special behaviours.
+    const tier = mob_evolution.GlobalMobTier;
+    const roll = f_rand() % 100;
+    if (tier >= mob_evolution.MOB_TIER_RED) {
+        if (roll < 15) return $U("Zerg Ultralisk");
+        if (roll < 30) return $U("Zerg Lurker");
+        if (roll < 45) return $U("Zerg Mutalisk");
+    } else if (tier >= mob_evolution.MOB_TIER_ORANGE) {
+        if (roll < 18) return $U("Zerg Lurker");
+        if (roll < 32) return $U("Zerg Mutalisk");
+    } else if (tier >= mob_evolution.MOB_TIER_BROWN) {
+        if (roll < 18) return $U("Zerg Broodling");
+    }
+
+    if (roll % 2 == 0) return $U("Zerg Zergling");
     return $U("Zerg Hydralisk");
 }
 
@@ -269,6 +300,8 @@ function spawnMobInArea(area) {
     MobArea[slot] = area;
     MobActive[slot] = 1;
     MobRoamTimer[slot] = MOB_ROAM_RETARGET_FRAMES;
+    MobTier[slot] = mob_evolution.GlobalMobTier;
+    MobSpecialCooldown[slot] = MOB_SPECIAL_COOLDOWN / 2 + f_rand() % MOB_SPECIAL_COOLDOWN;
     AreaCurrentDensity[area] += 1;
 }
 
@@ -283,6 +316,7 @@ function despawnAreaMobs(area) {
                 utils.removeCUnit(unit);
                 MobActive[i] = 0;
                 MobUnit[i] = 0;
+                MobSpecialCooldown[i] = 0;
                 remaining -= 1;
             }
         }
@@ -327,10 +361,113 @@ function updateActiveMobRoaming() {
     }
 }
 
+function getNearestPlayerInRange(unit : CUnit, range) {
+    var bestPlayer = -1;
+    var bestDist = range * range + 1;
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        if (players.HeroAlive[p]) {
+            const hero = players.getPlayerHeroUnit(p);
+            const dx = unit.posX > hero.posX ? unit.posX - hero.posX : hero.posX - unit.posX;
+            const dy = unit.posY > hero.posY ? unit.posY - hero.posY : hero.posY - unit.posY;
+            const dist = dx * dx + dy * dy;
+            if (dx <= range && dy <= range && dist < bestDist) {
+                bestDist = dist;
+                bestPlayer = p;
+            }
+        }
+    }
+    return bestPlayer, bestDist;
+}
+
+function applyMonsterBleed(player) {
+    PlayerBleedTimer[player] = MOB_BLEED_DURATION;
+}
+
+function applyMonsterSlow(player) {
+    PlayerSlowTimer[player] = MOB_SLOW_DURATION;
+}
+
+function jumpMobToPlayer(slot, player) {
+    const unit = CUnit(MobUnit[slot]);
+    const hero = players.getPlayerHeroUnit(player);
+    unit.setloc($L("_Screen"));
+    setloc($L("_Place"), hero.posX + f_rand() % 96 - 48, hero.posY + f_rand() % 96 - 48);
+    MoveUnit(1, "Any unit", MOB_OWNER_PLAYER, $L("_Screen"), $L("_Place"));
+    unit.orderID = constants.ORDER_ATTACK_UNIT;
+    unit.orderTargetUnit = hero;
+    utils.createImageSpriteOnUnit(constants.IMAGE_VESPENE_GEYSER_SMOKE1, hero);
+    players.damagePlayerHero(player, MOB_JUMP_DAMAGE);
+    applyMonsterBleed(player);
+    applyMonsterSlow(player);
+}
+
+function updateMobSpecialAbility(slot) {
+    if (!MobActive[slot]) return;
+    if (MobSpecialCooldown[slot] > 0) {
+        MobSpecialCooldown[slot] -= 1;
+        return;
+    }
+
+    const unit = CUnit(MobUnit[slot]);
+    if (MobTier[slot] >= mob_evolution.MOB_TIER_RED) {
+        const player, dist = getNearestPlayerInRange(unit, MOB_JUMP_MAX_RANGE);
+        if (player >= 0 && dist >= MOB_JUMP_MIN_RANGE * MOB_JUMP_MIN_RANGE) {
+            jumpMobToPlayer(slot, player);
+            MobSpecialCooldown[slot] = MOB_SPECIAL_COOLDOWN;
+            return;
+        }
+    }
+
+    const closePlayer, closeDist = getNearestPlayerInRange(unit, MOB_AMBUSH_RANGE);
+    if (closePlayer >= 0) {
+        const hero = players.getPlayerHeroUnit(closePlayer);
+        if (MobTier[slot] >= mob_evolution.MOB_TIER_BROWN && unit.orderTargetUnit == 0) {
+            // Ambush/burrow behaviour: hide briefly, then lunge at the nearest commando.
+            unit.orderID = constants.ORDER_BURROW;
+            unit.orderTargetX = hero.posX;
+            unit.orderTargetY = hero.posY;
+        }
+        unit.orderID = constants.ORDER_ATTACK_UNIT;
+        unit.orderTargetUnit = hero;
+
+        if (MobTier[slot] >= mob_evolution.MOB_TIER_ORANGE) {
+            applyMonsterBleed(closePlayer);
+            applyMonsterSlow(closePlayer);
+        } else if (MobTier[slot] >= mob_evolution.MOB_TIER_BROWN) {
+            applyMonsterSlow(closePlayer);
+        }
+        MobSpecialCooldown[slot] = MOB_SPECIAL_COOLDOWN;
+    }
+}
+
+function updateMonsterPlayerEffects() {
+    foreach (p : py_range(constants.MAX_PLAYERS)) {
+        if (PlayerBleedTimer[p] > 0) {
+            PlayerBleedTimer[p] -= 1;
+            if (players.HeroAlive[p]) players.damagePlayerHero(p, MOB_BLEED_DAMAGE_PER_FRAME);
+        }
+        if (PlayerSlowTimer[p] > 0) {
+            PlayerSlowTimer[p] -= 1;
+            if (players.HeroAlive[p]) {
+                const hero = players.getPlayerHeroUnit(p);
+                hero.ensnareTimer = 24;
+            }
+        }
+    }
+}
+
+function updateMobSpecialAbilities() {
+    foreach (i : py_range(MAX_ACTIVE_MOBS)) {
+        updateMobSpecialAbility(i);
+    }
+}
+
 function updateMobs() {
     refreshAreaPlayerPresence();
     refreshAreaLightLevels();
     updateActiveMobRoaming();
+    updateMonsterPlayerEffects();
+    updateMobSpecialAbilities();
 
     foreach (_ : py_range(AREA_SPAWN_CHECKS_PER_FRAME)) {
         updateAreaSpawning(SpawnAreaCursor);
