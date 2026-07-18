@@ -205,6 +205,18 @@ Acceptance criteria:
 - Hurt SFX does not spam unbearably.
 - Audio intensity communicates danger.
 
+#### Monster aggro audio feedback
+
+- Play monster SFX when nearby mobs aggro onto players.
+- Rate-limit per mob/player area so aggro audio feels tense without becoming spam.
+- Use distinct sounds for higher-tier ambush/jump attackers if possible.
+
+Acceptance criteria:
+
+- Player hears a clear warning when nearby monsters notice or engage them.
+- Repeated aggro events have cooldowns and do not stack into noise.
+- Elite monster aggro reads as more dangerous than basic mob aggro.
+
 #### Exploding death units
 
 - Some mobs explode on death.
