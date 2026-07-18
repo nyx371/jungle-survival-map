@@ -652,6 +652,10 @@
   ],
   "notes": [
     {
+      "title": "Monster aggro SFX",
+      "body": "Nearby monsters should play a clear, rate-limited aggro sound when they notice or engage a player. Elite ambush/jump attackers should use a more dangerous cue so players hear the threat before the collapse lands."
+    },
+    {
       "title": "Reuse unused abilities as spells",
       "body": "Review dormant StarCraft abilities and retain only effects that read clearly in combat."
     },
